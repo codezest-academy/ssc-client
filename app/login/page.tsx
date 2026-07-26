@@ -42,23 +42,23 @@ export default function LoginPage() {
 
   return (
     <div className="w-full min-h-screen grid lg:grid-cols-2">
-      {/* Left side: Branding (Always Primary Color) */}
-      <div className="hidden lg:flex flex-col justify-between bg-primary p-12 text-primary-foreground">
+      {/* Left side: Branding */}
+      <div className="hidden lg:flex flex-col justify-between bg-slate-50 dark:bg-slate-900/50 p-12 text-foreground border-r border-border/50">
         {/* Top left Logo */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center">
+          <div className="w-10 h-10 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center">
             <GraduationCap className="w-6 h-6 text-primary" />
           </div>
-          <span className="text-xl font-bold tracking-tight text-white">Code Zest Academy</span>
+          <span className="text-xl font-bold tracking-tight">Code Zest Academy</span>
         </div>
 
         {/* Bottom left Text */}
         <div className="max-w-md mt-auto">
-          <h1 className="text-5xl font-bold mb-6 tracking-tight leading-tight text-white">
-            Powering the future of SSC education.
+          <h1 className="text-5xl font-bold mb-6 tracking-tight leading-tight">
+            Master the <span className="text-primary">SSC Exams.</span>
           </h1>
-          <p className="text-lg opacity-90 leading-relaxed font-medium">
-            A comprehensive command center designed for speed, clarity, and reliability.
+          <p className="text-lg text-muted-foreground leading-relaxed font-medium">
+            Join thousands of students preparing with our premium mock tests, structured video courses, and detailed analytics.
           </p>
         </div>
       </div>
