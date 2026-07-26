@@ -43,9 +43,9 @@ export default function LoginPage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-slate-50">
       <Card className="w-[400px]">
-        <CardHeader>
-          <CardTitle>Student Portal</CardTitle>
-          <CardDescription>Sign in to your Code Zest account.</CardDescription>
+        <CardHeader className="text-center">
+          <CardTitle className="text-primary text-2xl">Code Zest Academy</CardTitle>
+          <CardDescription className="text-slate-600 mt-1 font-medium">SSC (Staff Selection Commission) Portal</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">

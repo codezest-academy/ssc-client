@@ -29,7 +29,11 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
       <header className="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-6">
-        <h1 className="font-bold text-xl text-slate-800">SSC Portal</h1>
+        <div className="flex items-center gap-2">
+          <h1 className="font-bold text-xl text-primary">Code Zest Academy</h1>
+          <span className="text-slate-300">|</span>
+          <span className="font-medium text-slate-600">SSC (Staff Selection Commission)</span>
+        </div>
         <div className="flex items-center gap-4">
           <div className="text-sm">
             <span className="text-slate-500">Welcome, </span>
