@@ -34,8 +34,9 @@ export default function LoginPage() {
       setAuth(response.data.user, response.data.token);
       toast.success("Logged in successfully");
       router.push("/dashboard");
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Invalid credentials");
+    } catch (err) {
+      const error = err as { response?: { data?: { message?: string } } };
+      toast.error(error.response?.data?.message || "Invalid credentials");
     } finally {
       setLoading(false);
     }
@@ -127,7 +128,7 @@ export default function LoginPage() {
           </div>
 
           <p className="text-center text-sm text-muted-foreground mt-8">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link href="/register" className="font-semibold text-primary hover:underline">
               Register here
             </Link>
