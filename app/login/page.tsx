@@ -7,6 +7,7 @@ import { api } from "@/lib/axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import Link from "next/link";
 import { GraduationCap } from "lucide-react";
@@ -15,6 +16,7 @@ import { DotPattern } from "@/components/ui/pattern";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const setAuth = useAuthStore((state) => state.setAuth);
@@ -24,7 +26,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await api.post("/auth/login", { email, password });
+      const response = await api.post("/auth/login", { email, password, rememberMe });
       
       if (response.data.user.role !== "STUDENT") {
         toast.error("Admins must use the admin portal.");
@@ -121,6 +123,20 @@ export default function LoginPage() {
                 />
               </div>
               
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="remember" 
+                  checked={rememberMe} 
+                  onCheckedChange={(checked) => setRememberMe(checked as boolean)} 
+                />
+                <Label
+                  htmlFor="remember"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Keep me logged in
+                </Label>
+              </div>
+
               <Button type="submit" className="w-full h-12 text-base font-bold rounded-lg" disabled={loading}>
                 {loading ? "Signing in..." : "Sign In"}
               </Button>
