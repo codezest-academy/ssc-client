@@ -55,9 +55,10 @@ These principles are derived from the psychology of exam preparation and learnin
 ### Principle 1: Reduce Anxiety, Build Confidence
 
 SSC aspirants face immense competitive pressure. The UI should never feel intimidating.
-- Avoid red as a dominant color in the study flow (reserve `--destructive` for test results only)
-- Use progress indicators liberally — partial completion feels like achievement
-- Celebrate small wins (lesson complete, streak maintained, personal best score)
+- **Brand Trust:** Use **CodeZest Indigo** as the primary interactive color. It promotes calm focus and professional trust.
+- **Strictly Semantic Red:** Avoid red as a dominant color in the study flow. In education, Red = "Incorrect/Danger". Reserve `--destructive` strictly for wrong answers and deleting data.
+- Use progress indicators liberally — partial completion feels like achievement.
+- Celebrate small wins (lesson complete, streak maintained, personal best score).
 
 ### Principle 2: Focus Over Feature Discovery
 
