@@ -66,7 +66,7 @@
 @layer base {
   :root {
     /* ── Core surfaces ───────────────────────────────────────── */
-    --background:          210 40% 98%;
+    --background:          210 70% 97%;   /* Sky Veil — light sky-blue tint */
     --foreground:          215 31% 12%;
 
     --card:                0 0% 100%;
@@ -85,7 +85,7 @@
     --secondary-foreground: 210 40% 98%;
 
     /* ── Muted ───────────────────────────────────────────────── */
-    --muted:               210 40% 96%;
+    --muted:               210 55% 93%;  /* Sky-tinted muted surface */
     --muted-foreground:    215 16% 47%;
 
     /* ── Accent ──────────────────────────────────────────────── */
@@ -110,7 +110,7 @@
     --radius: 0.5rem;
 
     /* ── Sidebar token family ────────────────────────────────── */
-    --sidebar:             220 25% 97%;
+    --sidebar:             210 55% 95%;  /* Slightly deeper sky blue */
     --sidebar-foreground:  215 31% 12%;
     --sidebar-primary:     243 74% 58%;
     --sidebar-primary-foreground: 0 0% 100%;
