@@ -3,6 +3,7 @@ import { useAuthStore } from "../store/auth";
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1",
+  withCredentials: true,
 });
 
 api.interceptors.request.use((config) => {
@@ -15,11 +16,29 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     if (error.response?.status === 401) {
-      // Auto logout on token expiry
-      useAuthStore.getState().logout();
-      window.location.href = "/login";
+      const originalRequest = error.config;
+      if (!originalRequest._retry) {
+        originalRequest._retry = true;
+        try {
+          const response = await axios.post(
+            `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1"}/auth/refresh`,
+            {},
+            { withCredentials: true }
+          );
+          
+          const newAccessToken = response.data.data.accessToken;
+          useAuthStore.getState().setToken(newAccessToken);
+          
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+          return api(originalRequest);
+        } catch (refreshError) {
+          useAuthStore.getState().logout();
+          window.location.href = "/login";
+          return Promise.reject(refreshError);
+        }
+      }
     }
     return Promise.reject(error);
   }
