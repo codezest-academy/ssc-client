@@ -1,56 +1,82 @@
-# UX/UI Guidelines & Student Flow
+# UX/UI Guidelines — Client App
 
 **Date:** 2026-07-26
-**Status:** 🔴 Draft
+**Updated:** 2026-07-28
+**Status:** 🟢 Active
 **Author:** CVS Charan
 
 ---
 
 ## Purpose
 
-Defines the design principles, component conventions, and key user flows for the `ssc-client` student application.
+Defines design principles, component conventions, and interaction patterns for the `ssc-client` student-facing app.
 
 ---
 
 ## Design Principles
 
-1. **Motivating & Focused** — The UI should feel like a study companion, not a generic web app. Use progress rings, streaks, and celebratory feedback.
-2. **Minimal cognitive load during tests** — The test-taking screen must be distraction-free: no navigation, no clutter.
-3. **Instant feedback on practice** — After each practice question, show correct answer + explanation immediately.
-4. **Mobile-first** — Most SSC aspirants study on mobile. Design for small screens first.
+1. **Reduce Anxiety, Build Confidence** — Avoid red as dominant color in study flow. Use progress indicators liberally.
+2. **Focus Over Feature Discovery** — Focus Mode during tests: strip all navigation, reduce chrome to zero.
+3. **Immediate Feedback Loops** — Practice set responses: show correct/incorrect immediately after selection.
+4. **Mobile-First, Touch-Friendly** — 44px minimum touch targets. No hover-dependent interactions.
+5. **Respect Long Study Sessions** — Dark mode must work perfectly. Avoid pure white.
 
 ---
 
 ## Color & Theme
 
-*(To be defined when UI development begins)*
+### Primary Brand Color
+
+`--primary = oklch(0.55 0.20 275)` → **CodeZest Indigo**
+
+The client app is slightly more expressive than the admin (up to 20% brand in hero areas) but still disciplined.
+
+**Red is not the brand color.** Red only appears as `--destructive` in error/danger states and test review (incorrect answers use `--incorrect` token, not `--destructive`).
+
+See `theme-system.md` for full token reference including Test State Tokens and Motivational Tokens.
 
 ---
 
-## Key User Flows
+## Layout Conventions
 
-### 1. Onboarding
-```
-Register → Verify Email → Select Target Exam → Dashboard
-```
+### Student Shell
 
-### 2. Learning Flow
-```
-Dashboard → Subject List → Chapter List → Lesson List → Lesson Viewer → Mark Complete
-```
-
-### 3. Practice Flow
-```
-Subject → Practice Sets → Start Set → MCQ Screen → Submit → Instant Result
-```
-
-### 4. Mock Test Flow
-```
-Mock Tests List → Test Info Page → Start (timer begins) → MCQ with Section Nav → Submit → Scorecard
-```
+- **Bottom Nav** (mobile): 5 items max. Dashboard, Subjects, Practice, Mock Tests, Profile.
+- **Side Nav** (desktop, 768px+): Collapsible, same indigo active state as admin sidebar.
+- **Focus Mode** (during test): No navigation visible. Top bar = timer + submit only.
 
 ---
 
-## Component Conventions
+## Icon System (Standardized — Lucide React only)
 
-*(To be defined when UI development begins)*
+### Navigation
+
+| Route | Icon |
+|---|---|
+| Dashboard / Home | `Home` |
+| Subjects | `BookOpen` |
+| Practice Sets | `ClipboardList` |
+| Mock Tests | `FileCheck` |
+| Leaderboard | `Trophy` |
+| Profile | `UserCircle` |
+
+### Actions
+
+| Action | Icon |
+|---|---|
+| Start Test | `Play` |
+| Submit | `CheckCircle` |
+| Back | `ArrowLeft` |
+| Next | `ArrowRight` |
+| Bookmark | `Bookmark` |
+| Loading | `Loader2` |
+
+### Test State Icons
+
+| State | Icon | Token |
+|---|---|---|
+| Correct answer | `CheckCircle` | `text-correct` |
+| Wrong answer | `XCircle` | `text-incorrect` |
+| Skipped | `MinusCircle` | `text-muted-foreground` |
+| Streak | `Flame` | `text-streak` |
+| Achievement | `Trophy` | `text-achievement` |
