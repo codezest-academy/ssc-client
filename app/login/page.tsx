@@ -13,8 +13,8 @@ import { GraduationCap } from "lucide-react";
 import { DotPattern } from "@/components/ui/pattern";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("student.free@gmail.com");
-  const [password, setPassword] = useState("password123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const setAuth = useAuthStore((state) => state.setAuth);
