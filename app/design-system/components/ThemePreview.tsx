@@ -16,7 +16,7 @@ export const ThemePreview = ({
         {description && <p className="text-muted-foreground">{description}</p>}
       </div>
     )}
-    <div className="overflow-hidden rounded-3xl border-none shadow-xl bg-card/80 backdrop-blur-xl text-foreground p-8 flex flex-col justify-center items-center min-h-[300px] relative transition-all hover:shadow-2xl hover:-translate-y-1">
+    <div className="overflow-hidden rounded-3xl border-2 border-dashed border-border/50 bg-transparent text-foreground p-8 flex flex-col justify-center items-center min-h-[300px] relative transition-all">
       <div className="w-full max-w-md relative z-10">{children}</div>
     </div>
   </div>
