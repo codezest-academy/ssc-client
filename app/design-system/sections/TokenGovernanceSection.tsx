@@ -17,7 +17,7 @@ export function TokenGovernanceSection() {
             <Palette className="w-4 h-4" /> 
             Color Tokens
           </h3>
-          <div className="bg-card/80 backdrop-blur-xl border-none rounded-3xl overflow-hidden divide-y divide-border/30 shadow-xl hover:-translate-y-1 hover:shadow-2xl transition-all">
+          <div className="bg-card border border-border/50 rounded-3xl overflow-hidden divide-y divide-border/30 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] transition-all">
             <div className="p-4 bg-destructive/5 flex gap-4 items-start">
               <div className="mt-2 w-6 h-6 rounded-full bg-destructive/10 flex items-center justify-center shrink-0">
                 <X className="w-3 h-3 text-destructive" />
@@ -47,7 +47,7 @@ export function TokenGovernanceSection() {
             <Layout className="w-4 h-4" /> 
             Structural Tokens
           </h3>
-          <div className="bg-card/80 backdrop-blur-xl border-none rounded-3xl overflow-hidden divide-y divide-border/30 shadow-xl hover:-translate-y-1 hover:shadow-2xl transition-all">
+          <div className="bg-card border border-border/50 rounded-3xl overflow-hidden divide-y divide-border/30 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] transition-all">
             <div className="p-4 bg-destructive/5 flex gap-4 items-start">
               <div className="mt-2 w-6 h-6 rounded-full bg-destructive/10 flex items-center justify-center shrink-0">
                 <X className="w-3 h-3 text-destructive" />

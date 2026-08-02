@@ -10,7 +10,7 @@ export function PagePatternsSection() {
         <p className="text-muted-foreground mt-2">How components assemble into complex interfaces.</p>
       </div>
       <ThemePreview title="Data Grid (Table)" description="Standard table pattern with status badges.">
-        <div className="rounded-3xl border-none shadow-xl bg-card/80 backdrop-blur-xl overflow-hidden hover:-translate-y-1 hover:shadow-2xl transition-all">
+        <div className="rounded-3xl border border-border/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] bg-card overflow-hidden hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] transition-all">
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/50 hover:bg-muted/50">
@@ -28,7 +28,7 @@ export function PagePatternsSection() {
         </div>
       </ThemePreview>
       <ThemePreview title="Sidebar Navigation" description="The core navigation using --sidebar-* tokens.">
-        <div className="bg-sidebar/90 border-none rounded-3xl p-4 w-64 text-sidebar-foreground shadow-xl backdrop-blur-xl hover:shadow-2xl hover:-translate-y-1 transition-all">
+        <div className="bg-sidebar border border-sidebar-border/50 rounded-3xl p-4 w-64 text-sidebar-foreground shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all">
           <div className="flex items-center gap-2 mb-8 px-2 font-bold text-lg"><BookOpen className="text-sidebar-primary" />CodeZest</div>
           <nav className="space-y-1">
             <a href="#" className="flex items-center gap-3 px-3 py-2 bg-sidebar-accent text-sidebar-accent-foreground rounded-md font-medium text-sm"><Search className="h-4 w-4" />Dashboard</a>
