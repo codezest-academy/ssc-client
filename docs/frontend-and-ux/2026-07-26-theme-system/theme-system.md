@@ -724,3 +724,16 @@ grep -rn '<button.*className.*h-[678]\b' src/ --include='*.tsx'
 - [Theme System (Admin Web)](../../../ssc-admin-web/docs/frontend-and-ux/2026-07-26-theme-system/theme-system.md) — Admin portal theme system
 - [API Response Shapes](../database-and-schema/2026-07-26-client-data-models/client-data-models.md) — Data models that drive UI state
 - [Master Progress Tracker](../progress-and-planning/2026-07-26-master-progress-tracker/progress-tracker.md) — Phase status
+
+---
+
+## 19. Central Design System Documentation Hub
+
+While this document outlines the rules for the client app specifically, the interactive visual reference for all shared structural and semantic tokens (colors, buttons, badges) is available at `/design-system` within the `ssc-admin-web` application.
+That hub serves as the **production-ready documentation site** containing:
+- **Interactive Token Editor**: A sidebar that lets you test Hue, Chroma, and Border Radius live with WCAG contrast checking.
+- **Visual Token Governance**: Concrete "Do / Don't" UI patterns demonstrating strict adherence to semantic tokens over raw Tailwind classes.
+- **Dual-Theme Previews**: Instantly verify how tokens render in light and dark modes side-by-side.
+- **Subject Tokens**: Visual representation of the `--subject-*` color family.
+
+If you are porting a component from the admin web or adding a new shared token, always refer to the Admin `/design-system` hub as the visual source of truth.

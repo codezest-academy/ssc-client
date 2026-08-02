@@ -10,12 +10,12 @@
 
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
+  --color-ring: var(--ring);
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
 
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
 
   --color-secondary: hsl(var(--secondary));
   --color-secondary-foreground: hsl(var(--secondary-foreground));
@@ -44,8 +44,8 @@
   /* Sidebar token family */
   --color-sidebar: hsl(var(--sidebar));
   --color-sidebar-foreground: hsl(var(--sidebar-foreground));
-  --color-sidebar-primary: hsl(var(--sidebar-primary));
-  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
   --color-sidebar-accent: hsl(var(--sidebar-accent));
   --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
   --color-sidebar-border: hsl(var(--sidebar-border));
@@ -57,6 +57,13 @@
   --color-incorrect-foreground: hsl(var(--incorrect-foreground));
   --color-streak: hsl(var(--streak));
   --color-achievement: hsl(var(--achievement));
+
+  /* Subject Colors */
+  --color-subject-quant: var(--subject-quant);
+  --color-subject-english: var(--subject-english);
+  --color-subject-ga: var(--subject-ga);
+  --color-subject-reason: var(--subject-reason);
+  --color-subject-science: var(--subject-science);
 
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
@@ -77,8 +84,8 @@
 
     /* ── Brand primary: CodeZest Indigo ──────────────────────── */
     /* Docs primitive: oklch(0.55 0.20 275) ≈ hsl(243, 74%, 58%) */
-    --primary:             243 74% 58%;
-    --primary-foreground:  0 0% 100%;
+    --primary:             oklch(0.55 0.22 275);
+    --primary-foreground:  oklch(0.98 0.01 275);
 
     /* ── Secondary: Deep Navy ────────────────────────────────── */
     --secondary:           215 31% 12%;
@@ -105,15 +112,15 @@
     /* ── Borders / Inputs / Ring ─────────────────────────────── */
     --border:              214 32% 91%;
     --input:               214 32% 91%;
-    --ring:                243 74% 58%;
+    --ring:                oklch(0.55 0.22 275);
 
     --radius: 0.5rem;
 
     /* ── Sidebar token family ────────────────────────────────── */
     --sidebar:             228 55% 93%;  /* Slightly deeper periwinkle sidebar */
     --sidebar-foreground:  215 35% 10%;
-    --sidebar-primary:     243 74% 58%;
-    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-primary:     oklch(0.55 0.22 275);
+    --sidebar-primary-foreground: oklch(0.98 0.01 275);
     --sidebar-accent:      220 20% 92%;
     --sidebar-accent-foreground: 215 25% 20%;
     --sidebar-border:      214 20% 88%;
@@ -125,6 +132,13 @@
     --incorrect-foreground: 0 0% 100%;
     --streak:              38 92% 50%;
     --achievement:         45 96% 62%;
+
+    /* ── Subject Colors (L=0.65, C=0.18) ─────────────────────── */
+    --subject-quant:       oklch(0.65 0.18 45);   /* Orange */
+    --subject-english:     oklch(0.65 0.18 250);  /* Blue */
+    --subject-ga:          oklch(0.65 0.18 300);  /* Purple */
+    --subject-reason:      oklch(0.65 0.18 145);  /* Green */
+    --subject-science:     oklch(0.65 0.18 190);  /* Teal */
   }
 
   .dark {
@@ -139,8 +153,8 @@
     --popover-foreground:  210 40% 96%;
 
     /* ── Brand primary: CodeZest Indigo (lighter in dark) ─────── */
-    --primary:             243 65% 68%;
-    --primary-foreground:  0 0% 100%;
+    --primary:             oklch(0.65 0.20 275);
+    --primary-foreground:  oklch(0.98 0.01 275);
 
     /* ── Secondary ───────────────────────────────────────────── */
     --secondary:           217 33% 18%;
@@ -167,13 +181,13 @@
     /* ── Borders / Inputs / Ring ─────────────────────────────── */
     --border:              217 33% 16%;
     --input:               217 33% 16%;
-    --ring:                243 65% 68%;
+    --ring:                oklch(0.65 0.20 275);
 
     /* ── Sidebar token family ────────────────────────────────── */
     --sidebar:             222 40% 7%;
     --sidebar-foreground:  210 40% 90%;
-    --sidebar-primary:     243 65% 68%;
-    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-primary:     oklch(0.65 0.20 275);
+    --sidebar-primary-foreground: oklch(0.98 0.01 275);
     --sidebar-accent:      222 32% 13%;
     --sidebar-accent-foreground: 210 40% 82%;
     --sidebar-border:      222 32% 14%;
@@ -185,6 +199,13 @@
     --incorrect-foreground: 0 0% 100%;
     --streak:              38 80% 45%;
     --achievement:         45 90% 55%;
+
+    /* ── Subject Colors (Slightly adjusted L for dark mode) ──── */
+    --subject-quant:       oklch(0.60 0.18 45);
+    --subject-english:     oklch(0.60 0.18 250);
+    --subject-ga:          oklch(0.60 0.18 300);
+    --subject-reason:      oklch(0.60 0.18 145);
+    --subject-science:     oklch(0.60 0.18 190);
   }
 }
 
@@ -204,5 +225,58 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+@layer utilities {
+  /* Ambient Contextual Gradients for Floating Bento (Client) */
+  .bg-ambient-indigo {
+    background-image: radial-gradient(circle at top right, color-mix(in oklab, var(--primary) 10%, transparent), transparent 40%),
+                      radial-gradient(circle at bottom left, color-mix(in oklab, var(--primary) 8%, transparent), transparent 40%);
+  }
+  .bg-ambient-quant {
+    background-image: radial-gradient(circle at top right, color-mix(in oklab, var(--subject-quant) 10%, transparent), transparent 40%),
+                      radial-gradient(circle at bottom left, color-mix(in oklab, var(--subject-quant) 8%, transparent), transparent 40%);
+  }
+  .bg-ambient-english {
+    background-image: radial-gradient(circle at top right, color-mix(in oklab, var(--subject-english) 10%, transparent), transparent 40%),
+                      radial-gradient(circle at bottom left, color-mix(in oklab, var(--subject-english) 8%, transparent), transparent 40%);
+  }
+  .bg-ambient-ga {
+    background-image: radial-gradient(circle at top right, color-mix(in oklab, var(--subject-ga) 10%, transparent), transparent 40%),
+                      radial-gradient(circle at bottom left, color-mix(in oklab, var(--subject-ga) 8%, transparent), transparent 40%);
+  }
+  .bg-ambient-reason {
+    background-image: radial-gradient(circle at top right, color-mix(in oklab, var(--subject-reason) 10%, transparent), transparent 40%),
+                      radial-gradient(circle at bottom left, color-mix(in oklab, var(--subject-reason) 8%, transparent), transparent 40%);
+  }
+  .bg-ambient-science {
+    background-image: radial-gradient(circle at top right, color-mix(in oklab, var(--subject-science) 10%, transparent), transparent 40%),
+                      radial-gradient(circle at bottom left, color-mix(in oklab, var(--subject-science) 8%, transparent), transparent 40%);
+  }
+
+  /* Progress bar stripe animation */
+  .animate-progress-stripe {
+    background-image: linear-gradient(
+      45deg,
+      color-mix(in oklab, var(--background) 15%, transparent) 25%,
+      transparent 25%,
+      transparent 50%,
+      color-mix(in oklab, var(--background) 15%, transparent) 50%,
+      color-mix(in oklab, var(--background) 15%, transparent) 75%,
+      transparent 75%,
+      transparent
+    );
+    background-size: 1rem 1rem;
+    animation: progress-stripe 1s linear infinite;
+  }
+}
+
+@keyframes progress-stripe {
+  from {
+    background-position: 1rem 0;
+  }
+  to {
+    background-position: 0 0;
   }
 }
