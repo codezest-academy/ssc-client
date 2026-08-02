@@ -1,96 +1,159 @@
-import React from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
+"use client";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { ModeToggle } from "@/components/mode-toggle";
+import { Search } from "lucide-react";
 
-export default function DesignSystemPage() {
+import { TokenEditorSidebar } from "./TokenEditorSidebar";
+import { IntroSection } from "./sections/IntroSection";
+import { ColorsSection } from "./sections/ColorsSection";
+import { SemanticStatusSection } from "./sections/SemanticStatusSection";
+import { SubjectSystemSection } from "./sections/SubjectSystemSection";
+import { InteractiveComponentsSection } from "./sections/InteractiveComponentsSection";
+import { ToasterSection } from "./sections/ToasterSection";
+import { PagePatternsSection } from "./sections/PagePatternsSection";
+import { TokenGovernanceSection } from "./sections/TokenGovernanceSection";
+
+export default function DesignSystem() {
+  const [activeSection, setActiveSection] = useState("intro");
+  const [isManualScroll, setIsManualScroll] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (isManualScroll) return;
+
+      const sectionIds = navItems.map((item) => item.id);
+      for (const id of sectionIds) {
+        const element = document.getElementById(id);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          // Check if the section is in the upper part of the viewport
+          if (rect.top <= 150 && rect.bottom >= 150) {
+            setActiveSection(id);
+            break;
+          }
+        }
+      }
+    };
+
+    const mainContainer = document.getElementById("main-scroll-container");
+    mainContainer?.addEventListener("scroll", handleScroll);
+    return () => mainContainer?.removeEventListener("scroll", handleScroll);
+  }, [isManualScroll]);
+
+  const scrollTo = (id: string) => {
+    setActiveSection(id);
+    setIsManualScroll(true);
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    
+    // Reset manual scroll flag after animation completes
+    setTimeout(() => {
+      setIsManualScroll(false);
+    }, 1000);
+  };
+
+  const navItems = [
+    { id: "intro", label: "Introduction" },
+    { id: "governance", label: "Token Governance" },
+    { id: "colors", label: "Brand & Colors" },
+    { id: "semantic-status", label: "Semantic Status" },
+    { id: "subjects", label: "Subject System" },
+    { id: "interactive", label: "Interactive Components" },
+    { id: "toasts", label: "Toasts (Sonner)" },
+    { id: "patterns", label: "Page Patterns" },
+  ];
+
   return (
-    <div className="min-h-screen bg-background text-foreground p-8">
-      <div className="max-w-6xl mx-auto space-y-12">
-        <header className="flex justify-between items-center border-b pb-6">
-          <div>
-            <h1 className="text-4xl font-bold tracking-tight">Design System</h1>
-            <p className="text-muted-foreground mt-2">A showcase of UI components used in the client project.</p>
-          </div>
-        </header>
-
-        {/* Colors & Typography */}
-        <section className="space-y-4">
-          <h2 className="text-2xl font-semibold border-b pb-2">Typography & Colors</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="space-y-4">
-              <h1 className="text-4xl font-bold">Heading 1</h1>
-              <h2 className="text-3xl font-semibold">Heading 2</h2>
-              <h3 className="text-2xl font-semibold">Heading 3</h3>
-              <h4 className="text-xl font-semibold">Heading 4</h4>
-              <p className="text-base">Regular paragraph text. The quick brown fox jumps over the lazy dog.</p>
-              <p className="text-sm text-muted-foreground">Muted smaller text for descriptions.</p>
+    <div className="design-system-root h-screen overflow-hidden bg-background bg-ambient-indigo text-foreground flex flex-col font-sans">
+      {/* Top Navbar */}
+      <header className="shrink-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="flex h-14 items-center px-6 gap-4">
+          <div className="flex items-center gap-2 font-bold text-lg mr-6">
+            <div className="h-6 w-6 bg-primary rounded-sm flex items-center justify-center text-primary-foreground text-xs font-bold">
+              C
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-primary text-primary-foreground p-4 rounded-md flex items-center justify-center font-medium">Primary</div>
-              <div className="bg-secondary text-secondary-foreground p-4 rounded-md flex items-center justify-center font-medium">Secondary</div>
-              <div className="bg-destructive text-destructive-foreground p-4 rounded-md flex items-center justify-center font-medium">Destructive</div>
-              <div className="bg-muted text-muted-foreground p-4 rounded-md flex items-center justify-center font-medium">Muted</div>
-              <div className="bg-accent text-accent-foreground p-4 rounded-md flex items-center justify-center font-medium">Accent</div>
-              <div className="bg-card text-card-foreground p-4 rounded-md border flex items-center justify-center font-medium">Card</div>
+            CodeZest UI Docs
+          </div>
+          <div className="flex-1 flex items-center">
+            <div className="relative w-full max-w-sm hidden md:flex items-center text-muted-foreground">
+              <Search className="absolute left-2.5 h-4 w-4" />
+              <Input
+                placeholder="Search documentation..."
+                className="w-full bg-muted shadow-none pl-9 h-9"
+              />
             </div>
           </div>
-        </section>
+          <nav className="flex items-center gap-4">
+            <a
+              href="#"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground"
+            >
+              GitHub
+            </a>
+            <ModeToggle />
+          </nav>
+        </div>
+      </header>
 
-        {/* Buttons */}
-        <section className="space-y-4">
-          <h2 className="text-2xl font-semibold border-b pb-2">Buttons</h2>
-          <div className="flex flex-wrap gap-4">
-            <Button variant="default">Default</Button>
-            <Button variant="secondary">Secondary</Button>
-            <Button variant="destructive">Destructive</Button>
-            <Button variant="outline">Outline</Button>
-            <Button variant="ghost">Ghost</Button>
-            <Button variant="link">Link</Button>
-            <Button disabled>Disabled</Button>
-          </div>
-        </section>
-
-        {/* Form Elements */}
-        <section className="space-y-4">
-          <h2 className="text-2xl font-semibold border-b pb-2">Form Elements</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="space-y-4 max-w-sm">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input type="email" id="email" placeholder="Email address" />
-              </div>
-            </div>
-            
-            <div className="space-y-6">
-              <div className="flex items-center space-x-2">
-                <Checkbox id="terms" />
-                <Label htmlFor="terms">Accept terms and conditions</Label>
+      <div className="flex-1 flex overflow-hidden">
+        {/* Page Nav Sidebar (Left) */}
+        <aside className="hidden w-64 shrink-0 overflow-y-auto border-r md:block py-6 px-4">
+          <div className="space-y-4">
+            <div className="pb-4">
+              <h4 className="mb-1 rounded-md px-2 py-1 text-sm font-semibold">
+                Design System
+              </h4>
+              <div className="grid grid-flow-row auto-rows-max text-sm">
+                {navItems.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => scrollTo(item.id)}
+                    className={`flex w-full items-center rounded-md px-2 py-1.5 text-left text-sm font-medium transition-colors hover:bg-muted ${
+                      activeSection === item.id
+                        ? "bg-muted text-foreground"
+                        : "text-muted-foreground"
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
-        </section>
+        </aside>
 
-        {/* Components */}
-        <section className="space-y-4">
-          <h2 className="text-2xl font-semibold border-b pb-2">Components (Cards)</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Card Title</CardTitle>
-                <CardDescription>Card Description goes here.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p>Content of the card is placed here. It can have text, images, or other components.</p>
-              </CardContent>
-              <CardFooter>
-                <Button>Action</Button>
-              </CardFooter>
-            </Card>
+        {/* Main Content */}
+        <main id="main-scroll-container" className="flex-1 overflow-y-auto p-8 lg:p-12 pb-32">
+          <div className="max-w-5xl mx-auto">
+            <div id="intro">
+              <IntroSection />
+            </div>
+            <div id="governance">
+              <TokenGovernanceSection />
+            </div>
+            <div id="colors">
+              <ColorsSection />
+            </div>
+            <div id="semantic-status">
+              <SemanticStatusSection />
+            </div>
+            <div id="subjects">
+              <SubjectSystemSection />
+            </div>
+            <div id="interactive">
+              <InteractiveComponentsSection />
+            </div>
+            <div id="toasts">
+              <ToasterSection />
+            </div>
+            <div id="patterns">
+              <PagePatternsSection />
+            </div>
           </div>
-        </section>
+        </main>
+
+        {/* Token Editor Sidebar (Right) */}
+        <TokenEditorSidebar />
       </div>
     </div>
   );
