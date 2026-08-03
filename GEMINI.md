@@ -14,9 +14,9 @@ When generating or modifying React components in this project, you MUST strictly
 
 ## 3. Semantic Status Rules
 Never invent status colors. Use the exact token combinations:
-* **Success (Published, Easy, Correct):** `text-success bg-success/10`
-* **Warning (Draft, Medium, Streak):** `text-warning bg-warning/10`
-* **Destructive (Deleted, Hard, Incorrect):** `text-destructive bg-destructive/10`
+* **Success (Published, Easy):** `text-success bg-success/10`
+* **Warning (Draft, Medium):** `text-warning bg-warning/10`
+* **Destructive (Deleted, Hard):** `text-destructive bg-destructive/10`
 * **Info:** `text-info bg-info/10`
 
 ## 4. Subject Color Rules
@@ -27,10 +27,15 @@ Never use primary brand colors for subject identification. Use the specific subj
 * `text-subject-reason bg-subject-reason/10`
 * `text-subject-science bg-subject-science/10`
 
-## 5. UI Architecture Rules (Client App)
+## 5. UI Architecture Rules
 * **No `dark:` modifiers for colors:** Semantic tokens automatically adjust for dark mode. Do not write `<div className="bg-white dark:bg-black" />`. Write `<div className="bg-card" />`.
+* **Cards (Admin):** Must use explicit `rounded-xl` instead of generic `rounded-lg` or token-driven radii.
 * **Focus States:** Never use `outline-none` without replacing it. Always use `focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`.
-* **Ambient Gradients:** Client app permits ambient gradients (e.g., `bg-ambient-quant`) strictly as contextual page headers per subject. Do NOT blend ambient gradients across subjects.
-* **Cards:** Client cards are borderless in light mode (relying on `bg-card` on `bg-background`), but require a visible border in dark mode (handled internally by the `Card` component).
+* **Gradients (Admin):** Strictly banned. Use flat colors and semantic surfaces.
 
-For the complete and absolute source of truth, ALWAYS review `docs/frontend-and-ux/2026-07-26-theme-system/theme-system.md` (in the admin repo) before making architectural UI decisions.
+For the complete and absolute source of truth, ALWAYS review `docs/frontend-and-ux/2026-07-26-theme-system/theme-system.md` before making architectural UI decisions.
+
+## 6. QuestionRenderer (KaTeX)
+Whenever you need to render strings containing LaTeX math (`$$...$$`, `\[...\]`, or `\(...\)`), you MUST use the `QuestionRenderer` component from `@/components/ui/question-renderer`. Do NOT write custom math parsers, use `dangerouslySetInnerHTML` directly for math, or rely on client-side DOM mutation libraries like `auto-render`.
+* **Usage:** `<QuestionRenderer content={htmlString} />`
+* The component pre-processes the string for robust hydration and styling without React DOM mutation clashes.
