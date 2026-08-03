@@ -15,7 +15,7 @@ export function QuestionRenderer({ content, className, ...props }: QuestionRende
       let html = content;
 
       // Render Display Math: $$ ... $$
-      html = html.replace(/\$\$(.*?)\$\$/gs, (match, math) => {
+      html = html.replace(/\$\$([\s\S]*?)\$\$/g, (match, math) => {
         try {
           return katex.renderToString(math, { displayMode: true, throwOnError: false, errorColor: "#ef4444" });
         } catch (e) {
@@ -24,7 +24,7 @@ export function QuestionRenderer({ content, className, ...props }: QuestionRende
       });
 
       // Render Display Math: \[ ... \]
-      html = html.replace(/\\\[(.*?)\\\]/gs, (match, math) => {
+      html = html.replace(/\\\[([\s\S]*?)\\\]/g, (match, math) => {
         try {
           return katex.renderToString(math, { displayMode: true, throwOnError: false, errorColor: "#ef4444" });
         } catch (e) {
@@ -33,7 +33,7 @@ export function QuestionRenderer({ content, className, ...props }: QuestionRende
       });
 
       // Render Inline Math: \( ... \)
-      html = html.replace(/\\\((.*?)\\\)/gs, (match, math) => {
+      html = html.replace(/\\\(([\s\S]*?)\\\)/g, (match, math) => {
         try {
           return katex.renderToString(math, { displayMode: false, throwOnError: false, errorColor: "#ef4444" });
         } catch (e) {

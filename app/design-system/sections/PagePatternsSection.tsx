@@ -38,6 +38,35 @@ export function PagePatternsSection() {
           </nav>
         </div>
       </ThemePreview>
+      <ThemePreview title="Premium Login Layout" description="Full-screen dynamic background with a solid center card to ensure WCAG legibility while maintaining a 'wow' factor.">
+        <div className="relative w-full h-[400px] flex items-center justify-center overflow-hidden bg-[#0a0a0f] rounded-3xl border">
+          <div className="absolute inset-0 z-0">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-[#0a0a0f] to-[#0a0a0f] opacity-80" />
+            <div className="absolute top-[-10%] left-[-10%] w-[250px] h-[250px] rounded-full bg-primary/20 blur-[80px] animate-float-slow" />
+            <div className="absolute bottom-[-20%] right-[-10%] w-[300px] h-[300px] rounded-full bg-indigo-600/10 blur-[100px] animate-float-slower" />
+            <div className="absolute top-[30%] left-[60%] w-[200px] h-[200px] rounded-full bg-primary/10 blur-[70px] animate-float-slow" style={{ animationDelay: '-5s' }} />
+          </div>
+          <div className="relative z-10 w-full max-w-[280px]">
+            <div className="bg-card text-card-foreground border shadow-xl rounded-2xl p-6">
+              <div className="text-center mb-6">
+                <h3 className="text-lg font-bold tracking-tight">Log In</h3>
+                <p className="text-xs text-muted-foreground mt-1">Student Portal</p>
+              </div>
+              <div className="space-y-4">
+                <div className="space-y-1">
+                  <div className="h-4 w-16 bg-muted rounded animate-pulse" />
+                  <div className="h-10 w-full bg-background/50 border rounded-md" />
+                </div>
+                <div className="space-y-1">
+                  <div className="h-4 w-20 bg-muted rounded animate-pulse" />
+                  <div className="h-10 w-full bg-background/50 border rounded-md" />
+                </div>
+                <div className="h-10 w-full bg-primary rounded-lg" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </ThemePreview>
     </section>
   );
 }
