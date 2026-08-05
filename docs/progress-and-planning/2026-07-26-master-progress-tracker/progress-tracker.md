@@ -23,7 +23,7 @@
 |---|---|---|---|
 | **Phase 1** | Project scaffolding, routing, global themes, API client setup | ✅ Complete | API Phase 1 |
 | **Phase 2** | Auth — Register, Verify Email, Login (Layout synced), Logout | ✅ Complete | API Phase 2 |
-| **Phase 3** | Onboarding — Target exam selection, profile setup | 🔴 Not Started | API Phase 3 |
+| **Phase 3** | Onboarding — Target exam selection, profile setup | ✅ Complete | API Phase 3 |
 | **Phase 4** | Learning — Subject → Chapter → Lesson browser | 🔴 Not Started | API Phase 4 |
 | **Phase 5** | Lesson viewer (video player, article renderer, PDF viewer) | 🔴 Not Started | API Phase 4 |
 | **Phase 6** | Practice Set — attempt MCQs, instant result | 🔴 Not Started | API Phase 7 |

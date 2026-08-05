@@ -9,6 +9,7 @@ export interface User {
   email: string;
   name: string;
   role: Role;
+  targetExam?: string | null;
   subscriptionTier: SubscriptionTier;
   subscriptionExpiresAt: string | null;
 }

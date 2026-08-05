@@ -18,8 +18,12 @@ export default function DashboardLayout({
   const router = useRouter();
 
   useEffect(() => {
-    if (isHydrated && !user) {
-      router.replace("/login");
+    if (isHydrated) {
+      if (!user) {
+        router.replace("/login");
+      } else if (!user.targetExam) {
+        router.replace("/onboarding");
+      }
     }
   }, [user, isHydrated, router]);
 
