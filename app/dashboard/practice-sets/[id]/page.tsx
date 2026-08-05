@@ -7,6 +7,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, PlayCircle, BookOpen, Clock, Target } from "lucide-react";
 import Link from "next/link";
+import { useAuthStore } from "@/store/auth";
+import { PaywallGate } from "@/components/ui/paywall-gate";
 
 interface PracticeSet {
   id: string;
@@ -14,6 +16,7 @@ interface PracticeSet {
   description: string;
   subject?: { name: string };
   chapter?: { name: string };
+  isFree: boolean;
   questions: any[];
 }
 
@@ -25,6 +28,8 @@ export default function PracticeSetOverviewPage() {
   const [practiceSet, setPracticeSet] = useState<PracticeSet | null>(null);
   const [loading, setLoading] = useState(true);
   const [starting, setStarting] = useState(false);
+
+  const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
     if (!id) return;
@@ -120,30 +125,34 @@ export default function PracticeSetOverviewPage() {
         </Card>
       </div>
 
-      <div className="bg-white border border-border rounded-2xl p-8 shadow-sm text-center">
-        <h3 className="text-xl font-semibold mb-4 text-slate-900">Ready to begin?</h3>
-        <p className="text-slate-500 mb-8 max-w-lg mx-auto">
-          Your progress will be saved automatically. You can pause and resume this practice set at any time.
-        </p>
-        
-        <Button 
-          size="lg" 
-          onClick={handleStartPractice} 
-          disabled={starting || questionCount === 0}
-          className="w-full sm:w-auto min-w-[200px] text-lg h-14"
-        >
-          {starting ? (
-            "Starting..."
-          ) : (
-            <>
-              <PlayCircle className="w-6 h-6 mr-2" /> Start Practice
-            </>
+      {(!practiceSet.isFree && (!user || user.subscriptionTier === "FREE")) ? (
+        <PaywallGate contentType="Practice Set" title="Premium Practice Set" />
+      ) : (
+        <div className="bg-white border border-border rounded-2xl p-8 shadow-sm text-center">
+          <h3 className="text-xl font-semibold mb-4 text-slate-900">Ready to begin?</h3>
+          <p className="text-slate-500 mb-8 max-w-lg mx-auto">
+            Your progress will be saved automatically. You can pause and resume this practice set at any time.
+          </p>
+          
+          <Button 
+            size="lg" 
+            onClick={handleStartPractice} 
+            disabled={starting || questionCount === 0}
+            className="w-full sm:w-auto min-w-[200px] text-lg h-14"
+          >
+            {starting ? (
+              "Starting..."
+            ) : (
+              <>
+                <PlayCircle className="w-6 h-6 mr-2" /> Start Practice
+              </>
+            )}
+          </Button>
+          {questionCount === 0 && (
+            <p className="text-rose-500 text-sm mt-4">This practice set has no questions yet.</p>
           )}
-        </Button>
-        {questionCount === 0 && (
-          <p className="text-rose-500 text-sm mt-4">This practice set has no questions yet.</p>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -7,6 +7,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, PlayCircle, FileText, Clock, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import { useAuthStore } from "@/store/auth";
+import { PaywallGate } from "@/components/ui/paywall-gate";
 
 interface MockTest {
   id: string;
@@ -14,6 +16,7 @@ interface MockTest {
   description: string;
   durationMinutes: number;
   examType: string;
+  isFree: boolean;
   sections: any[];
 }
 
@@ -25,6 +28,8 @@ export default function MockTestOverviewPage() {
   const [mockTest, setMockTest] = useState<MockTest | null>(null);
   const [loading, setLoading] = useState(true);
   const [starting, setStarting] = useState(false);
+
+  const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
     if (!id) return;
@@ -122,33 +127,37 @@ export default function MockTestOverviewPage() {
         </Card>
       </div>
 
-      <div className="bg-white border border-border rounded-2xl p-8 shadow-sm text-center">
-        <h3 className="text-xl font-semibold mb-4 text-slate-900">Important Instructions</h3>
-        <ul className="text-slate-600 mb-8 max-w-lg mx-auto text-left list-disc list-inside space-y-2">
-          <li>Ensure you have a stable internet connection.</li>
-          <li>Do not refresh or close the browser window once the test starts.</li>
-          <li>Use the "Focus Mode" inside the test to minimize distractions.</li>
-          <li>Your test will be automatically submitted when the timer ends.</li>
-        </ul>
-        
-        <Button 
-          size="lg" 
-          onClick={handleStartMockTest} 
-          disabled={starting || questionCount === 0}
-          className="w-full sm:w-auto min-w-[200px] text-lg h-14 bg-indigo-600 hover:bg-indigo-700 text-white"
-        >
-          {starting ? (
-            "Starting..."
-          ) : (
-            <>
-              <PlayCircle className="w-6 h-6 mr-2" /> Start Mock Test
-            </>
+      {(!mockTest.isFree && (!user || user.subscriptionTier === "FREE")) ? (
+        <PaywallGate contentType="Mock Test" title="Premium Mock Test" />
+      ) : (
+        <div className="bg-white border border-border rounded-2xl p-8 shadow-sm text-center">
+          <h3 className="text-xl font-semibold mb-4 text-slate-900">Important Instructions</h3>
+          <ul className="text-slate-600 mb-8 max-w-lg mx-auto text-left list-disc list-inside space-y-2">
+            <li>Ensure you have a stable internet connection.</li>
+            <li>Do not refresh or close the browser window once the test starts.</li>
+            <li>Use the "Focus Mode" inside the test to minimize distractions.</li>
+            <li>Your test will be automatically submitted when the timer ends.</li>
+          </ul>
+          
+          <Button 
+            size="lg" 
+            onClick={handleStartMockTest} 
+            disabled={starting || questionCount === 0}
+            className="w-full sm:w-auto min-w-[200px] text-lg h-14 bg-indigo-600 hover:bg-indigo-700 text-white"
+          >
+            {starting ? (
+              "Starting..."
+            ) : (
+              <>
+                <PlayCircle className="w-6 h-6 mr-2" /> Start Mock Test
+              </>
+            )}
+          </Button>
+          {questionCount === 0 && (
+            <p className="text-rose-500 text-sm mt-4">This mock test has no questions yet.</p>
           )}
-        </Button>
-        {questionCount === 0 && (
-          <p className="text-rose-500 text-sm mt-4">This mock test has no questions yet.</p>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, CheckCircle2, Circle } from "lucide-react";
 import Link from "next/link";
 import { QuestionRenderer } from "@/components/ui/question-renderer";
+import { useAuthStore } from "@/store/auth";
+import { PaywallGate } from "@/components/ui/paywall-gate";
 
 interface LessonProgress {
   watchedSeconds: number;
@@ -33,6 +35,7 @@ interface Lesson {
   articleHtml?: string;
   pdfUrl?: string;
   duration: number;
+  isFree: boolean;
   chapter: Chapter;
   subject: Subject;
   progress?: LessonProgress[];
@@ -46,6 +49,8 @@ export default function LessonViewerPage() {
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [loading, setLoading] = useState(true);
   const [markingComplete, setMarkingComplete] = useState(false);
+
+  const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
     if (!slug) return;
@@ -110,6 +115,7 @@ export default function LessonViewerPage() {
   }
 
   const isCompleted = !!lesson.progress?.[0]?.completedAt;
+  const hasAccess = lesson.isFree || (user && user.subscriptionTier !== "FREE");
 
   return (
     <div className="max-w-5xl mx-auto pb-24">
@@ -129,40 +135,51 @@ export default function LessonViewerPage() {
       </div>
 
       {/* Lesson Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">{lesson.title}</h1>
-        {lesson.description && <p className="text-slate-500 text-lg">{lesson.description}</p>}
+      <div className="mb-8 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">{lesson.title}</h1>
+          {lesson.description && <p className="text-slate-500 text-lg">{lesson.description}</p>}
+        </div>
+        {!lesson.isFree && (
+          <span className="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded flex items-center gap-1 border border-amber-200">
+            Premium
+          </span>
+        )}
       </div>
 
       {/* Lesson Content Area */}
-      <div className="bg-white rounded-2xl shadow-sm border border-border overflow-hidden min-h-[500px]">
-        {lesson.type === "VIDEO" && lesson.videoUrl ? (
-          <div className="aspect-video w-full bg-black">
-            <iframe
-              src={lesson.videoUrl}
-              className="w-full h-full border-0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
-        ) : lesson.type === "ARTICLE" && lesson.articleHtml ? (
-          <div className="p-8 prose prose-slate max-w-none prose-headings:text-slate-900 prose-a:text-primary">
-            <QuestionRenderer content={lesson.articleHtml} />
-          </div>
-        ) : lesson.type === "PDF" && lesson.pdfUrl ? (
-          <div className="w-full h-[80vh]">
-            <iframe
-              src={lesson.pdfUrl}
-              className="w-full h-full border-0"
-              title="PDF Viewer"
-            />
-          </div>
-        ) : (
-          <div className="p-12 text-center text-slate-400">
-            Content not available for this lesson.
-          </div>
-        )}
-      </div>
+      {!hasAccess ? (
+        <PaywallGate contentType="Lesson" title={`Unlock "${lesson.title}"`} />
+      ) : (
+        <div className="bg-white rounded-2xl shadow-sm border border-border overflow-hidden min-h-[500px]">
+          {lesson.type === "VIDEO" && lesson.videoUrl ? (
+            <div className="aspect-video w-full bg-black">
+              <iframe
+                src={lesson.videoUrl}
+                className="w-full h-full border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          ) : lesson.type === "ARTICLE" && lesson.articleHtml ? (
+            <div className="p-8 prose prose-slate max-w-none prose-headings:text-slate-900 prose-a:text-primary">
+              <QuestionRenderer content={lesson.articleHtml} />
+            </div>
+          ) : lesson.type === "PDF" && lesson.pdfUrl ? (
+            <div className="w-full h-[80vh]">
+              <iframe
+                src={lesson.pdfUrl}
+                className="w-full h-full border-0"
+                title="PDF Viewer"
+              />
+            </div>
+          ) : (
+            <div className="p-12 text-center text-slate-400">
+              Content not available for this lesson.
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Fixed Bottom Action Bar */}
       <div className="fixed bottom-0 left-0 right-0 md:left-64 bg-white/80 backdrop-blur-md border-t border-border p-4 px-6 sm:px-8 z-40">

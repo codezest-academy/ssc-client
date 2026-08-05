@@ -61,6 +61,7 @@ interface LoginResponse {
     avatarUrl: string | null;
     targetExam: ExamType | null;
     isEmailVerified: boolean;
+    subscriptionTier: 'FREE' | 'PRO' | 'ELITE';
   };
 }
 ```
@@ -102,6 +103,40 @@ interface Lesson {
   isFree: boolean;
   order: number;
   isCompleted: boolean;    // injected server-side based on logged-in student's progress
+}
+```
+
+---
+
+## Practice Sets
+
+### `GET /api/v1/practice-sets/:id` Response
+```typescript
+interface PracticeSet {
+  id: string;
+  title: string;
+  description: string;
+  subject?: { name: string };
+  chapter?: { name: string };
+  isFree: boolean;
+  questions: any[];
+}
+```
+
+---
+
+## Mock Tests
+
+### `GET /api/v1/mock-tests/:id` Response
+```typescript
+interface MockTest {
+  id: string;
+  title: string;
+  description: string;
+  durationMinutes: number;
+  examType: string;
+  isFree: boolean;
+  sections: any[];
 }
 ```
 

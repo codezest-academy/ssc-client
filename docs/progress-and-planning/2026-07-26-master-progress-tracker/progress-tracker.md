@@ -30,7 +30,7 @@
 | **Phase 7** | Mock Test — Test Engine UI (Focus Mode, Palette, Timer, Submit) | ✅ Complete | API Phase 7 |
 | **Phase 8** | Analytics Dashboard — accuracy, streak, recent attempts | ✅ Complete | API Phase 8 |
 | **Phase 9** | Leaderboard | ✅ Complete | API Phase 8 |
-| **Phase 10** | Premium / Subscription gate UI | 🔴 Not Started | API Phase 10 |
+| **Phase 10** | Premium / Subscription gate UI | ✅ Complete | API Phase 10 |
 
 ---
 
