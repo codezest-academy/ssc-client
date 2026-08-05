@@ -26,7 +26,7 @@
 | **Phase 3** | Onboarding — Target exam selection, profile setup | ✅ Complete | API Phase 3 |
 | **Phase 4** | Learning — Subject → Chapter → Lesson browser | ✅ Complete | API Phase 4 |
 | **Phase 5** | Lesson viewer (video player, article renderer, PDF viewer) | ✅ Complete | API Phase 4 |
-| **Phase 6** | Practice Set — attempt MCQs, instant result | 🔴 Not Started | API Phase 7 |
+| **Phase 6** | Practice Set — attempt MCQs, instant result | ✅ Complete | API Phase 7 |
 | **Phase 7** | Mock Test — Test Engine UI (Focus Mode, Palette, Timer, Submit) | 🟡 In Progress — UI complete on mock data; awaiting API Phase 7 | API Phase 7 |
 | **Phase 8** | Analytics Dashboard — accuracy, streak, recent attempts | 🔴 Not Started | API Phase 8 |
 | **Phase 9** | Leaderboard | 🔴 Not Started | API Phase 8 |

@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { api } from '@/lib/axios';
 
 export type QuestionStatus =
   | 'NOT_VISITED'
@@ -9,25 +10,30 @@ export type QuestionStatus =
 
 export type OptionType = 'A' | 'B' | 'C' | 'D' | null;
 
-export interface MockQuestion {
-  id: string;
+export interface EngineOption {
+  key: OptionType;
   text: string;
-  options: {
-    key: OptionType;
-    text: string;
-  }[];
+  imageUrl?: string;
+}
+
+export interface EngineQuestion {
+  id: string;
+  questionText: string;
+  questionImageUrl?: string;
+  options: EngineOption[];
 }
 
 interface TestEngineState {
-  questions: MockQuestion[];
+  questions: EngineQuestion[];
   currentIndex: number;
   answers: Record<string, OptionType>;
   questionStatus: Record<string, QuestionStatus>;
   timeRemaining: number;
   status: 'NOT_STARTED' | 'IN_PROGRESS' | 'SUBMITTED';
+  attemptId: string | null;
   
   // Actions
-  initializeTest: (questions: MockQuestion[], durationSeconds: number) => void;
+  initializeTest: (questions: EngineQuestion[], durationSeconds: number, attemptId: string) => void;
   selectOption: (questionId: string, option: OptionType) => void;
   saveAndNext: () => void;
   markForReviewAndNext: () => void;
@@ -37,26 +43,16 @@ interface TestEngineState {
   submitTest: () => void;
 }
 
-const mockQuestionsData: MockQuestion[] = Array.from({ length: 15 }).map((_, i) => ({
-  id: `q${i + 1}`,
-  text: `This is a sample mock question number ${i + 1}. What is the correct answer according to the concepts you have learned?`,
-  options: [
-    { key: 'A', text: `Option A for Question ${i + 1}` },
-    { key: 'B', text: `Option B for Question ${i + 1}` },
-    { key: 'C', text: `Option C for Question ${i + 1}` },
-    { key: 'D', text: `Option D for Question ${i + 1}` },
-  ],
-}));
-
 export const useTestEngineStore = create<TestEngineState>((set, get) => ({
-  questions: mockQuestionsData,
+  questions: [],
   currentIndex: 0,
   answers: {},
   questionStatus: {},
   timeRemaining: 0,
   status: 'NOT_STARTED',
+  attemptId: null,
 
-  initializeTest: (questions, durationSeconds) => {
+  initializeTest: (questions, durationSeconds, attemptId) => {
     const initialStatus: Record<string, QuestionStatus> = {};
     questions.forEach((q, idx) => {
       initialStatus[q.id] = idx === 0 ? 'NOT_ANSWERED' : 'NOT_VISITED';
@@ -69,6 +65,7 @@ export const useTestEngineStore = create<TestEngineState>((set, get) => ({
       questionStatus: initialStatus,
       timeRemaining: durationSeconds,
       status: 'IN_PROGRESS',
+      attemptId,
     });
   },
 
@@ -81,11 +78,28 @@ export const useTestEngineStore = create<TestEngineState>((set, get) => ({
     }));
   },
 
-  saveAndNext: () => {
+  saveAndNext: async () => {
+    const state = get();
+    const currentQ = state.questions[state.currentIndex];
+    const hasAnswer = state.answers[currentQ.id] !== undefined && state.answers[currentQ.id] !== null;
+    
+    // Sync to backend if we have an attemptId
+    if (state.attemptId) {
+      try {
+        await api.patch(`/attempts/${state.attemptId}/answers`, {
+          responses: [
+            {
+              questionId: currentQ.id,
+              selectedOption: state.answers[currentQ.id] || null,
+            }
+          ]
+        });
+      } catch (e) {
+        console.error('Failed to sync answer', e);
+      }
+    }
+
     set((state) => {
-      const currentQ = state.questions[state.currentIndex];
-      const hasAnswer = state.answers[currentQ.id] !== undefined && state.answers[currentQ.id] !== null;
-      
       const newStatus = { ...state.questionStatus };
       newStatus[currentQ.id] = hasAnswer ? 'ANSWERED' : 'NOT_ANSWERED';
 
@@ -103,11 +117,27 @@ export const useTestEngineStore = create<TestEngineState>((set, get) => ({
     });
   },
 
-  markForReviewAndNext: () => {
+  markForReviewAndNext: async () => {
+    const state = get();
+    const currentQ = state.questions[state.currentIndex];
+    const hasAnswer = state.answers[currentQ.id] !== undefined && state.answers[currentQ.id] !== null;
+
+    if (state.attemptId) {
+      try {
+        await api.patch(`/attempts/${state.attemptId}/answers`, {
+          responses: [
+            {
+              questionId: currentQ.id,
+              selectedOption: state.answers[currentQ.id] || null,
+            }
+          ]
+        });
+      } catch (e) {
+        console.error('Failed to sync answer', e);
+      }
+    }
+
     set((state) => {
-      const currentQ = state.questions[state.currentIndex];
-      const hasAnswer = state.answers[currentQ.id] !== undefined && state.answers[currentQ.id] !== null;
-      
       const newStatus = { ...state.questionStatus };
       newStatus[currentQ.id] = hasAnswer ? 'ANSWERED_MARKED_FOR_REVIEW' : 'MARKED_FOR_REVIEW';
 
@@ -125,9 +155,26 @@ export const useTestEngineStore = create<TestEngineState>((set, get) => ({
     });
   },
 
-  clearResponse: () => {
+  clearResponse: async () => {
+    const state = get();
+    const currentQ = state.questions[state.currentIndex];
+
+    if (state.attemptId) {
+      try {
+        await api.patch(`/attempts/${state.attemptId}/answers`, {
+          responses: [
+            {
+              questionId: currentQ.id,
+              selectedOption: null,
+            }
+          ]
+        });
+      } catch (e) {
+        console.error('Failed to clear answer', e);
+      }
+    }
+
     set((state) => {
-      const currentQ = state.questions[state.currentIndex];
       const newAnswers = { ...state.answers };
       delete newAnswers[currentQ.id];
       
@@ -158,13 +205,23 @@ export const useTestEngineStore = create<TestEngineState>((set, get) => ({
     set((state) => {
       if (state.timeRemaining <= 0 || state.status !== 'IN_PROGRESS') return state;
       if (state.timeRemaining === 1) {
-        return { timeRemaining: 0, status: 'SUBMITTED' };
+        // We defer calling the async submitTest so we don't break Zustand's set execution flow
+        setTimeout(() => get().submitTest(), 0);
+        return { timeRemaining: 0 }; // status will be updated by submitTest
       }
       return { timeRemaining: state.timeRemaining - 1 };
     });
   },
 
-  submitTest: () => {
+  submitTest: async () => {
+    const state = get();
+    if (state.attemptId) {
+      try {
+        await api.post(`/attempts/${state.attemptId}/submit`);
+      } catch (e) {
+        console.error('Failed to submit test', e);
+      }
+    }
     set({ status: 'SUBMITTED' });
   },
 }));

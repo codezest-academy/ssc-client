@@ -4,6 +4,7 @@ import { useTestEngineStore, OptionType } from '@/store/useTestEngineStore';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Bookmark, Save, Trash2, ArrowLeft } from 'lucide-react';
+import { QuestionRenderer } from '@/components/ui/question-renderer';
 
 export function QuestionViewer() {
   const {
@@ -36,9 +37,14 @@ export function QuestionViewer() {
       {/* Question Content */}
       <div className="flex-1 overflow-y-auto px-6 py-8">
         <div className="max-w-3xl mx-auto space-y-8">
-          <p className="text-lg leading-relaxed text-foreground">
-            {currentQuestion.text}
-          </p>
+          <div className="text-lg leading-relaxed text-foreground">
+            <QuestionRenderer content={currentQuestion.questionText} />
+            {currentQuestion.questionImageUrl && (
+              <div className="mt-4">
+                <img src={currentQuestion.questionImageUrl} alt="Question Reference" className="max-w-full rounded-md" />
+              </div>
+            )}
+          </div>
 
           <div className="space-y-3">
             {currentQuestion.options.map((option) => {
@@ -66,7 +72,14 @@ export function QuestionViewer() {
                   >
                     {option.key}
                   </span>
-                  <span className="mt-1 text-base">{option.text}</span>
+                  <span className="mt-1 text-base flex-1">
+                    <QuestionRenderer content={option.text} />
+                    {option.imageUrl && (
+                      <div className="mt-2">
+                        <img src={option.imageUrl} alt={`Option ${option.key}`} className="max-w-full rounded-md max-h-32" />
+                      </div>
+                    )}
+                  </span>
                 </button>
               );
             })}
