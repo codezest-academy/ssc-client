@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTestEngineStore } from '@/store/useTestEngineStore';
 import { TestTimer } from './TestTimer';
 import { Button } from '@/components/ui/button';
-import { LayoutGrid, X } from 'lucide-react';
+import { LayoutGrid, X, Maximize, Minimize } from 'lucide-react';
 import { QuestionPalette } from './QuestionPalette';
 import { cn } from '@/lib/utils';
 
@@ -16,6 +16,33 @@ interface TestLayoutProps {
 export function TestLayout({ children, testTitle }: TestLayoutProps) {
   const { status, submitTest } = useTestEngineStore();
   const [isMobilePaletteOpen, setIsMobilePaletteOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Focus Mode toggle
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().then(() => {
+        setIsFullscreen(true);
+      }).catch(err => {
+        console.error("Error attempting to enable full-screen mode:", err.message);
+      });
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().then(() => {
+          setIsFullscreen(false);
+        });
+      }
+    }
+  };
+
+  // Listen to fullscreen changes outside of react
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
 
   return (
     <div className="flex flex-col h-screen w-full bg-background overflow-hidden">
@@ -41,6 +68,16 @@ export function TestLayout({ children, testTitle }: TestLayoutProps) {
             className="hidden sm:flex"
           >
             {status === 'SUBMITTED' ? 'Submitted' : 'Submit Test'}
+          </Button>
+
+          {/* Focus Mode Toggle */}
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={toggleFullscreen}
+            title={isFullscreen ? "Exit Focus Mode" : "Enter Focus Mode"}
+          >
+            {isFullscreen ? <Minimize className="w-5 h-5 text-primary" /> : <Maximize className="w-5 h-5 text-muted-foreground" />}
           </Button>
 
           {/* Mobile Palette Toggle */}

@@ -47,7 +47,7 @@ export default function TestAttemptPage() {
           const mtRes = await api.get(`/mock-tests/${attempt.mockTestId}`);
           const mt = mtRes.data.data;
           setTestTitle(mt.title);
-          questionsData = mt.questions.map((q: any) => q.question);
+          questionsData = mt.sections.flatMap((s: any) => s.questions.map((q: any) => q.question));
           durationSeconds = mt.durationMinutes * 60;
         }
 
