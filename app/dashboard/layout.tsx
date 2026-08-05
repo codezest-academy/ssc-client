@@ -3,6 +3,7 @@
 import { useAuthStore } from "@/store/auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { api } from "@/lib/axios";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 
@@ -21,6 +22,17 @@ export default function DashboardLayout({
       router.replace("/login");
     }
   }, [user, isHydrated, router]);
+
+  const handleLogout = async () => {
+    try {
+      await api.post("/auth/logout");
+    } catch (error) {
+      console.error("Logout error", error);
+    } finally {
+      logout();
+      router.push("/login");
+    }
+  };
 
   if (!isHydrated || !user) {
     return null; // Or a loading spinner
@@ -42,7 +54,7 @@ export default function DashboardLayout({
               {user.subscriptionTier}
             </span>
           </div>
-          <Button variant="ghost" size="sm" onClick={() => logout()}>
+          <Button variant="ghost" size="sm" onClick={handleLogout}>
             <LogOut className="w-4 h-4 mr-2" />
             Logout
           </Button>

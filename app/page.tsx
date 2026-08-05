@@ -60,12 +60,12 @@ export default function Home() {
           
           <div className="flex flex-col sm:flex-row items-center gap-4">
             <Link href="/register">
-              <Button size="lg" className="h-14 px-8 text-lg font-bold rounded-full shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30 transition-all hover:-translate-y-1">
-                Start Free Trial <ArrowRight className="ml-2 w-5 h-5" />
+              <Button size="lg" className="h-14 px-8 text-lg font-bold rounded-xl shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30 transition-all hover:-translate-y-1">
+                Start Free Trial
               </Button>
             </Link>
             <Link href="#features">
-              <Button size="lg" variant="outline" className="h-14 px-8 text-lg font-bold rounded-full bg-background/50 backdrop-blur-sm">
+              <Button size="lg" variant="outline" className="h-14 px-8 text-lg font-bold rounded-xl border-2 shadow-sm hover:bg-accent hover:-translate-y-1 transition-all">
                 Explore Features
               </Button>
             </Link>
