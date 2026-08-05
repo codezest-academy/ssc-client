@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, CheckCircle2, Circle } from "lucide-react";
@@ -45,58 +45,59 @@ export default function LessonViewerPage() {
   const params = useParams();
   const router = useRouter();
   const slug = params?.slug as string;
-
-  const [lesson, setLesson] = useState<Lesson | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [markingComplete, setMarkingComplete] = useState(false);
+  const queryClient = useQueryClient();
 
   const user = useAuthStore((state) => state.user);
 
-  useEffect(() => {
-    if (!slug) return;
+  const { data: lesson, isLoading: loading } = useQuery<Lesson>({
+    queryKey: ["lesson", slug],
+    queryFn: async () => {
+      const response = await api.get(`/lessons/${slug}`);
+      return response.data.data;
+    },
+    enabled: !!slug,
+  });
 
-    const fetchLesson = async () => {
-      try {
-        const response = await api.get(`/lessons/${slug}`);
-        setLesson(response.data.data);
-      } catch (error) {
-        console.error("Failed to load lesson:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchLesson();
-  }, [slug]);
-
-  const handleMarkComplete = async () => {
-    if (!lesson) return;
-    const isCompleted = !!lesson.progress?.[0]?.completedAt;
-    
-    // Toggle completion status
-    setMarkingComplete(true);
-    try {
+  const markCompleteMutation = useMutation({
+    mutationFn: async (isCompleted: boolean) => {
+      if (!lesson) return;
       await api.post(`/lessons/${lesson.id}/progress`, {
         isCompleted: !isCompleted,
       });
-      
-      // Update local state to reflect change instantly
-      setLesson((prev) => {
-        if (!prev) return prev;
-        return {
-          ...prev,
+    },
+    onMutate: async (isCompleted) => {
+      if (!lesson) return;
+      await queryClient.cancelQueries({ queryKey: ["lesson", slug] });
+      const previousLesson = queryClient.getQueryData<Lesson>(["lesson", slug]);
+
+      // Optimistically update
+      if (previousLesson) {
+        queryClient.setQueryData<Lesson>(["lesson", slug], {
+          ...previousLesson,
           progress: [
             {
-              watchedSeconds: prev.progress?.[0]?.watchedSeconds || 0,
+              watchedSeconds: previousLesson.progress?.[0]?.watchedSeconds || 0,
               completedAt: !isCompleted ? new Date().toISOString() : null,
-            }
-          ]
-        };
-      });
-    } catch (error) {
-      console.error("Failed to update progress:", error);
-    } finally {
-      setMarkingComplete(false);
-    }
+            },
+          ],
+        });
+      }
+      return { previousLesson };
+    },
+    onError: (err, newStatus, context) => {
+      if (context?.previousLesson) {
+        queryClient.setQueryData(["lesson", slug], context.previousLesson);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["lesson", slug] });
+    },
+  });
+
+  const handleMarkComplete = () => {
+    if (!lesson) return;
+    const isCompleted = !!lesson.progress?.[0]?.completedAt;
+    markCompleteMutation.mutate(isCompleted);
   };
 
   if (loading) {
@@ -193,7 +194,7 @@ export default function LessonViewerPage() {
           
           <Button
             onClick={handleMarkComplete}
-            disabled={markingComplete}
+            disabled={markCompleteMutation.isPending}
             variant={isCompleted ? "secondary" : "default"}
             className={isCompleted ? "text-emerald-700 bg-emerald-100 hover:bg-emerald-200" : ""}
           >
