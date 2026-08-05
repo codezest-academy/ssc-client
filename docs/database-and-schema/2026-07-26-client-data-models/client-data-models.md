@@ -130,4 +130,39 @@ interface SubmitAttemptBody {
 
 ---
 
+## Leaderboard
+
+### `GET /api/v1/analytics/leaderboard/global` Response
+```typescript
+interface LeaderboardEntry {
+  rank: number;
+  student: {
+    id: string;
+    name: string;
+  };
+  totalScore: number;
+  averageAccuracy: number;
+  testsTaken: number;
+}
+// Returns: LeaderboardEntry[] inside the data envelope
+```
+
+### `GET /api/v1/analytics/leaderboard/mock-tests/:mockTestId` Response
+```typescript
+interface MockTestLeaderboardEntry {
+  rank: number;
+  id: string;
+  marksObtained: number;
+  accuracy: number;
+  timeTakenSeconds: number;
+  student: {
+    id: string;
+    name: string;
+  };
+}
+// Returns: MockTestLeaderboardEntry[] inside the data envelope
+```
+
+---
+
 *(Add new response shapes here as API routes are implemented)*

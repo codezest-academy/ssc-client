@@ -45,13 +45,23 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
       <header className="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-6">
-        <div className="flex items-center gap-2">
-          <h1 className="font-bold text-xl text-primary">Code Zest Academy</h1>
-          <span className="text-slate-300">|</span>
-          <span className="font-medium text-slate-600">SSC (Staff Selection Commission)</span>
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-2">
+            <h1 className="font-bold text-xl text-primary">Code Zest Academy</h1>
+            <span className="text-slate-300">|</span>
+            <span className="font-medium text-slate-600">SSC</span>
+          </div>
+          
+          <nav className="hidden md:flex items-center gap-4 text-sm font-medium">
+            <a href="/dashboard" className="text-slate-600 hover:text-primary transition-colors">Curriculum</a>
+            <a href="/dashboard/practice-sets" className="text-slate-600 hover:text-primary transition-colors">Practice Sets</a>
+            <a href="/dashboard/mock-tests" className="text-slate-600 hover:text-primary transition-colors">Mock Tests</a>
+            <a href="/dashboard/analytics" className="text-slate-600 hover:text-primary transition-colors">Analytics</a>
+            <a href="/dashboard/leaderboard" className="text-slate-600 hover:text-primary transition-colors">Leaderboard</a>
+          </nav>
         </div>
         <div className="flex items-center gap-4">
-          <div className="text-sm">
+          <div className="text-sm hidden sm:block">
             <span className="text-slate-500">Welcome, </span>
             <span className="font-medium text-slate-900">{user.name}</span>
             <span className="ml-2 px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">

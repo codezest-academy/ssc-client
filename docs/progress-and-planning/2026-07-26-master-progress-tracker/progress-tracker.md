@@ -28,8 +28,8 @@
 | **Phase 5** | Lesson viewer (video player, article renderer, PDF viewer) | ✅ Complete | API Phase 4 |
 | **Phase 6** | Practice Set — attempt MCQs, instant result | ✅ Complete | API Phase 7 |
 | **Phase 7** | Mock Test — Test Engine UI (Focus Mode, Palette, Timer, Submit) | ✅ Complete | API Phase 7 |
-| **Phase 8** | Analytics Dashboard — accuracy, streak, recent attempts | 🔴 Not Started | API Phase 8 |
-| **Phase 9** | Leaderboard | 🔴 Not Started | API Phase 8 |
+| **Phase 8** | Analytics Dashboard — accuracy, streak, recent attempts | ✅ Complete | API Phase 8 |
+| **Phase 9** | Leaderboard | ✅ Complete | API Phase 8 |
 | **Phase 10** | Premium / Subscription gate UI | 🔴 Not Started | API Phase 10 |
 
 ---
