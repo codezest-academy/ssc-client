@@ -129,7 +129,7 @@ export default function ChapterPage() {
           lessons.map((lesson) => {
             const isCompleted = lesson.progress?.[0]?.completedAt != null;
             return (
-              <Card key={lesson.id} className="border-border opacity-75 hover:opacity-100 hover:border-primary/50 transition-all shadow-sm rounded-xl overflow-hidden cursor-not-allowed">
+              <Card key={lesson.id} className="border-border hover:border-primary/50 transition-all shadow-sm rounded-xl overflow-hidden">
                 <CardContent className="p-0">
                   <div className="flex flex-col sm:flex-row sm:items-center p-4 gap-4">
                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${getLessonColor(lesson.type)}`}>
@@ -161,9 +161,11 @@ export default function ChapterPage() {
                     </div>
                     
                     <div className="mt-4 sm:mt-0 flex justify-end">
-                      <Button variant="secondary" disabled className="w-full sm:w-auto">
-                        Coming Soon
-                      </Button>
+                      <Link href={`/dashboard/lessons/${lesson.slug}`} className="w-full sm:w-auto">
+                        <Button variant="secondary" className="w-full">
+                          View Lesson
+                        </Button>
+                      </Link>
                     </div>
                   </div>
                 </CardContent>
