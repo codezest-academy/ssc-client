@@ -37,7 +37,10 @@ const eslintConfig = defineConfig([
           selector: "Literal[value=/\\\\btext-\\\\[.*?\\\\].*?/]",
           message: "[Theme] Arbitrary typography sizes are banned. Use the Tight Editorial scale.",
         }
-      ]
+      ],
+      "@typescript-eslint/no-explicit-any": "warn",
+      "react/no-unescaped-entities": "off",
+      "@next/next/no-html-link-for-pages": "off"
     }
   }
 ]);

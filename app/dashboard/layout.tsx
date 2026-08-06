@@ -58,9 +58,11 @@ export default function DashboardLayout({
             <a href="/dashboard/mock-tests" className="text-slate-600 hover:text-primary transition-colors">Mock Tests</a>
             <a href="/dashboard/analytics" className="text-slate-600 hover:text-primary transition-colors">Analytics</a>
             <a href="/dashboard/leaderboard" className="text-slate-600 hover:text-primary transition-colors">Leaderboard</a>
+            <a href="/pricing" className="text-slate-600 hover:text-primary transition-colors font-semibold text-primary">Upgrade</a>
           </nav>
         </div>
         <div className="flex items-center gap-4">
+          <a href="/dashboard/purchases" className="text-sm text-slate-600 hover:text-primary font-medium hidden sm:block">My Purchases</a>
           <div className="text-sm hidden sm:block">
             <span className="text-slate-500">Welcome, </span>
             <span className="font-medium text-slate-900">{user.name}</span>
