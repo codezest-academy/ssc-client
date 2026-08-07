@@ -9,6 +9,7 @@ import { ArrowLeft, PlayCircle, BookOpen, Clock, Target } from "lucide-react";
 import Link from "next/link";
 import { useAuthStore } from "@/store/auth";
 import { PaywallGate } from "@/components/ui/paywall-gate";
+import { PracticeSetQuestion } from "@/types/api";
 
 interface PracticeSet {
   id: string;
@@ -17,7 +18,7 @@ interface PracticeSet {
   subject?: { name: string };
   chapter?: { name: string };
   isFree: boolean;
-  questions: any[];
+  questions: PracticeSetQuestion[];
 }
 
 export default function PracticeSetOverviewPage() {

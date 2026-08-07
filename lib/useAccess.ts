@@ -29,9 +29,9 @@ export function useAccess() {
     if (!purchases) return false;
 
     // We check if the user has a SUCCESS purchase for a product that contains this itemId
-    const hasPurchased = purchases.some((p: any) => 
+    const hasPurchased = purchases.some((p: { status: string, product: { items: { itemId: string }[] } }) => 
       p.status === "SUCCESS" && 
-      p.product?.items?.some((pi: any) => pi.itemId === itemId)
+      p.product?.items?.some((pi) => pi.itemId === itemId)
     );
 
     return hasPurchased;

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { api } from "@/lib/axios";
 import { useTestEngineStore, EngineQuestion } from "@/store/useTestEngineStore";
+import { Question, PracticeSetQuestion, MockTestSection, MockTestSectionQuestion } from "@/types/api";
 import { TestLayout } from "@/components/test-engine/TestLayout";
 import { QuestionViewer } from "@/components/test-engine/QuestionViewer";
 
@@ -33,21 +34,21 @@ export default function TestAttemptPage() {
         }
 
         // 2. Fetch the actual questions
-        let questionsData: any[] = [];
+        let questionsData: Question[] = [];
         let durationSeconds = 30 * 60; // default 30 mins
 
         if (attempt.practiceSetId) {
           const psRes = await api.get(`/practice-sets/${attempt.practiceSetId}`);
           const ps = psRes.data.data;
           setTestTitle(ps.title);
-          questionsData = ps.questions.map((q: any) => q.question);
+          questionsData = ps.questions.map((q: PracticeSetQuestion) => q.question);
           // Estimate 1.5 mins per question for practice sets if duration not specified
           durationSeconds = questionsData.length * 90;
         } else if (attempt.mockTestId) {
           const mtRes = await api.get(`/mock-tests/${attempt.mockTestId}`);
           const mt = mtRes.data.data;
           setTestTitle(mt.title);
-          questionsData = mt.sections.flatMap((s: any) => s.questions.map((q: any) => q.question));
+          questionsData = mt.sections.flatMap((s: MockTestSection) => s.questions.map((q: MockTestSectionQuestion) => q.question));
           durationSeconds = mt.durationMinutes * 60;
         }
 
@@ -63,7 +64,7 @@ export default function TestAttemptPage() {
             id: q.id,
             questionText: q.questionText,
             questionImageUrl: q.questionImageUrl,
-            options: parsedOptions.map((opt: any) => ({
+            options: parsedOptions.map((opt: Record<string, unknown>) => ({
               key: opt.key,
               text: opt.text,
               imageUrl: opt.imageUrl,

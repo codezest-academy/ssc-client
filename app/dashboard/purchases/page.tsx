@@ -4,22 +4,34 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import { Loader2, Package, Calendar } from "lucide-react";
 import { format } from "date-fns";
+import { useAuthStore } from "@/store/auth";
+import { useRouter } from "next/navigation";
+import { Purchase } from "@/types/api";
 
 export default function PurchasesPage() {
+  const { isHydrated, user } = useAuthStore();
+  const router = useRouter();
+
   const { data: purchases, isLoading } = useQuery({
     queryKey: ["user-purchases"],
     queryFn: async () => {
       const res = await api.get("/payments/history");
-      return res.data.data;
+      return res.data.data as Purchase[];
     },
+    enabled: isHydrated && !!user,
   });
 
-  if (isLoading) {
+  if (!isHydrated || isLoading) {
     return (
       <div className="flex h-[50vh] items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
       </div>
     );
+  }
+
+  if (!user) {
+    router.push("/login?redirect=/dashboard/purchases");
+    return null;
   }
 
   return (
@@ -40,7 +52,7 @@ export default function PurchasesPage() {
         </div>
       ) : (
         <div className="space-y-4">
-          {purchases.map((purchase: any) => (
+          {purchases.map((purchase: Purchase) => (
             <div key={purchase.id} className="bg-white rounded-xl border border-slate-200 p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2 mb-1">

@@ -9,6 +9,7 @@ import { ArrowLeft, PlayCircle, FileText, Clock, AlertCircle } from "lucide-reac
 import Link from "next/link";
 import { useAuthStore } from "@/store/auth";
 import { PaywallGate } from "@/components/ui/paywall-gate";
+import { MockTestSection } from "@/types/api";
 
 interface MockTest {
   id: string;
@@ -17,7 +18,7 @@ interface MockTest {
   durationMinutes: number;
   examType: string;
   isFree: boolean;
-  sections: any[];
+  sections: MockTestSection[];
 }
 
 export default function MockTestOverviewPage() {

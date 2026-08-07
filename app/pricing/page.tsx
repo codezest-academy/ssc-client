@@ -9,6 +9,8 @@ import { useAuthStore } from "@/store/auth";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { Product, ProductItem } from "@/types/api";
+
 export default function PricingPage() {
   const { user, isHydrated } = useAuthStore();
   const router = useRouter();
@@ -18,7 +20,7 @@ export default function PricingPage() {
     queryKey: ["products"],
     queryFn: async () => {
       const res = await api.get("/products");
-      return res.data.data;
+      return res.data.data as Product[];
     },
   });
 
@@ -47,7 +49,7 @@ export default function PricingPage() {
         name: "CodeZest SSC",
         description: "Purchase product",
         order_id: orderId,
-        handler: async function (response: any) {
+        handler: async function (response: Record<string, string>) {
           try {
             await api.post("/payments/verify", {
               orderId: response.razorpay_order_id,
@@ -70,8 +72,8 @@ export default function PricingPage() {
         },
       };
 
-      const rzp1 = new (window as any).Razorpay(options);
-      rzp1.on("payment.failed", function (response: any) {
+      const rzp1 = new window.Razorpay(options);
+      rzp1.on("payment.failed", function (response: { error: { description: string } }) {
         alert("Payment Failed. " + response.error.description);
       });
       rzp1.open();
@@ -101,7 +103,7 @@ export default function PricingPage() {
       </div>
 
       <div className="grid md:grid-cols-3 gap-8">
-        {products?.map((product: any) => (
+        {products?.map((product: Product) => (
           <div key={product.id} className="border border-slate-200 rounded-2xl p-8 flex flex-col bg-white shadow-sm hover:shadow-md transition-shadow relative">
             <div className="mb-6">
               <h3 className="text-2xl font-bold text-slate-900 mb-2">{product.name}</h3>
@@ -114,7 +116,7 @@ export default function PricingPage() {
 
             <div className="flex-1">
               <ul className="space-y-3 mb-8">
-                {product.items?.map((item: any, i: number) => (
+                {product.items?.map((item: ProductItem, i: number) => (
                   <li key={i} className="flex items-start text-sm text-slate-700">
                     <Check className="w-5 h-5 text-green-500 mr-2 shrink-0" />
                     <span>{item.itemType} - Unlock content</span>
