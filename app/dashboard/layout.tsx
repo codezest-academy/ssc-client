@@ -21,7 +21,7 @@ export default function DashboardLayout({
     if (isHydrated) {
       if (!user) {
         router.replace("/login");
-      } else if (!user.targetExam) {
+      } else if (!user.onboardingComplete) {
         router.replace("/onboarding");
       }
     }
