@@ -1,7 +1,7 @@
 # API Response Shapes & Client Data Models
 
 **Date:** 2026-07-26
-**Status:** 🔴 Draft — to be updated as API routes are implemented
+**Status:** 🟢 Active — Updated 2026-08-08 with persona & onboarding fields
 **Author:** CVS Charan
 **Source:** `ssc-api` → `src/modules/*/`
 
@@ -51,6 +51,11 @@ All API responses follow this envelope:
 
 ### `POST /api/v1/auth/login` Response
 ```typescript
+type StudyPersona = 'FULL_TIME_ASPIRANT' | 'PART_TIME_ASPIRANT' | 'REPEAT_ASPIRANT';
+type DailyStudyTime = 'LESS_THAN_2_HOURS' | 'TWO_TO_FOUR_HOURS' | 'MORE_THAN_4_HOURS';
+type EducationLevel = 'HIGH_SCHOOL' | 'UNDERGRADUATE' | 'POSTGRADUATE' | 'OTHER';
+type Gender = 'MALE' | 'FEMALE' | 'OTHER' | 'PREFER_NOT_TO_SAY';
+
 interface LoginResponse {
   accessToken: string;        // JWT, 15 min
   user: {
@@ -60,8 +65,21 @@ interface LoginResponse {
     role: 'STUDENT';
     avatarUrl: string | null;
     targetExam: ExamType | null;
+    examYear: number | null;
     isEmailVerified: boolean;
     subscriptionTier: 'FREE' | 'PRO' | 'ELITE';
+    // Persona & onboarding state
+    onboardingComplete: boolean;
+    studyPersona: StudyPersona | null;
+    dailyStudyTime: DailyStudyTime | null;
+    hasAttemptedBefore: boolean;
+    // Demographics (all optional)
+    age: number | null;
+    gender: Gender | null;
+    educationLevel: EducationLevel | null;
+    city: string | null;
+    occupation: string | null;
+    incomeRange: string | null;
   };
 }
 ```
@@ -112,14 +130,24 @@ interface Lesson {
 
 ### `GET /api/v1/practice-sets/:id` Response
 ```typescript
+interface PracticeSetQuestion {
+  id: string;
+  questionText: string;
+  questionImageUrl: string | null;
+  options: { key: 'A' | 'B' | 'C' | 'D'; text: string; imageUrl?: string }[];
+  correctOption: 'A' | 'B' | 'C' | 'D';
+  explanation: string | null;
+  difficulty: 'EASY' | 'MEDIUM' | 'HARD';
+}
+
 interface PracticeSet {
   id: string;
   title: string;
-  description: string;
   subject?: { name: string };
   chapter?: { name: string };
-  isFree: boolean;
-  questions: any[];
+  accessTier: 'FREE' | 'PRO' | 'EXCLUSIVE';
+  questionCount: number;
+  questions: PracticeSetQuestion[];
 }
 ```
 
@@ -129,14 +157,36 @@ interface PracticeSet {
 
 ### `GET /api/v1/mock-tests/:id` Response
 ```typescript
+interface MockTestSectionQuestion {
+  questionId: string;
+  order: number;
+  question: PracticeSetQuestion;
+}
+
+interface MockTestSection {
+  id: string;
+  name: string;
+  subjectId: string;
+  questionCount: number;
+  maxMarks: number;
+  durationMins: number | null;
+  order: number;
+  questions: MockTestSectionQuestion[];
+}
+
 interface MockTest {
   id: string;
   title: string;
-  description: string;
+  examType: ExamType;
+  totalQuestions: number;
+  totalMarks: number;
   durationMinutes: number;
-  examType: string;
-  isFree: boolean;
-  sections: any[];
+  markingCorrect: number;
+  markingIncorrect: number;
+  markingSkipped: number;
+  accessTier: 'FREE' | 'PRO' | 'EXCLUSIVE';
+  scheduledAt: string | null;
+  sections: MockTestSection[];
 }
 ```
 
@@ -196,6 +246,37 @@ interface MockTestLeaderboardEntry {
   };
 }
 // Returns: MockTestLeaderboardEntry[] inside the data envelope
+```
+
+---
+
+## Onboarding
+
+### `POST /api/v1/users/onboarding` Request Body
+```typescript
+interface OnboardingInput {
+  // Required
+  targetExam: ExamType;
+  examYear: number;
+  occupation: string;
+  hasAttemptedBefore: boolean;
+  dailyStudyTime: DailyStudyTime;
+  // Optional (Step 4)
+  age?: number;
+  gender?: Gender;
+  educationLevel?: EducationLevel;
+  city?: string;
+  incomeRange?: string;
+}
+```
+
+### `POST /api/v1/users/onboarding` Response
+```typescript
+interface OnboardingResponse {
+  studyPersona: StudyPersona;
+  onboardingComplete: true;
+  user: LoginResponse['user'];  // Full updated user object
+}
 ```
 
 ---

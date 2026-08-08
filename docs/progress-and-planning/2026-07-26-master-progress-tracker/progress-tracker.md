@@ -1,7 +1,7 @@
 # SSC Client — Master Progress Tracker
 
-**Last Updated:** 2026-08-06
-**Overall Status:** ✅ Complete — All phases finished. Optimization & Error handling added.
+**Last Updated:** 2026-08-08  
+**Overall Status:** ✅ Phases 1–10 Complete. 🔴 Phase 11 (Persona Onboarding & Dashboard) Planned.
 
 ---
 
@@ -31,6 +31,7 @@
 | **Phase 8** | Analytics Dashboard — accuracy, streak, recent attempts | ✅ Complete | API Phase 8 |
 | **Phase 9** | Leaderboard | ✅ Complete | API Phase 8 |
 | **Phase 10** | Premium / Subscription gate UI | ✅ Complete | API Phase 10 |
+| **Phase 11** | Persona Onboarding Wizard (4-step) + Persona-Aware Dashboard | 🔴 Planned | API Phase 13 |
 
 ---
 
@@ -53,3 +54,5 @@
 | API Response Shapes | [client-data-models.md](../../database-and-schema/2026-07-26-client-data-models/client-data-models.md) |
 | Theme System | [theme-system.md](../../frontend-and-ux/2026-07-26-theme-system/theme-system.md) |
 | UX/UI Guidelines | [ux-ui-guidelines.md](../../frontend-and-ux/2026-07-26-ux-ui-guidelines/ux-ui-guidelines.md) |
+| **Onboarding Flow Spec (NEW)** | [onboarding-flow.md](../../frontend-and-ux/2026-08-08-onboarding-flow/onboarding-flow.md) |
+| **User Personas (NEW)** | [user-personas.md](../../../../../ssc-api/docs/product/user-personas.md) |
