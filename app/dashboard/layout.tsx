@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { api } from "@/lib/axios";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
+import { FeedbackWidget } from "@/components/ui/feedback-widget";
 
 export default function DashboardLayout({
   children,
@@ -84,6 +85,7 @@ export default function DashboardLayout({
           {children}
         </div>
       </main>
+      <FeedbackWidget />
     </div>
   );
 }

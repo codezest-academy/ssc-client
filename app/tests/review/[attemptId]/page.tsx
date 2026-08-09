@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { api } from "@/lib/axios";
 import { QuestionRenderer } from "@/components/ui/question-renderer";
 import { ShareScoreButton } from "@/components/ui/share-score-button";
+import { ReportIssueButton } from "@/components/ui/report-issue-button";
 import {
   BarChart,
   Bar,
@@ -258,7 +259,7 @@ export default function TestReviewPage() {
                       )}
                     </div>
                   </div>
-                  <div className="shrink-0">
+                  <div className="shrink-0 flex flex-col items-end gap-2">
                     {resp.isCorrect ? (
                       <span className="bg-success/10 text-success px-3 py-1 rounded-full text-xs font-semibold">Correct (+{resp.marksAwarded})</span>
                     ) : resp.selectedOption ? (
@@ -266,6 +267,7 @@ export default function TestReviewPage() {
                     ) : (
                       <span className="bg-muted text-muted-foreground px-3 py-1 rounded-full text-xs font-semibold">Skipped</span>
                     )}
+                    <ReportIssueButton questionId={q.id} />
                   </div>
                 </div>
 
