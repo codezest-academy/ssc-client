@@ -37,6 +37,15 @@ interface AnalyticsSummary {
   totalTests: number;
 }
 
+interface WeakTopic {
+  id: string;
+  name: string;
+  subjectName: string;
+  correct: number;
+  total: number;
+  accuracy: number;
+}
+
 // ─── Persona Hero Components ──────────────────────────────────────────────────
 
 function FullTimeHero({ userName }: { userName: string }) {
@@ -272,20 +281,86 @@ function DailyTargetButton() {
   );
 }
 
+// ─── Weak Topics Widget (Target 160+) ─────────────────────────────────────────
+
+function WeakTopicsWidget({ weakTopics }: { weakTopics: WeakTopic[] }) {
+  const router = useRouter();
+  const [generatingFor, setGeneratingFor] = useState<string | null>(null);
+
+  if (!weakTopics || weakTopics.length === 0) return null;
+
+  const handlePractice = async (chapterId: string) => {
+    try {
+      setGeneratingFor(chapterId);
+      const res = await api.post("/attempts/pyq", {
+        chapterId,
+        limit: 10,
+      });
+      router.push(`/tests/attempt/${res.data.data.id}`);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      alert(error.response?.data?.message || "Failed to generate practice test");
+      setGeneratingFor(null);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-xl font-bold text-foreground tracking-tight">Target 160+ Weak Areas</h3>
+          <p className="text-muted-foreground text-sm mt-1">
+            We analyzed your recent mock tests. Practice these topics to boost your score.
+          </p>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {weakTopics.map((topic) => (
+          <div key={topic.id} className="bg-destructive/5 border border-destructive/20 rounded-xl p-5 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-semibold text-destructive px-2 py-0.5 bg-destructive/10 rounded-full">
+                  {topic.accuracy}% Accuracy
+                </span>
+                <span className="text-xs text-muted-foreground">{topic.subjectName}</span>
+              </div>
+              <h4 className="font-bold text-foreground line-clamp-1" title={topic.name}>{topic.name}</h4>
+              <p className="text-sm text-muted-foreground mt-1">
+                You got {topic.correct} out of {topic.total} correct.
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full mt-4 border-destructive text-destructive hover:bg-destructive hover:text-white transition-colors"
+              onClick={() => handlePractice(topic.id)}
+              disabled={generatingFor === topic.id}
+            >
+              {generatingFor === topic.id ? "Loading..." : "Practice PYQs"}
+            </Button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Dashboard Page ──────────────────────────────────────────────────────
 
 export default function DashboardPage() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [analytics, setAnalytics] = useState<AnalyticsSummary | null>(null);
+  const [weakTopics, setWeakTopics] = useState<WeakTopic[]>([]);
   const [loading, setLoading] = useState(true);
   const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
     const load = async () => {
       try {
-        const [subjectsRes, analyticsRes] = await Promise.allSettled([
+        const [subjectsRes, analyticsRes, weakTopicsRes] = await Promise.allSettled([
           api.get("/subjects"),
           api.get("/analytics/dashboard"),
+          api.get("/analytics/weak-topics"),
         ]);
 
         if (subjectsRes.status === "fulfilled") {
@@ -293,6 +368,9 @@ export default function DashboardPage() {
         }
         if (analyticsRes.status === "fulfilled") {
           setAnalytics(analyticsRes.value.data.data);
+        }
+        if (weakTopicsRes.status === "fulfilled") {
+          setWeakTopics(weakTopicsRes.value.data.data);
         }
       } catch (error) {
         console.error("Failed to load dashboard:", error);
@@ -331,6 +409,9 @@ export default function DashboardPage() {
           <DailyTargetButton />
         </div>
       </div>
+
+      {/* ── Weak Topics Widget ──────────────────────────────── */}
+      <WeakTopicsWidget weakTopics={weakTopics} />
 
       {/* ── Subjects Section ────────────────────────────────── */}
       <div>
