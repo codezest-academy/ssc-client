@@ -1,9 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { api } from "@/lib/axios";
 import { QuestionRenderer } from "@/components/ui/question-renderer";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Cell
+} from "recharts";
+import { AlertCircle, Clock, CheckCircle2, XCircle } from "lucide-react";
 
 export default function TestReviewPage() {
   const params = useParams();
@@ -29,6 +40,73 @@ export default function TestReviewPage() {
     loadData();
   }, [attemptId]);
 
+  // Analytics Logic
+  const analytics = useMemo(() => {
+    if (!attempt || !attempt.responses) return null;
+
+    let totalCorrectTime = 0;
+    let correctCount = 0;
+    let totalIncorrectTime = 0;
+    let incorrectCount = 0;
+
+    const subjectMap: Record<string, { total: number; correct: number; time: number }> = {};
+    const chapterMap: Record<string, { total: number; correct: number; time: number; subject: string }> = {};
+
+    attempt.responses.forEach((resp: any) => {
+      const q = resp.question;
+      if (!q) return;
+
+      const time = resp.timeTakenSeconds || 0;
+      
+      if (resp.isCorrect) {
+        totalCorrectTime += time;
+        correctCount++;
+      } else if (resp.selectedOption) {
+        totalIncorrectTime += time;
+        incorrectCount++;
+      }
+
+      // Group by Subject
+      const subName = q.subject?.name || "Unknown Subject";
+      if (!subjectMap[subName]) subjectMap[subName] = { total: 0, correct: 0, time: 0 };
+      if (resp.selectedOption) {
+        subjectMap[subName].total++;
+        if (resp.isCorrect) subjectMap[subName].correct++;
+      }
+      subjectMap[subName].time += time;
+
+      // Group by Chapter
+      const chapName = q.chapter?.name || "Unknown Chapter";
+      if (!chapterMap[chapName]) chapterMap[chapName] = { total: 0, correct: 0, time: 0, subject: subName };
+      if (resp.selectedOption) {
+        chapterMap[chapName].total++;
+        if (resp.isCorrect) chapterMap[chapName].correct++;
+      }
+      chapterMap[chapName].time += time;
+    });
+
+    const avgCorrectTime = correctCount ? Math.round(totalCorrectTime / correctCount) : 0;
+    const avgIncorrectTime = incorrectCount ? Math.round(totalIncorrectTime / incorrectCount) : 0;
+
+    const subjectStats = Object.keys(subjectMap).map(name => {
+      const stat = subjectMap[name];
+      const accuracy = stat.total > 0 ? Math.round((stat.correct / stat.total) * 100) : 0;
+      return { name, accuracy, time: stat.time };
+    });
+
+    // Danger Zones: Chapters with < 50% accuracy and substantial time spent (e.g. > 60s total)
+    const dangerZones = Object.keys(chapterMap)
+      .map(name => {
+        const stat = chapterMap[name];
+        const accuracy = stat.total > 0 ? Math.round((stat.correct / stat.total) * 100) : 0;
+        return { name, accuracy, time: stat.time, subject: stat.subject, total: stat.total };
+      })
+      .filter(chap => chap.total > 0 && chap.accuracy <= 50 && chap.time > 30)
+      .sort((a, b) => b.time - a.time);
+
+    return { avgCorrectTime, avgIncorrectTime, subjectStats, dangerZones };
+  }, [attempt]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center">
@@ -44,33 +122,109 @@ export default function TestReviewPage() {
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
-      <div className="max-w-4xl mx-auto space-y-6">
+      <div className="max-w-5xl mx-auto space-y-8">
+        
+        {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Test Review</h1>
-            <p className="text-muted-foreground">Score: {attempt.marksObtained} | Accuracy: {Math.round(attempt.accuracy || 0)}%</p>
+            <h1 className="text-3xl font-bold text-foreground">Performance Diagnostics</h1>
+            <p className="text-muted-foreground mt-1">Score: <span className="font-semibold text-foreground">{attempt.marksObtained}</span> | Accuracy: <span className="font-semibold text-foreground">{Math.round(attempt.accuracy || 0)}%</span></p>
           </div>
           <button
             onClick={() => router.push("/dashboard")}
-            className="px-4 py-2 rounded-full border bg-card hover:bg-muted transition-colors text-sm font-medium"
+            className="px-6 py-2 rounded-full border bg-card hover:bg-muted transition-colors text-sm font-semibold shadow-sm"
           >
             Exit Review
           </button>
         </div>
 
-        <div className="space-y-8">
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+        {/* Analytics Dashboard */}
+        {analytics && (
+          <div className="grid md:grid-cols-3 gap-6">
+            
+            {/* Subject Accuracy Chart */}
+            <div className="md:col-span-2 bg-card border rounded-2xl p-6 shadow-sm">
+              <h3 className="font-semibold text-lg mb-4 text-foreground">Subject-wise Accuracy</h3>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={analytics.subjectStats} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="text-muted/30" />
+                    <XAxis dataKey="name" tick={{ fontSize: 12 }} stroke="currentColor" className="text-muted-foreground" />
+                    <YAxis tick={{ fontSize: 12 }} stroke="currentColor" className="text-muted-foreground" unit="%" />
+                    <Tooltip 
+                      cursor={{ fill: 'var(--muted)' }}
+                      contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                    />
+                    <Bar dataKey="accuracy" radius={[4, 4, 0, 0]}>
+                      {analytics.subjectStats.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.accuracy >= 75 ? '#10b981' : entry.accuracy >= 50 ? '#f59e0b' : '#ef4444'} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Time Management & Danger Zones */}
+            <div className="space-y-6">
+              <div className="bg-card border rounded-2xl p-6 shadow-sm">
+                <h3 className="font-semibold text-lg mb-4 text-foreground flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-primary" /> Time Management
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center p-3 bg-success/10 rounded-xl border border-success/20">
+                    <div className="flex items-center gap-2 text-success">
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span className="text-sm font-medium">Avg Correct Time</span>
+                    </div>
+                    <span className="font-bold text-success">{analytics.avgCorrectTime}s</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-destructive/10 rounded-xl border border-destructive/20">
+                    <div className="flex items-center gap-2 text-destructive">
+                      <XCircle className="w-4 h-4" />
+                      <span className="text-sm font-medium">Avg Incorrect Time</span>
+                    </div>
+                    <span className="font-bold text-destructive">{analytics.avgIncorrectTime}s</span>
+                  </div>
+                </div>
+              </div>
+
+              {analytics.dangerZones.length > 0 && (
+                <div className="bg-warning/10 border border-warning/20 rounded-2xl p-6 shadow-sm">
+                  <h3 className="font-semibold text-lg mb-4 text-warning flex items-center gap-2">
+                    <AlertCircle className="w-5 h-5" /> Danger Zones
+                  </h3>
+                  <div className="space-y-3">
+                    {analytics.dangerZones.slice(0, 3).map((zone, i) => (
+                      <div key={i} className="flex justify-between items-center text-sm border-b border-warning/20 pb-2 last:border-0 last:pb-0">
+                        <div>
+                          <p className="font-semibold text-warning-text-on-tint">{zone.name}</p>
+                          <p className="text-xs opacity-80">{zone.subject}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold text-warning-text-on-tint">{zone.accuracy}% Acc</p>
+                          <p className="text-xs opacity-80">{zone.time}s spent</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        <div className="pt-8 border-t space-y-8">
+          <h2 className="text-2xl font-bold text-foreground">Detailed Review</h2>
+          
           {attempt.responses.map((resp: any, index: number) => {
             const q = resp.question;
             if (!q) return null;
             
-            // Parse options if needed
             let options = q.options;
             if (typeof options === "string") {
               try { options = JSON.parse(options); } catch (e) {}
             }
-
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const selectedOpt = options.find((o: any) => o.key === resp.selectedOption);
 
             return (
@@ -81,6 +235,13 @@ export default function TestReviewPage() {
                       {index + 1}
                     </div>
                     <div className="space-y-3 pt-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-xs font-semibold px-2 py-1 bg-primary/10 text-primary rounded-md">{q.subject?.name}</span>
+                        <span className="text-xs text-muted-foreground">{q.chapter?.name}</span>
+                        <span className="text-xs text-muted-foreground ml-auto flex items-center gap-1">
+                          <Clock className="w-3 h-3" /> {resp.timeTakenSeconds || 0}s
+                        </span>
+                      </div>
                       <div className="prose prose-sm dark:prose-invert">
                         <QuestionRenderer content={q.questionText} />
                       </div>
@@ -101,7 +262,6 @@ export default function TestReviewPage() {
                 </div>
 
                 <div className="pl-12 space-y-3">
-                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                   {options.map((opt: any) => {
                     const isSelected = resp.selectedOption === opt.key;
                     const isCorrect = q.correctOption === opt.key;
@@ -139,7 +299,7 @@ export default function TestReviewPage() {
                       <h4 className="font-semibold text-warning text-sm flex items-center gap-2">
                         <span>⚠️</span> Why you got this wrong:
                       </h4>
-                      <p className="text-warning text-sm">
+                      <p className="text-warning-text-on-tint text-sm">
                         {selectedOpt.rationale}
                       </p>
                     </div>
@@ -153,7 +313,7 @@ export default function TestReviewPage() {
                       <h4 className="font-semibold text-info text-sm flex items-center gap-2">
                         <span>💡</span> Correct Explanation:
                       </h4>
-                      <div className="text-info text-sm prose prose-sm dark:prose-invert">
+                      <div className="text-info-text-on-tint text-sm prose prose-sm dark:prose-invert">
                         <QuestionRenderer content={q.explanation} />
                       </div>
                       {q.explanationImageUrl && (
