@@ -50,6 +50,12 @@ export default function TestAttemptPage() {
           setTestTitle(mt.title);
           questionsData = mt.sections.flatMap((s: MockTestSection) => s.questions.map((q: MockTestSectionQuestion) => q.question));
           durationSeconds = mt.durationMinutes * 60;
+        } else {
+          // Dynamic Topic-wise PYQ Test
+          setTestTitle("Topic-wise PYQ Test");
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          questionsData = attempt.responses.map((r: any) => r.question);
+          durationSeconds = questionsData.length * 90;
         }
 
         // 3. Map questions to EngineQuestion format
