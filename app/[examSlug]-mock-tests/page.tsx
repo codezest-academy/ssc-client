@@ -4,12 +4,17 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Clock, HelpCircle, Trophy } from "lucide-react";
 
-export default async function ExamMockTestsLandingPage({ params }: { params: { examSlug: string } }) {
+export default async function ExamMockTestsLandingPage({ params }: { params: Promise<{ examSlug: string }> }) {
+  const resolvedParams = await params;
+  const examSlug = resolvedParams.examSlug || "";
+  
+  if (!examSlug) return null;
+
   // Format exam slug to readable title (e.g. ssc-cgl -> SSC CGL)
-  const examTitle = params.examSlug.replace(/-/g, ' ').toUpperCase();
+  const examTitle = examSlug.replace(/-/g, ' ').toUpperCase();
   
   // Fetch mock tests for this exam
-  const examType = params.examSlug.replace(/-/g, '_').toUpperCase();
+  const examType = examSlug.replace(/-/g, '_').toUpperCase();
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1'}/mock-tests?examType=${examType}`, {
     cache: 'no-store'
   }).catch(() => null);

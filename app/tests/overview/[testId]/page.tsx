@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,9 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, AlertCircle, Clock, CheckCircle2, ShieldAlert } from "lucide-react";
 import { api } from "@/lib/axios";
 
-export default function TestOverviewPage({ params }: { params: { testId: string } }) {
+export default function TestOverviewPage({ params }: { params: Promise<{ testId: string }> }) {
+  const resolvedParams = use(params);
+  const testId = resolvedParams.testId;
   const router = useRouter();
   const [testData, setTestData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -20,7 +22,7 @@ export default function TestOverviewPage({ params }: { params: { testId: string 
   useEffect(() => {
     const fetchTest = async () => {
       try {
-        const { data } = await api.get(`/mock-tests/${params.testId}`);
+        const { data } = await api.get(`/mock-tests/${testId}`);
         setTestData(data.data);
       } catch (err: any) {
         setError(err.response?.data?.message || "Failed to load test details");
@@ -29,7 +31,7 @@ export default function TestOverviewPage({ params }: { params: { testId: string 
       }
     };
     fetchTest();
-  }, [params.testId]);
+  }, [testId]);
 
   const handleStartTest = async () => {
     if (!agreed) return;
@@ -39,7 +41,7 @@ export default function TestOverviewPage({ params }: { params: { testId: string 
     try {
       const { data } = await api.post("/attempts/start", {
         attemptType: "MOCK",
-        mockTestId: params.testId,
+        mockTestId: testId,
       });
       // Redirect to the actual attempt page
       router.push(`/tests/attempt/${data.data.id}`);
