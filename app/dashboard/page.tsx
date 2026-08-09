@@ -16,6 +16,7 @@ import {
   Target,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useAuthStore, type StudyPersona } from "@/store/auth";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -220,6 +221,57 @@ function PersonaHero({
   return <FullTimeHero userName={userName} />;
 }
 
+// ─── Daily Target Button ──────────────────────────────────────────────────────
+
+function DailyTargetButton() {
+  const [generating, setGenerating] = useState(false);
+  const router = useRouter();
+  const user = useAuthStore((state) => state.user);
+
+  // Check if they already played today (basic check using lastActiveDate)
+  const isCompletedToday = () => {
+    if (!user?.lastActiveDate) return false;
+    const lastActive = new Date(user.lastActiveDate);
+    const today = new Date();
+    return (
+      lastActive.getDate() === today.getDate() &&
+      lastActive.getMonth() === today.getMonth() &&
+      lastActive.getFullYear() === today.getFullYear()
+    );
+  };
+
+  const handleGenerate = async () => {
+    if (isCompletedToday()) return; // Already done
+    try {
+      setGenerating(true);
+      const res = await api.post("/attempts/daily");
+      router.push(`/tests/attempt/${res.data.data.id}`);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      alert(error.response?.data?.message || "Failed to generate daily attempt");
+      setGenerating(false);
+    }
+  };
+
+  if (isCompletedToday()) {
+    return (
+      <div className="flex items-center gap-2 px-6 py-3 bg-success/10 text-success rounded-xl font-bold">
+        <Target className="w-5 h-5" /> Completed!
+      </div>
+    );
+  }
+
+  return (
+    <Button 
+      onClick={handleGenerate} 
+      disabled={generating}
+      className="rounded-xl px-8 py-6 text-lg font-bold bg-orange-600 hover:bg-orange-700 text-white shadow-md hover:shadow-lg transition-all"
+    >
+      {generating ? "Starting..." : "Start Daily Target"}
+    </Button>
+  );
+}
+
 // ─── Main Dashboard Page ──────────────────────────────────────────────────────
 
 export default function DashboardPage() {
@@ -263,6 +315,22 @@ export default function DashboardPage() {
         userName={user?.name ?? "there"}
         accuracy={analytics?.averageAccuracy ?? null}
       />
+
+      {/* ── Daily 10-Min Target Widget ──────────────────────── */}
+      <div className="bg-gradient-to-r from-orange-500/10 via-orange-400/5 to-transparent border border-orange-500/20 rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <Flame className="w-5 h-5 text-orange-600" />
+            <h3 className="text-xl font-bold text-foreground tracking-tight">Daily 10-Min Target</h3>
+          </div>
+          <p className="text-muted-foreground text-sm max-w-xl">
+            Keep your streak alive! Complete today's dynamic 10-question practice set covering mixed topics to build your daily learning habit.
+          </p>
+        </div>
+        <div className="shrink-0">
+          <DailyTargetButton />
+        </div>
+      </div>
 
       {/* ── Subjects Section ────────────────────────────────── */}
       <div>

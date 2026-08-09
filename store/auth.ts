@@ -40,6 +40,9 @@ export interface User {
   city?: string | null;
   occupation?: string | null;
   incomeRange?: string | null;
+  // Gamification
+  streakDays?: number;
+  lastActiveDate?: string | null;
 }
 
 interface AuthState {

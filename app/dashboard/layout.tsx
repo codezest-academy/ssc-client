@@ -70,6 +70,9 @@ export default function DashboardLayout({
               {user.subscriptionTier}
             </span>
           </div>
+          <div className="flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-600 rounded-full font-bold shadow-sm">
+            🔥 <span>{user.streakDays || 0}</span>
+          </div>
           <Button variant="ghost" size="sm" onClick={handleLogout}>
             <LogOut className="w-4 h-4 mr-2" />
             Logout
