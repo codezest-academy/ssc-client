@@ -4,8 +4,9 @@ import { useParams, useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, CheckCircle2, Circle } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Circle, PlayCircle, FileText, FileBadge } from "lucide-react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 import { QuestionRenderer } from "@/components/ui/question-renderer";
 import { useAuthStore } from "@/store/auth";
 import { PaywallGate } from "@/components/ui/paywall-gate";
@@ -56,6 +57,15 @@ export default function LessonViewerPage() {
       return response.data.data;
     },
     enabled: !!slug,
+  });
+
+  const { data: chapterLessons } = useQuery<Lesson[]>({
+    queryKey: ["chapter-lessons", lesson?.chapter.id],
+    queryFn: async () => {
+      const response = await api.get(`/lessons/chapter/${lesson!.chapter.id}`);
+      return response.data.data;
+    },
+    enabled: !!lesson?.chapter.id,
   });
 
   const markCompleteMutation = useMutation({
@@ -118,6 +128,15 @@ export default function LessonViewerPage() {
   const isCompleted = !!lesson.progress?.[0]?.completedAt;
   const hasAccess = lesson.isFree || (user && user.subscriptionTier !== "FREE");
 
+  const getLessonIcon = (type: string) => {
+    switch (type) {
+      case "VIDEO": return <PlayCircle className="w-4 h-4" />;
+      case "ARTICLE": return <FileText className="w-4 h-4" />;
+      case "PDF": return <FileBadge className="w-4 h-4" />;
+      default: return <PlayCircle className="w-4 h-4" />;
+    }
+  };
+
   return (
     <div className="max-w-5xl mx-auto pb-24">
       {/* Breadcrumbs */}
@@ -152,33 +171,79 @@ export default function LessonViewerPage() {
       {!hasAccess ? (
         <PaywallGate contentType="Lesson" title={`Unlock "${lesson.title}"`} />
       ) : (
-        <div className="bg-white rounded-2xl shadow-sm border border-border overflow-hidden min-h-[500px]">
-          {lesson.type === "VIDEO" && lesson.videoUrl ? (
-            <div className="aspect-video w-full bg-black">
-              <iframe
-                src={lesson.videoUrl}
-                className="w-full h-full border-0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Main Content Area */}
+          <div className="flex-1 bg-white rounded-2xl shadow-sm border border-border overflow-hidden min-h-[500px]">
+            {lesson.type === "VIDEO" && lesson.videoUrl ? (
+              <div className="aspect-video w-full bg-black">
+                <iframe
+                  src={lesson.videoUrl}
+                  className="w-full h-full border-0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            ) : lesson.type === "ARTICLE" && lesson.articleHtml ? (
+              <div className="p-8 prose prose-slate max-w-none prose-headings:text-slate-900 prose-a:text-primary">
+                <QuestionRenderer content={lesson.articleHtml} />
+              </div>
+            ) : lesson.type === "PDF" && lesson.pdfUrl ? (
+              <div className="w-full h-[80vh]">
+                <iframe
+                  src={lesson.pdfUrl}
+                  className="w-full h-full border-0"
+                  title="PDF Viewer"
+                />
+              </div>
+            ) : (
+              <div className="p-12 text-center text-slate-400">
+                Content not available for this lesson.
+              </div>
+            )}
+          </div>
+
+          {/* Course Sidebar */}
+          <div className="w-full lg:w-80 flex flex-col gap-4">
+            <div className="bg-white rounded-2xl shadow-sm border border-border p-4">
+              <h3 className="font-semibold text-slate-900 mb-4">{lesson.chapter?.name}</h3>
+              <div className="flex flex-col gap-2">
+                {chapterLessons?.map((l, index) => {
+                  const isCurrent = l.slug === lesson.slug;
+                  const isFinished = !!l.progress?.[0]?.completedAt;
+                  return (
+                    <Link
+                      key={l.id}
+                      href={`/dashboard/lessons/${l.slug}`}
+                      className={cn(
+                        "flex items-center gap-3 p-3 rounded-xl transition-colors",
+                        isCurrent ? "bg-primary/10 border border-primary/20" : "hover:bg-slate-50 border border-transparent"
+                      )}
+                    >
+                      <div className={cn(
+                        "flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center border",
+                        isFinished 
+                          ? "bg-emerald-100 border-emerald-200 text-emerald-600" 
+                          : isCurrent 
+                            ? "bg-primary text-white border-primary"
+                            : "bg-slate-100 border-slate-200 text-slate-400"
+                      )}>
+                        {isFinished ? <CheckCircle2 className="w-4 h-4" /> : <span className="text-xs font-medium">{index + 1}</span>}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className={cn("text-sm truncate font-medium", isCurrent ? "text-primary" : "text-slate-700")}>
+                          {l.title}
+                        </p>
+                        <div className="flex items-center gap-1 text-xs text-slate-500 mt-1">
+                          {getLessonIcon(l.type)}
+                          <span>{l.type === "VIDEO" ? `${l.duration} min` : l.type}</span>
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
-          ) : lesson.type === "ARTICLE" && lesson.articleHtml ? (
-            <div className="p-8 prose prose-slate max-w-none prose-headings:text-slate-900 prose-a:text-primary">
-              <QuestionRenderer content={lesson.articleHtml} />
-            </div>
-          ) : lesson.type === "PDF" && lesson.pdfUrl ? (
-            <div className="w-full h-[80vh]">
-              <iframe
-                src={lesson.pdfUrl}
-                className="w-full h-full border-0"
-                title="PDF Viewer"
-              />
-            </div>
-          ) : (
-            <div className="p-12 text-center text-slate-400">
-              Content not available for this lesson.
-            </div>
-          )}
+          </div>
         </div>
       )}
 
