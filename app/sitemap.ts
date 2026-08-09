@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next'
-import { api } from '@/lib/axios'
+
 
 interface Subject {
   slug: string;
@@ -64,9 +64,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   try {
+    const apiUrl = process.env.API_URL || 'http://localhost:5000/api/v1';
+    
     // Fetch subjects
-    const subjectsResponse = await api.get('/subjects');
-    const subjects: Subject[] = subjectsResponse.data.data;
+    const subjectsResponse = await fetch(`${apiUrl}/subjects`).then(res => res.json());
+    const subjects: Subject[] = subjectsResponse?.data || [];
 
     const dynamicRoutes = await Promise.all(
       subjects.map(async (subject) => {
@@ -80,8 +82,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
         // Fetch chapters for this subject
         try {
-          const chaptersResponse = await api.get(`/chapters/subject/${subject.slug}`);
-          const chapters: Chapter[] = chaptersResponse.data.data;
+          const chaptersResponse = await fetch(`${apiUrl}/chapters/subject/${subject.slug}`).then(res => res.json());
+          const chapters: Chapter[] = chaptersResponse?.data || [];
 
           const chapterRoutes = chapters.map((chapter) => ({
             url: `${baseUrl}/pyq/${subject.slug}/${chapter.id}`,
