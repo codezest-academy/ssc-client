@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { api } from "@/lib/axios";
 import { QuestionRenderer } from "@/components/ui/question-renderer";
+import { ShareScoreButton } from "@/components/ui/share-score-button";
 import {
   BarChart,
   Bar,
@@ -130,12 +131,19 @@ export default function TestReviewPage() {
             <h1 className="text-3xl font-bold text-foreground">Performance Diagnostics</h1>
             <p className="text-muted-foreground mt-1">Score: <span className="font-semibold text-foreground">{attempt.marksObtained}</span> | Accuracy: <span className="font-semibold text-foreground">{Math.round(attempt.accuracy || 0)}%</span></p>
           </div>
-          <button
-            onClick={() => router.push("/dashboard")}
-            className="px-6 py-2 rounded-full border bg-card hover:bg-muted transition-colors text-sm font-semibold shadow-sm"
-          >
-            Exit Review
-          </button>
+          <div className="flex gap-4">
+            <ShareScoreButton 
+              testName={attempt.mockTest?.title || attempt.practiceSet?.title || 'Diagnostic'} 
+              score={attempt.marksObtained} 
+              totalMarks={attempt.mockTest?.totalMarks || 200} 
+            />
+            <button
+              onClick={() => router.push("/dashboard")}
+              className="px-6 py-2 rounded-full border bg-card hover:bg-muted transition-colors text-sm font-semibold shadow-sm"
+            >
+              Exit Review
+            </button>
+          </div>
         </div>
 
         {/* Analytics Dashboard */}
