@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { LayoutGrid, X, Maximize, Minimize } from 'lucide-react';
 import { QuestionPalette } from './QuestionPalette';
 import { cn } from '@/lib/utils';
+import { usePostHog } from 'posthog-js/react';
 
 interface TestLayoutProps {
   children: React.ReactNode;
@@ -43,6 +44,18 @@ export function TestLayout({ children, testTitle }: TestLayoutProps) {
     document.addEventListener("fullscreenchange", handleFullscreenChange);
     return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, []);
+
+  const posthog = usePostHog();
+  const [hasTrackedSubmit, setHasTrackedSubmit] = useState(false);
+
+  useEffect(() => {
+    if (status === 'SUBMITTED' && !hasTrackedSubmit) {
+      posthog?.capture('mock_test_completed', {
+        testTitle,
+      });
+      setHasTrackedSubmit(true);
+    }
+  }, [status, hasTrackedSubmit, posthog, testTitle]);
 
   return (
     <div className="flex flex-col h-screen w-full bg-background overflow-hidden">

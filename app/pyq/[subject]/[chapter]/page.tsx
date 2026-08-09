@@ -3,6 +3,7 @@ import { api } from "@/lib/axios";
 import Link from "next/link";
 import { ArrowLeft, PlayCircle, Trophy, BarChart3, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PyqLandingTracker } from "./tracker";
 
 export async function generateMetadata({
   params,
@@ -78,6 +79,7 @@ export default async function ChapterPYQPage({
 
   return (
     <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6">
+      <PyqLandingTracker subjectSlug={params.subject} chapterId={params.chapter} chapterName={chapter.name} />
       <Link href={`/pyq/${chapter.subject.slug}`} className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-primary mb-8 transition-colors">
         <ArrowLeft className="w-4 h-4 mr-1" /> Back to {chapter.subject.name}
       </Link>

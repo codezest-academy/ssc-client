@@ -45,6 +45,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { PostHogProvider } from "@/components/providers/posthog-provider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -57,17 +59,19 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Providers>
-            {children}
-            <Toaster />
-          </Providers>
-        </ThemeProvider>
+        <PostHogProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Providers>
+              {children}
+              <Toaster />
+            </Providers>
+          </ThemeProvider>
+        </PostHogProvider>
       </body>
     </html>
   );

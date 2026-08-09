@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useAuthStore } from "@/store/auth";
 import { PaywallGate } from "@/components/ui/paywall-gate";
 import { MockTestSection } from "@/types/api";
+import { usePostHog } from 'posthog-js/react';
 
 interface MockTest {
   id: string;
@@ -25,6 +26,7 @@ export default function MockTestOverviewPage() {
   const params = useParams();
   const router = useRouter();
   const id = params?.id as string;
+  const posthog = usePostHog();
 
   const [mockTest, setMockTest] = useState<MockTest | null>(null);
   const [loading, setLoading] = useState(true);
@@ -57,6 +59,13 @@ export default function MockTestOverviewPage() {
         mockTestId: mockTest.id,
       });
       const attemptId = response.data.data.id;
+      
+      posthog?.capture('mock_test_started', {
+        mockTestId: mockTest.id,
+        mockTestTitle: mockTest.title,
+        attemptId: attemptId,
+      });
+
       router.push(`/tests/attempt/${attemptId}`);
     } catch (error) {
       console.error("Failed to start attempt:", error);
