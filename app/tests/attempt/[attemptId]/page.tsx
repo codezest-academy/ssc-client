@@ -125,12 +125,20 @@ export default function TestAttemptPage() {
           <h2 className="font-semibold text-foreground text-center text-lg">Summary</h2>
           <SummaryGrid />
         </div>
-        <a
-          href="/dashboard"
-          className="mt-4 inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-full font-semibold shadow hover:bg-primary/90 transition-colors"
-        >
-          Back to Dashboard
-        </a>
+        <div className="mt-4 flex items-center gap-4">
+          <a
+            href={`/tests/review/${attemptId}`}
+            className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-full font-semibold shadow hover:bg-primary/90 transition-colors"
+          >
+            Review Mistakes
+          </a>
+          <a
+            href="/dashboard"
+            className="inline-flex items-center gap-2 bg-muted text-foreground px-6 py-3 rounded-full font-semibold hover:bg-muted/80 transition-colors"
+          >
+            Dashboard
+          </a>
+        </div>
       </div>
     );
   }
