@@ -46,9 +46,25 @@ interface WeakTopic {
   accuracy: number;
 }
 
+interface DailyAgenda {
+  persona: StudyPersona;
+  targets: { lessons: number; practice: number };
+  progress: { lessonsCompletedToday: number; practiceCompletedToday: number };
+  nextLesson: {
+    id: string;
+    title: string;
+    slug: string;
+    type: string;
+    chapterName: string;
+    chapterSlug: string;
+    subjectName: string;
+    subjectSlug: string;
+  } | null;
+}
+
 // ─── Persona Hero Components ──────────────────────────────────────────────────
 
-function FullTimeHero({ userName }: { userName: string }) {
+function FullTimeHero({ userName, agenda }: { userName: string, agenda: DailyAgenda | null }) {
   return (
     <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20 p-6 md:p-8">
       <div className="absolute inset-0 opacity-5 bg-[radial-gradient(circle_at_80%_50%,hsl(var(--primary))_0%,transparent_60%)]" />
@@ -64,10 +80,10 @@ function FullTimeHero({ userName }: { userName: string }) {
             Good morning, {userName.split(" ")[0]}! 🎯
           </h2>
           <p className="text-muted-foreground text-sm md:text-base max-w-lg">
-            You&apos;re on the <span className="text-foreground font-semibold">full preparation track</span>. Today&apos;s target: complete 2 lessons and 1 practice set to stay on schedule.
+            You&apos;re on the <span className="text-foreground font-semibold">full preparation track</span>. Today&apos;s target: complete {agenda?.targets.lessons || 2} lessons and {agenda?.targets.practice || 1} practice set to stay on schedule.
           </p>
           <div className="flex flex-wrap items-center gap-3 mt-5">
-            <Link href="/dashboard/subjects">
+            <Link href={agenda?.nextLesson ? `/dashboard/subjects/${agenda.nextLesson.subjectSlug}/chapters/${agenda.nextLesson.chapterSlug}/lessons/${agenda.nextLesson.slug}` : "/dashboard/subjects"}>
               <Button size="sm" className="rounded-xl font-semibold">
                 Continue Learning <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
@@ -82,8 +98,8 @@ function FullTimeHero({ userName }: { userName: string }) {
         {/* Daily target chips */}
         <div className="flex md:flex-col gap-3 shrink-0">
           {[
-            { label: "Lessons", target: 2, icon: Book, color: "bg-blue-100 text-blue-600" },
-            { label: "Practice", target: 1, icon: Target, color: "bg-emerald-100 text-emerald-600" },
+            { label: "Lessons", target: agenda?.targets.lessons || 2, current: agenda?.progress.lessonsCompletedToday || 0, icon: Book, color: "bg-blue-100 text-blue-600" },
+            { label: "Practice", target: agenda?.targets.practice || 1, current: agenda?.progress.practiceCompletedToday || 0, icon: Target, color: "bg-emerald-100 text-emerald-600" },
           ].map((item) => (
             <div key={item.label} className="flex items-center gap-3 bg-card border border-border rounded-xl px-4 py-3 shadow-sm">
               <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center", item.color)}>
@@ -91,7 +107,7 @@ function FullTimeHero({ userName }: { userName: string }) {
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">{item.label}</p>
-                <p className="text-sm font-bold text-foreground">0 / {item.target} done</p>
+                <p className="text-sm font-bold text-foreground">{item.current} / {item.target} done</p>
               </div>
             </div>
           ))}
@@ -101,7 +117,7 @@ function FullTimeHero({ userName }: { userName: string }) {
   );
 }
 
-function PartTimeHero({ userName }: { userName: string }) {
+function PartTimeHero({ userName, agenda }: { userName: string, agenda: DailyAgenda | null }) {
   return (
     <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border border-amber-500/20 p-6 md:p-8">
       <div className="absolute inset-0 opacity-5 bg-[radial-gradient(circle_at_80%_50%,hsl(38,92%,50%)_0%,transparent_60%)]" />
@@ -139,7 +155,9 @@ function PartTimeHero({ userName }: { userName: string }) {
             </div>
             <div>
               <p className="text-xs text-muted-foreground">Today&apos;s target</p>
-              <p className="text-sm font-bold text-foreground">15 min quiz</p>
+              <p className="text-sm font-bold text-foreground">
+                {agenda?.progress.practiceCompletedToday ? "Completed!" : "15 min quiz"}
+              </p>
             </div>
           </div>
         </div>
@@ -148,7 +166,7 @@ function PartTimeHero({ userName }: { userName: string }) {
   );
 }
 
-function RepeatHero({ userName, accuracy }: { userName: string; accuracy: number | null }) {
+function RepeatHero({ userName, accuracy, agenda }: { userName: string; accuracy: number | null; agenda: DailyAgenda | null }) {
   const accuracyColor =
     accuracy === null ? "text-muted-foreground" :
     accuracy >= 70 ? "text-success" :
@@ -215,19 +233,21 @@ function PersonaHero({
   persona,
   userName,
   accuracy,
+  agenda,
 }: {
   persona: StudyPersona | null;
   userName: string;
   accuracy: number | null;
+  agenda: DailyAgenda | null;
 }) {
   if (persona === "REPEAT_ASPIRANT") {
-    return <RepeatHero userName={userName} accuracy={accuracy} />;
+    return <RepeatHero userName={userName} accuracy={accuracy} agenda={agenda} />;
   }
   if (persona === "PART_TIME_ASPIRANT") {
-    return <PartTimeHero userName={userName} />;
+    return <PartTimeHero userName={userName} agenda={agenda} />;
   }
   // Default: FULL_TIME_ASPIRANT or null (not yet classified)
-  return <FullTimeHero userName={userName} />;
+  return <FullTimeHero userName={userName} agenda={agenda} />;
 }
 
 // ─── Daily Target Button ──────────────────────────────────────────────────────
@@ -351,16 +371,18 @@ export default function DashboardPage() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [analytics, setAnalytics] = useState<AnalyticsSummary | null>(null);
   const [weakTopics, setWeakTopics] = useState<WeakTopic[]>([]);
+  const [agenda, setAgenda] = useState<DailyAgenda | null>(null);
   const [loading, setLoading] = useState(true);
   const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
     const load = async () => {
       try {
-        const [subjectsRes, analyticsRes, weakTopicsRes] = await Promise.allSettled([
+        const [subjectsRes, analyticsRes, weakTopicsRes, agendaRes] = await Promise.allSettled([
           api.get("/subjects"),
           api.get("/analytics/dashboard"),
           api.get("/analytics/weak-topics"),
+          api.get("/dashboard/agenda"),
         ]);
 
         if (subjectsRes.status === "fulfilled") {
@@ -371,6 +393,9 @@ export default function DashboardPage() {
         }
         if (weakTopicsRes.status === "fulfilled") {
           setWeakTopics(weakTopicsRes.value.data.data);
+        }
+        if (agendaRes.status === "fulfilled") {
+          setAgenda(agendaRes.value.data.data);
         }
       } catch (error) {
         console.error("Failed to load dashboard:", error);
@@ -392,6 +417,7 @@ export default function DashboardPage() {
         persona={user?.studyPersona ?? null}
         userName={user?.name ?? "there"}
         accuracy={analytics?.averageAccuracy ?? null}
+        agenda={agenda}
       />
 
       {/* ── Daily 10-Min Target Widget ──────────────────────── */}
