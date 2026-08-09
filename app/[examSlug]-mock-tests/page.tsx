@@ -8,6 +8,15 @@ export default async function ExamMockTestsLandingPage({ params }: { params: { e
   // Format exam slug to readable title (e.g. ssc-cgl -> SSC CGL)
   const examTitle = params.examSlug.replace(/-/g, ' ').toUpperCase();
   
+  // Fetch mock tests for this exam
+  const examType = params.examSlug.replace(/-/g, '_').toUpperCase();
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1'}/mock-tests?examType=${examType}`, {
+    cache: 'no-store'
+  }).catch(() => null);
+  
+  const result = res ? await res.json().catch(() => null) : null;
+  const mockTests: any[] = result?.data || [];
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Hero Section */}
@@ -80,30 +89,35 @@ export default async function ExamMockTestsLandingPage({ params }: { params: { e
           </div>
 
           <div className="space-y-4">
-            {/* Hardcoded Sample for SEO & Demo */}
-            {[1, 2, 3].map((i) => (
-              <Card key={i} className="bg-card border-border overflow-hidden hover:border-primary/50 transition-colors">
-                <div className="flex flex-col sm:flex-row items-center justify-between p-6 gap-6">
-                  <div className="space-y-2 flex-1 text-center sm:text-left">
-                    <div className="flex items-center justify-center sm:justify-start gap-2">
-                      <h3 className="font-semibold text-lg text-foreground">{examTitle} Full Mock Test {i}</h3>
-                      {i === 1 && <Badge className="bg-success/10 text-success border-success/20">FREE</Badge>}
+            {mockTests.length === 0 ? (
+              <div className="text-center py-12 border border-border rounded-lg bg-card">
+                <p className="text-muted-foreground">No mock tests available for {examTitle} yet. Check back soon!</p>
+              </div>
+            ) : (
+              mockTests.map((test, index) => (
+                <Card key={test.id} className="bg-card border-border overflow-hidden hover:border-primary/50 transition-colors">
+                  <div className="flex flex-col sm:flex-row items-center justify-between p-6 gap-6">
+                    <div className="space-y-2 flex-1 text-center sm:text-left">
+                      <div className="flex items-center justify-center sm:justify-start gap-2">
+                        <h3 className="font-semibold text-lg text-foreground">{test.title}</h3>
+                        {index === 0 && <Badge className="bg-success/10 text-success border-success/20">FREE</Badge>}
+                      </div>
+                      <div className="flex items-center justify-center sm:justify-start gap-4 text-sm text-muted-foreground">
+                        <span className="flex items-center gap-1"><HelpCircle className="w-4 h-4" /> {test.totalQuestions} Qs</span>
+                        <span className="flex items-center gap-1"><Trophy className="w-4 h-4" /> {test.totalMarks} Marks</span>
+                        <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> {test.durationMinutes} Mins</span>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-center sm:justify-start gap-4 text-sm text-muted-foreground">
-                      <span className="flex items-center gap-1"><HelpCircle className="w-4 h-4" /> 100 Qs</span>
-                      <span className="flex items-center gap-1"><Trophy className="w-4 h-4" /> 200 Marks</span>
-                      <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> 60 Mins</span>
-                    </div>
+                    
+                    <Link href={`/tests/overview/${test.id}`}>
+                      <Button variant={index === 0 ? "default" : "outline"} className={index === 0 ? "w-full sm:w-auto" : "w-full sm:w-auto border-primary text-primary hover:bg-primary/10"}>
+                        {index === 0 ? "Attempt Free Test" : "Unlock Test"}
+                      </Button>
+                    </Link>
                   </div>
-                  
-                  <Link href={`/mock-tests/demo-test-${i}`}>
-                    <Button variant={i === 1 ? "default" : "outline"} className={i === 1 ? "w-full sm:w-auto" : "w-full sm:w-auto border-primary text-primary hover:bg-primary/10"}>
-                      {i === 1 ? "Attempt Free Test" : "Unlock Test"}
-                    </Button>
-                  </Link>
-                </div>
-              </Card>
-            ))}
+                </Card>
+              ))
+            )}
           </div>
         </div>
       </section>
