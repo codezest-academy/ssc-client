@@ -1,10 +1,38 @@
 import Link from "next/link";
 import { GraduationCap, CheckCircle2, TrendingUp, BarChart3, Clock, PlayCircle, LogIn, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { TestimonialsSection } from "@/components/marketing/testimonials";
 
 export default function Home() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://codezest-ssc.com/#organization",
+        "name": "Code Zest Academy",
+        "url": "https://codezest-ssc.com",
+        "logo": "https://codezest-ssc.com/logo.png",
+        "description": "The only premium, AI-driven platform that diagnoses your exact weaknesses and generates a personalized, daily micro-learning path to 160+ for SSC CGL."
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://codezest-ssc.com/#website",
+        "url": "https://codezest-ssc.com",
+        "name": "Code Zest",
+        "publisher": {
+          "@id": "https://codezest-ssc.com/#organization"
+        }
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/20 flex flex-col font-sans">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       
       {/* 1. Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
@@ -139,6 +167,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 3.5 Testimonials */}
+      <TestimonialsSection />
+
       {/* 4. Pricing Section */}
       <section id="pricing" className="py-24 border-t">
         <div className="container mx-auto max-w-7xl px-4 sm:px-6">
@@ -221,10 +252,10 @@ export default function Home() {
           <div>
             <h4 className="font-semibold mb-4">Company</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-foreground">About Us</a></li>
-              <li><a href="#" className="hover:text-foreground">Contact</a></li>
-              <li><a href="#" className="hover:text-foreground">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-foreground">Terms of Service</a></li>
+              <li><Link href="/about" className="hover:text-foreground">About Us</Link></li>
+              <li><Link href="/contact" className="hover:text-foreground">Contact</Link></li>
+              <li><Link href="/privacy" className="hover:text-foreground">Privacy Policy</Link></li>
+              <li><Link href="/terms" className="hover:text-foreground">Terms of Service</Link></li>
             </ul>
           </div>
         </div>

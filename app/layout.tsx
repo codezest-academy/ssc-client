@@ -16,11 +16,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://codezest-ssc.com"),
   title: {
     template: "%s | Code Zest",
     default: "SSC CGL Preparation - Diagnostic Mocks & PYQs | Code Zest",
   },
-  description: "The only premium, AI-driven platform that diagnoses your exact weaknesses and generates a personalized, daily micro-learning path to 160+ for SSC CGL.",
+  description: "The only premium, AI-driven platform that diagnoses your exact weaknesses and generates a personalized, daily micro-learning path to 160+ for SSC CGL. Access bilingual video solutions, test series, and advanced analytics.",
   openGraph: {
     title: "SSC CGL Preparation - Diagnostic Mocks & PYQs | Code Zest",
     description: "The only premium, AI-driven platform that diagnoses your exact weaknesses and generates a personalized, daily micro-learning path to 160+ for SSC CGL.",
