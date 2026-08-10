@@ -365,7 +365,11 @@ export default function OnboardingPage() {
           )}
 
           <div className="flex justify-between">
-            <Button variant="ghost" onClick={() => setStep(1)} className="text-slate-400 hover:text-white">
+            <Button 
+              variant="outline" 
+              onClick={() => setStep(1)} 
+              className="h-12 px-6 text-base font-medium rounded-lg border-white/10 text-slate-300 hover:text-white hover:bg-white/5"
+            >
               Previous
             </Button>
             <Button
@@ -413,7 +417,11 @@ export default function OnboardingPage() {
           </div>
 
           <div className="flex justify-between">
-            <Button variant="ghost" onClick={() => setStep(2)} className="text-slate-400 hover:text-white">
+            <Button 
+              variant="outline" 
+              onClick={() => setStep(2)} 
+              className="h-12 px-6 text-base font-medium rounded-lg border-white/10 text-slate-300 hover:text-white hover:bg-white/5"
+            >
               Previous
             </Button>
             <Button
@@ -503,7 +511,11 @@ export default function OnboardingPage() {
           </div>
 
           <div className="flex justify-between">
-            <Button variant="ghost" onClick={() => setStep(3)} className="text-slate-400 hover:text-white">
+            <Button 
+              variant="outline" 
+              onClick={() => setStep(3)} 
+              className="h-12 px-6 text-base font-medium rounded-lg border-white/10 text-slate-300 hover:text-white hover:bg-white/5"
+            >
               Previous
             </Button>
             <div className="flex gap-3">
