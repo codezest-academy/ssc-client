@@ -523,7 +523,7 @@ export default function OnboardingPage() {
                 variant="ghost"
                 onClick={() => handleSubmit(true)}
                 disabled={loading}
-                className="text-slate-400 hover:text-white h-9 px-4 text-sm rounded-full"
+                className="bg-transparent hover:bg-white/5 text-slate-400 hover:text-white h-9 px-4 text-sm rounded-full"
               >
                 <SkipForward className="mr-2 w-3.5 h-3.5" />
                 Skip for now
