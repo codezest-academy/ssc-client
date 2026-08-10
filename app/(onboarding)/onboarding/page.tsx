@@ -307,7 +307,7 @@ export default function OnboardingPage() {
             <Button
               onClick={() => setStep(2)}
               disabled={!canProceedStep1}
-              className="h-12 px-8 text-base font-bold rounded-lg group"
+              className="h-9 px-6 text-sm font-semibold rounded-full group"
             >
               Continue
             </Button>
@@ -364,18 +364,18 @@ export default function OnboardingPage() {
             </div>
           )}
 
-          <div className="flex justify-between">
+          <div className="flex justify-between mt-4">
             <Button 
               variant="outline" 
               onClick={() => setStep(1)} 
-              className="h-12 px-6 text-base font-medium rounded-lg border-white/10 text-slate-300 hover:text-white hover:bg-white/5"
+              className="h-9 px-5 text-sm font-medium rounded-full border-white/10 text-slate-300 hover:text-white hover:bg-white/5"
             >
               Previous
             </Button>
             <Button
               onClick={() => setStep(3)}
               disabled={!canProceedStep2}
-              className="h-12 px-8 text-base font-bold rounded-lg group"
+              className="h-9 px-6 text-sm font-semibold rounded-full group"
             >
               Continue
             </Button>
@@ -416,18 +416,18 @@ export default function OnboardingPage() {
             })}
           </div>
 
-          <div className="flex justify-between">
+          <div className="flex justify-between mt-4">
             <Button 
               variant="outline" 
               onClick={() => setStep(2)} 
-              className="h-12 px-6 text-base font-medium rounded-lg border-white/10 text-slate-300 hover:text-white hover:bg-white/5"
+              className="h-9 px-5 text-sm font-medium rounded-full border-white/10 text-slate-300 hover:text-white hover:bg-white/5"
             >
               Previous
             </Button>
             <Button
               onClick={() => setStep(4)}
               disabled={!canProceedStep3}
-              className="h-12 px-8 text-base font-bold rounded-lg group"
+              className="h-9 px-6 text-sm font-semibold rounded-full group"
             >
               Continue
             </Button>
@@ -510,11 +510,11 @@ export default function OnboardingPage() {
             </div>
           </div>
 
-          <div className="flex justify-between">
+          <div className="flex justify-between mt-4">
             <Button 
               variant="outline" 
               onClick={() => setStep(3)} 
-              className="h-12 px-6 text-base font-medium rounded-lg border-white/10 text-slate-300 hover:text-white hover:bg-white/5"
+              className="h-9 px-5 text-sm font-medium rounded-full border-white/10 text-slate-300 hover:text-white hover:bg-white/5"
             >
               Previous
             </Button>
@@ -523,15 +523,15 @@ export default function OnboardingPage() {
                 variant="ghost"
                 onClick={() => handleSubmit(true)}
                 disabled={loading}
-                className="text-slate-400 hover:text-white"
+                className="text-slate-400 hover:text-white h-9 px-4 text-sm rounded-full"
               >
-                <SkipForward className="mr-2 w-4 h-4" />
+                <SkipForward className="mr-2 w-3.5 h-3.5" />
                 Skip for now
               </Button>
               <Button
                 onClick={() => handleSubmit(false)}
                 disabled={loading}
-                className="h-12 px-8 text-base font-bold rounded-lg"
+                className="h-9 px-6 text-sm font-semibold rounded-full"
               >
                 {loading ? "Setting up..." : "Let's go! 🚀"}
               </Button>
