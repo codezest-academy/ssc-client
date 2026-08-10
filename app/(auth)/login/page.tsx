@@ -27,13 +27,14 @@ export default function LoginPage() {
 
     try {
       const response = await api.post("/auth/login", { email, password, rememberMe });
+      const { user, accessToken } = response.data.data;
       
-      if (response.data.user.role !== "STUDENT") {
+      if (user.role !== "STUDENT") {
         toast.error("Admins must use the admin portal.");
         return;
       }
 
-      setAuth(response.data.user, response.data.token);
+      setAuth(user, accessToken);
       toast.success("Logged in successfully");
       router.push("/dashboard");
     } catch (err) {

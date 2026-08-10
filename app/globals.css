@@ -68,6 +68,8 @@
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+
+  --shadow-floating: var(--floating-shadow);
 }
 
 @layer base {
@@ -138,6 +140,11 @@
     --subject-ga:          oklch(0.65 0.18 300);  /* Purple */
     --subject-reason:      oklch(0.65 0.18 145);  /* Green */
     --subject-science:     oklch(0.65 0.18 190);  /* Teal */
+
+    /* ── Floating Shell Tokens ───────────────────────────────── */
+    --floating-shadow:     0 1px 2px 0 rgb(0 0 0 / 0.04),
+                           0 4px 12px -2px rgb(0 0 0 / 0.06),
+                           0 12px 24px -8px rgb(0 0 0 / 0.05);
   }
 
   .dark {
@@ -205,6 +212,11 @@
     --subject-ga:          oklch(0.60 0.18 300);
     --subject-reason:      oklch(0.60 0.18 145);
     --subject-science:     oklch(0.60 0.18 190);
+
+    /* ── Floating Shell Tokens ───────────────────────────────── */
+    --floating-shadow:     0 1px 2px 0 rgb(0 0 0 / 0.20),
+                           0 4px 12px -2px rgb(0 0 0 / 0.30),
+                           0 12px 24px -8px rgb(0 0 0 / 0.25);
   }
 }
 

@@ -25,18 +25,12 @@ function PostHogPageView() {
 }
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
-  // Check if we are running on the client side
-  if (typeof window !== 'undefined') {
-    return (
-      <Provider client={posthog}>
-        <Suspense fallback={null}>
-          <PostHogPageView />
-        </Suspense>
-        {children}
-      </Provider>
-    )
-  }
-
-  // Server side render
-  return <>{children}</>
+  return (
+    <Provider client={posthog}>
+      <Suspense fallback={null}>
+        <PostHogPageView />
+      </Suspense>
+      {children}
+    </Provider>
+  )
 }
