@@ -84,7 +84,7 @@ const DAILY_TIMES: { id: DailyStudyTime; label: string; description: string; ico
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 interface FormData {
-  targetExam: string | null;
+  targetExam: string[];
   examYear: string | null;
   situationId: string | null;
   occupation: string;
@@ -156,7 +156,7 @@ export default function OnboardingPage() {
   const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState<FormData>({
-    targetExam: null,
+    targetExam: [],
     examYear: null,
     situationId: null,
     occupation: "",
@@ -179,7 +179,7 @@ export default function OnboardingPage() {
     }
   }, [user, isHydrated, router]);
 
-  const canProceedStep1 = form.targetExam !== null && form.examYear !== null;
+  const canProceedStep1 = form.targetExam.length > 0 && form.examYear !== null;
   const canProceedStep2 = form.situationId !== null;
   const canProceedStep3 = form.dailyStudyTime !== null;
 
@@ -196,7 +196,7 @@ export default function OnboardingPage() {
   };
 
   const handleSubmit = async (skipDemographics = false) => {
-    if (!form.targetExam || !form.examYear || !form.dailyStudyTime) return;
+    if (form.targetExam.length === 0 || !form.examYear || !form.dailyStudyTime) return;
 
     setLoading(true);
     try {
@@ -257,11 +257,16 @@ export default function OnboardingPage() {
             {EXAMS.map((exam) => (
               <SelectionCard
                 key={exam.id}
-                isSelected={form.targetExam === exam.id}
-                onClick={() => setForm((p) => ({ ...p, targetExam: exam.id }))}
+                isSelected={form.targetExam.includes(exam.id)}
+                onClick={() => setForm((p) => ({
+                  ...p,
+                  targetExam: p.targetExam.includes(exam.id)
+                    ? p.targetExam.filter((e) => e !== exam.id)
+                    : [...p.targetExam, exam.id]
+                }))}
               >
                 <div>
-                  <span className={cn("font-bold text-base block", form.targetExam === exam.id ? "text-primary" : "text-white")}>
+                  <span className={cn("font-bold text-base block", form.targetExam.includes(exam.id) ? "text-primary" : "text-white")}>
                     {exam.name}
                   </span>
                   <span className="text-xs text-slate-400 mt-0.5 block">{exam.description}</span>
