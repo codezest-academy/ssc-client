@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth";
 import { api } from "@/lib/axios";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import {
   CheckCircle2,
@@ -446,67 +448,68 @@ export default function OnboardingPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
             <div>
               <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Age</label>
-              <input
+              <Input
                 type="number"
                 min={15}
                 max={45}
                 value={form.age}
                 onChange={(e) => setForm((p) => ({ ...p, age: e.target.value }))}
                 placeholder="e.g. 22"
-                className="w-full h-12 px-4 rounded-xl bg-white/8 border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-primary/60 text-sm"
+                className="w-full h-12 px-4 rounded-xl bg-white/8 border-white/10 text-white placeholder:text-slate-500 focus-visible:border-primary/60 focus-visible:ring-0 text-sm"
               />
             </div>
             <div>
               <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Gender</label>
-              <select
-                value={form.gender}
-                onChange={(e) => setForm((p) => ({ ...p, gender: e.target.value }))}
-                className="w-full h-12 px-4 rounded-xl bg-white/8 border border-white/10 text-white focus:outline-none focus:border-primary/60 text-sm appearance-none"
-              >
-                <option value="" className="bg-slate-900">Select...</option>
-                <option value="MALE" className="bg-slate-900">Male</option>
-                <option value="FEMALE" className="bg-slate-900">Female</option>
-                <option value="OTHER" className="bg-slate-900">Other</option>
-                <option value="PREFER_NOT_TO_SAY" className="bg-slate-900">Prefer not to say</option>
-              </select>
+              <Select value={form.gender || undefined} onValueChange={(value) => setForm((p) => ({ ...p, gender: value }))}>
+                <SelectTrigger className="w-full h-12 px-4 rounded-xl bg-white/8 border-white/10 text-white focus:ring-0 focus:border-primary/60 text-sm">
+                  <SelectValue placeholder="Select..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="MALE">Male</SelectItem>
+                  <SelectItem value="FEMALE">Female</SelectItem>
+                  <SelectItem value="OTHER">Other</SelectItem>
+                  <SelectItem value="PREFER_NOT_TO_SAY">Prefer not to say</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div>
               <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Education</label>
-              <select
-                value={form.educationLevel}
-                onChange={(e) => setForm((p) => ({ ...p, educationLevel: e.target.value }))}
-                className="w-full h-12 px-4 rounded-xl bg-white/8 border border-white/10 text-white focus:outline-none focus:border-primary/60 text-sm appearance-none"
-              >
-                <option value="" className="bg-slate-900">Select...</option>
-                <option value="HIGH_SCHOOL" className="bg-slate-900">High School</option>
-                <option value="UNDERGRADUATE" className="bg-slate-900">Undergraduate</option>
-                <option value="POSTGRADUATE" className="bg-slate-900">Postgraduate</option>
-                <option value="OTHER" className="bg-slate-900">Other</option>
-              </select>
+              <Select value={form.educationLevel || undefined} onValueChange={(value) => setForm((p) => ({ ...p, educationLevel: value }))}>
+                <SelectTrigger className="w-full h-12 px-4 rounded-xl bg-white/8 border-white/10 text-white focus:ring-0 focus:border-primary/60 text-sm">
+                  <SelectValue placeholder="Select..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="HIGH_SCHOOL">High School</SelectItem>
+                  <SelectItem value="UNDERGRADUATE">Undergraduate</SelectItem>
+                  <SelectItem value="POSTGRADUATE">Postgraduate</SelectItem>
+                  <SelectItem value="OTHER">Other</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div>
               <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">City</label>
-              <input
+              <Input
                 type="text"
                 value={form.city}
                 onChange={(e) => setForm((p) => ({ ...p, city: e.target.value }))}
                 placeholder="e.g. Delhi"
-                className="w-full h-12 px-4 rounded-xl bg-white/8 border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-primary/60 text-sm"
+                className="w-full h-12 px-4 rounded-xl bg-white/8 border-white/10 text-white placeholder:text-slate-500 focus-visible:border-primary/60 focus-visible:ring-0 text-sm"
               />
             </div>
             <div className="sm:col-span-2">
               <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Monthly Income / Family Income</label>
-              <select
-                value={form.incomeRange}
-                onChange={(e) => setForm((p) => ({ ...p, incomeRange: e.target.value }))}
-                className="w-full h-12 px-4 rounded-xl bg-white/8 border border-white/10 text-white focus:outline-none focus:border-primary/60 text-sm appearance-none"
-              >
-                <option value="" className="bg-slate-900">Prefer not to say</option>
-                <option value="< 3 LPA" className="bg-slate-900">{"< 3 LPA"}</option>
-                <option value="3-6 LPA" className="bg-slate-900">3–6 LPA</option>
-                <option value="6-10 LPA" className="bg-slate-900">6–10 LPA</option>
-                <option value="> 10 LPA" className="bg-slate-900">{"> 10 LPA"}</option>
-              </select>
+              <Select value={form.incomeRange || undefined} onValueChange={(value) => setForm((p) => ({ ...p, incomeRange: value }))}>
+                <SelectTrigger className="w-full h-12 px-4 rounded-xl bg-white/8 border-white/10 text-white focus:ring-0 focus:border-primary/60 text-sm">
+                  <SelectValue placeholder="Prefer not to say" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="< 3 LPA">{"< 3 LPA"}</SelectItem>
+                  <SelectItem value="3-6 LPA">3–6 LPA</SelectItem>
+                  <SelectItem value="6-10 LPA">6–10 LPA</SelectItem>
+                  <SelectItem value="> 10 LPA">{"> 10 LPA"}</SelectItem>
+                  <SelectItem value="PREFER_NOT_TO_SAY">Prefer not to say</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -533,7 +536,7 @@ export default function OnboardingPage() {
                 disabled={loading}
                 className="h-9 px-6 text-sm font-semibold rounded-full"
               >
-                {loading ? "Setting up..." : "Let's go! 🚀"}
+                {loading ? "Setting up..." : "Let's go!"}
               </Button>
             </div>
           </div>
