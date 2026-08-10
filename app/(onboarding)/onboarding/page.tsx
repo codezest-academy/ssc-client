@@ -368,7 +368,7 @@ export default function OnboardingPage() {
             <Button 
               variant="outline" 
               onClick={() => setStep(1)} 
-              className="h-9 px-5 text-sm font-medium rounded-full border-white/10 text-slate-300 hover:text-white hover:bg-white/5"
+              className="bg-transparent h-9 px-5 text-sm font-medium rounded-full border-white/10 text-slate-300 hover:text-white hover:bg-white/5"
             >
               Previous
             </Button>
@@ -420,7 +420,7 @@ export default function OnboardingPage() {
             <Button 
               variant="outline" 
               onClick={() => setStep(2)} 
-              className="h-9 px-5 text-sm font-medium rounded-full border-white/10 text-slate-300 hover:text-white hover:bg-white/5"
+              className="bg-transparent h-9 px-5 text-sm font-medium rounded-full border-white/10 text-slate-300 hover:text-white hover:bg-white/5"
             >
               Previous
             </Button>
@@ -514,7 +514,7 @@ export default function OnboardingPage() {
             <Button 
               variant="outline" 
               onClick={() => setStep(3)} 
-              className="h-9 px-5 text-sm font-medium rounded-full border-white/10 text-slate-300 hover:text-white hover:bg-white/5"
+              className="bg-transparent h-9 px-5 text-sm font-medium rounded-full border-white/10 text-slate-300 hover:text-white hover:bg-white/5"
             >
               Previous
             </Button>
