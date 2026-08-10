@@ -31,7 +31,14 @@ const EXAMS = [
   { id: "SSC_GD", name: "SSC GD", description: "General Duty Constable" },
 ];
 
-const EXAM_YEARS = ["2025", "2026", "2027", "2028", "Not sure yet"];
+const currentYear = new Date().getFullYear();
+const EXAM_YEARS = [
+  currentYear.toString(),
+  (currentYear + 1).toString(),
+  (currentYear + 2).toString(),
+  (currentYear + 3).toString(),
+  "Not sure yet"
+];
 
 const SITUATIONS = [
   {
