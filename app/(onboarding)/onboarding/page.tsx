@@ -140,7 +140,7 @@ function SelectionCard({
       type="button"
       onClick={onClick}
       className={cn(
-        "relative flex items-start gap-4 text-left p-5 rounded-xl border-2 transition-all duration-200 w-full min-h-[44px]",
+        "relative flex items-start gap-4 cursor-pointer text-left p-5 rounded-xl border-2 transition-all duration-200 w-full min-h-[44px]",
         isSelected
           ? "border-primary bg-primary/10"
           : "border-white/10 bg-white/5 hover:border-primary/40 hover:bg-white/8"
