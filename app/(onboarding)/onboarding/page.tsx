@@ -310,7 +310,6 @@ export default function OnboardingPage() {
               className="h-12 px-8 text-base font-bold rounded-lg group"
             >
               Continue
-              <ChevronRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>
         </div>
@@ -367,7 +366,7 @@ export default function OnboardingPage() {
 
           <div className="flex justify-between">
             <Button variant="ghost" onClick={() => setStep(1)} className="text-slate-400 hover:text-white">
-              <ChevronLeft className="mr-2 w-4 h-4" /> Back
+              Previous
             </Button>
             <Button
               onClick={() => setStep(3)}
@@ -375,7 +374,6 @@ export default function OnboardingPage() {
               className="h-12 px-8 text-base font-bold rounded-lg group"
             >
               Continue
-              <ChevronRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>
         </div>
@@ -416,7 +414,7 @@ export default function OnboardingPage() {
 
           <div className="flex justify-between">
             <Button variant="ghost" onClick={() => setStep(2)} className="text-slate-400 hover:text-white">
-              <ChevronLeft className="mr-2 w-4 h-4" /> Back
+              Previous
             </Button>
             <Button
               onClick={() => setStep(4)}
@@ -424,7 +422,6 @@ export default function OnboardingPage() {
               className="h-12 px-8 text-base font-bold rounded-lg group"
             >
               Continue
-              <ChevronRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>
         </div>
@@ -507,7 +504,7 @@ export default function OnboardingPage() {
 
           <div className="flex justify-between">
             <Button variant="ghost" onClick={() => setStep(3)} className="text-slate-400 hover:text-white">
-              <ChevronLeft className="mr-2 w-4 h-4" /> Back
+              Previous
             </Button>
             <div className="flex gap-3">
               <Button
