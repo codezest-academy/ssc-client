@@ -15,7 +15,13 @@ export default function NotFound() {
 
   return (
     <div className="min-h-screen flex flex-col font-sans bg-background text-foreground bg-grid-pattern">
-      {showDashboardNav ? <FloatingNav /> : <MarketingNav />}
+      {showDashboardNav ? (
+        <div className="p-2 sm:p-3 md:p-4 pb-0">
+          <FloatingNav />
+        </div>
+      ) : (
+        <MarketingNav />
+      )}
       <main className="flex-1 relative flex flex-col items-center justify-center p-4">
         <div className="text-center max-w-2xl mx-auto space-y-6 relative z-10 py-24">
           <div className="relative flex items-center justify-center mb-8">
@@ -47,7 +53,7 @@ export default function NotFound() {
           </div>
         </div>
       </main>
-      <MarketingFooter />
+      {!showDashboardNav && <MarketingFooter />}
     </div>
   );
 }

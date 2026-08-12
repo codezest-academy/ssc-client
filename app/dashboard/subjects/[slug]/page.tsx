@@ -126,7 +126,7 @@ export default function SubjectPage() {
           />
         ) : (
           subject.chapters.map((chapter) => (
-            <Link key={chapter.id} href={`/dashboard/subjects/${subject.slug}/chapters/${chapter.slug}`} className="block group">
+            <Link key={chapter.id} href={`/dashboard/learn/${subject.slug}/${chapter.slug}`} className="block group">
               <Card className="border-border hover:border-primary/50 hover:bg-slate-50 transition-colors duration-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between p-6 rounded-xl">
                 <div className="flex items-start gap-4 flex-1">
                   <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center shrink-0 text-slate-500 font-bold group-hover:bg-primary/10 group-hover:text-primary transition-colors">
