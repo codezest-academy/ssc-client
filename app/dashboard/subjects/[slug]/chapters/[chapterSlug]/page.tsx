@@ -39,6 +39,7 @@ interface PracticeSet {
 interface Chapter {
   id: string;
   name: string;
+  slug: string;
   description: string;
   practiceSets?: PracticeSet[];
 }
@@ -53,7 +54,7 @@ export default function ChapterPage() {
   const params = useParams();
   const router = useRouter();
   const slug = params?.slug as string;
-  const chapterId = params?.chapterId as string;
+  const chapterSlug = params?.chapterSlug as string;
   
   const [subject, setSubject] = useState<SubjectDetails | null>(null);
   const [chapter, setChapter] = useState<Chapter | null>(null);
@@ -62,7 +63,7 @@ export default function ChapterPage() {
   const [error, setError] = useState<Error | null>(null);
 
   const fetchData = async () => {
-    if (!slug || !chapterId) return;
+    if (!slug || !chapterSlug) return;
     try {
       setLoading(true);
       setError(null);
@@ -71,14 +72,16 @@ export default function ChapterPage() {
       const subjectData = subjectRes.data.data;
       setSubject(subjectData);
       
-      const currentChapter = subjectData.chapters.find((c: Chapter) => c.id === chapterId);
+      const currentChapter = subjectData.chapters.find((c: Chapter) => c.slug === chapterSlug);
       if (currentChapter) {
         setChapter(currentChapter);
       }
 
       // Fetch lessons for this chapter
-      const lessonsRes = await api.get(`/lessons/chapter/${chapterId}`);
-      setLessons(lessonsRes.data.data);
+      if (currentChapter) {
+        const lessonsRes = await api.get(`/lessons/chapter/${currentChapter.id}`);
+        setLessons(lessonsRes.data.data);
+      }
     } catch (err: any) {
       console.error("Failed to load chapter data:", err);
       setError(err instanceof Error ? err : new Error(err.response?.data?.message || err.message || "Failed to load chapter data"));
@@ -89,7 +92,7 @@ export default function ChapterPage() {
 
   useEffect(() => {
     fetchData();
-  }, [slug, chapterId]);
+  }, [slug, chapterSlug]);
 
   if (loading) {
     return (
@@ -185,7 +188,7 @@ export default function ChapterPage() {
                       <div className="flex items-center gap-4 mt-3 text-xs font-medium text-slate-400">
                         <div className="flex items-center">
                           <Clock className="w-3.5 h-3.5 mr-1" />
-                          {Math.floor(lesson.duration / 60)} mins
+                          {lesson.duration ? `${Math.floor(lesson.duration / 60)} mins` : lesson.type === 'ARTICLE' ? 'Article' : 'N/A'}
                         </div>
                         <div className="flex items-center">
                           {isCompleted ? (
@@ -198,7 +201,7 @@ export default function ChapterPage() {
                     </div>
                     
                     <div className="mt-4 sm:mt-0 flex justify-end">
-                      <Link href={`/dashboard/lessons/${lesson.slug}`} className="w-full sm:w-auto">
+                      <Link href={`/dashboard/learn/${slug}/${chapter.slug}/${lesson.slug}`} className="w-full sm:w-auto">
                         <Button variant="secondary" className="w-full">
                           View Lesson
                         </Button>

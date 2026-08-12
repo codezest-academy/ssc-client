@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useMemo, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
@@ -46,19 +47,32 @@ interface Lesson {
 export default function LessonViewerPage() {
   const params = useParams();
   const router = useRouter();
-  const slug = params?.slug as string;
+  const subjectSlug = params?.subjectSlug as string;
+  const chapterSlug = params?.chapterSlug as string;
+  const lessonSlug = params?.lessonSlug as string;
   const queryClient = useQueryClient();
 
   const user = useAuthStore((state) => state.user);
 
+  const [currentPage, setCurrentPage] = useState(0);
+
   const { data: lesson, isLoading: loading, error: lessonError, refetch: refetchLesson } = useQuery<Lesson>({
-    queryKey: ["lesson", slug],
+    queryKey: ["lesson", subjectSlug, chapterSlug, lessonSlug],
     queryFn: async () => {
-      const response = await api.get(`/lessons/${slug}`);
+      const response = await api.get(`/lessons/learn/${subjectSlug}/${chapterSlug}/${lessonSlug}`);
       return response.data.data;
     },
-    enabled: !!slug,
+    enabled: !!subjectSlug && !!chapterSlug && !!lessonSlug,
   });
+
+  const articlePages = useMemo(() => {
+    if (lesson?.type !== "ARTICLE" || !lesson?.articleHtml) return [];
+    return lesson.articleHtml.split(/<hr\s*\/?>/i).map(page => page.trim()).filter(Boolean);
+  }, [lesson?.articleHtml, lesson?.type]);
+
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [lesson?.id]);
 
   const { data: chapterLessons } = useQuery<Lesson[]>({
     queryKey: ["chapter-lessons", lesson?.chapter.id],
@@ -78,12 +92,12 @@ export default function LessonViewerPage() {
     },
     onMutate: async (isCompleted) => {
       if (!lesson) return;
-      await queryClient.cancelQueries({ queryKey: ["lesson", slug] });
-      const previousLesson = queryClient.getQueryData<Lesson>(["lesson", slug]);
+      await queryClient.cancelQueries({ queryKey: ["lesson", subjectSlug, chapterSlug, lessonSlug] });
+      const previousLesson = queryClient.getQueryData<Lesson>(["lesson", subjectSlug, chapterSlug, lessonSlug]);
 
       // Optimistically update
       if (previousLesson) {
-        queryClient.setQueryData<Lesson>(["lesson", slug], {
+        queryClient.setQueryData<Lesson>(["lesson", subjectSlug, chapterSlug, lessonSlug], {
           ...previousLesson,
           progress: [
             {
@@ -97,11 +111,11 @@ export default function LessonViewerPage() {
     },
     onError: (err, newStatus, context) => {
       if (context?.previousLesson) {
-        queryClient.setQueryData(["lesson", slug], context.previousLesson);
+        queryClient.setQueryData(["lesson", subjectSlug, chapterSlug, lessonSlug], context.previousLesson);
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["lesson", slug] });
+      queryClient.invalidateQueries({ queryKey: ["lesson", subjectSlug, chapterSlug, lessonSlug] });
     },
   });
 
@@ -138,6 +152,7 @@ export default function LessonViewerPage() {
 
   const isCompleted = !!lesson.progress?.[0]?.completedAt;
   const hasAccess = lesson.isFree || (user && user.subscriptionTier !== "FREE");
+  const isFinalPage = lesson.type !== "ARTICLE" || articlePages.length === 0 || currentPage === articlePages.length - 1;
 
   const getLessonIcon = (type: string) => {
     switch (type) {
@@ -194,9 +209,33 @@ export default function LessonViewerPage() {
                   allowFullScreen
                 />
               </div>
-            ) : lesson.type === "ARTICLE" && lesson.articleHtml ? (
-              <div className="p-8 prose prose-slate max-w-none prose-headings:text-slate-900 prose-a:text-primary">
-                <QuestionRenderer content={lesson.articleHtml} />
+            ) : lesson.type === "ARTICLE" && articlePages.length > 0 ? (
+              <div className="flex flex-col h-full min-h-full">
+                <div className="flex-1 p-8 md:p-12 lg:p-16 prose prose-lg prose-slate max-w-none prose-headings:font-display prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-slate-900 prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-p:leading-relaxed prose-p:text-slate-600 prose-li:marker:text-primary prose-li:text-slate-600 prose-strong:text-slate-900 prose-hr:border-border">
+                  <QuestionRenderer content={articlePages[currentPage]} />
+                </div>
+                
+                {articlePages.length > 1 && (
+                  <div className="flex items-center justify-between p-6 border-t border-border bg-slate-50 mt-auto rounded-b-2xl">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
+                      disabled={currentPage === 0}
+                    >
+                      <ArrowLeft className="w-4 h-4 mr-2" /> Previous Page
+                    </Button>
+                    <span className="text-sm font-medium text-slate-500">
+                      Page {currentPage + 1} of {articlePages.length}
+                    </span>
+                    <Button 
+                      variant={currentPage === articlePages.length - 1 ? "secondary" : "default"}
+                      onClick={() => setCurrentPage(prev => Math.min(articlePages.length - 1, prev + 1))}
+                      disabled={currentPage === articlePages.length - 1}
+                    >
+                      Next Page <ArrowLeft className="w-4 h-4 ml-2 rotate-180" />
+                    </Button>
+                  </div>
+                )}
               </div>
             ) : lesson.type === "PDF" && lesson.pdfUrl ? (
               <div className="w-full h-[80vh]">
@@ -224,7 +263,7 @@ export default function LessonViewerPage() {
                   return (
                     <Link
                       key={l.id}
-                      href={`/dashboard/lessons/${l.slug}`}
+                      href={`/dashboard/learn/${subjectSlug}/${chapterSlug}/${l.slug}`}
                       className={cn(
                         "flex items-center gap-3 p-3 rounded-xl transition-colors",
                         isCurrent ? "bg-primary/10 border border-primary/20" : "hover:bg-slate-50 border border-transparent"
@@ -268,22 +307,28 @@ export default function LessonViewerPage() {
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Chapter
           </Button>
           
-          <Button
-            onClick={handleMarkComplete}
-            disabled={markCompleteMutation.isPending}
-            variant={isCompleted ? "secondary" : "default"}
-            className={isCompleted ? "text-emerald-700 bg-emerald-100 hover:bg-emerald-200" : ""}
-          >
-            {isCompleted ? (
-              <>
-                <CheckCircle2 className="w-5 h-5 mr-2" /> Completed
-              </>
-            ) : (
-              <>
-                <Circle className="w-5 h-5 mr-2" /> Mark as Complete
-              </>
-            )}
-          </Button>
+          {isFinalPage ? (
+            <Button
+              onClick={handleMarkComplete}
+              disabled={markCompleteMutation.isPending}
+              variant={isCompleted ? "secondary" : "default"}
+              className={isCompleted ? "text-emerald-700 bg-emerald-100 hover:bg-emerald-200" : ""}
+            >
+              {isCompleted ? (
+                <>
+                  <CheckCircle2 className="w-5 h-5 mr-2" /> Completed
+                </>
+              ) : (
+                <>
+                  <Circle className="w-5 h-5 mr-2" /> Mark as Complete
+                </>
+              )}
+            </Button>
+          ) : (
+            <Button disabled variant="outline" className="text-slate-400">
+              Complete Lesson to Finish
+            </Button>
+          )}
         </div>
       </div>
     </div>

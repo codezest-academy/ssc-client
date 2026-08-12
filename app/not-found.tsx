@@ -1,18 +1,21 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { MarketingNav } from "@/components/layout/MarketingNav";
 import { MarketingFooter } from "@/components/layout/MarketingFooter";
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "404 - Page Not Found",
-  description: "The page you are looking for does not exist.",
-};
+import { FloatingNav } from "@/components/layout/FloatingNav";
+import { useAuthStore } from "@/store/auth";
 
 export default function NotFound() {
+  const user = useAuthStore((state) => state.user);
+  const isHydrated = useAuthStore((state) => state.isHydrated);
+
+  const showDashboardNav = isHydrated && user;
+
   return (
     <div className="min-h-screen flex flex-col font-sans bg-background text-foreground bg-grid-pattern">
-      <MarketingNav />
+      {showDashboardNav ? <FloatingNav /> : <MarketingNav />}
       <main className="flex-1 relative flex flex-col items-center justify-center p-4">
         <div className="text-center max-w-2xl mx-auto space-y-6 relative z-10 py-24">
           <div className="relative flex items-center justify-center mb-8">
@@ -31,9 +34,9 @@ export default function NotFound() {
           </p>
           
           <div className="pt-8 flex justify-center gap-4">
-            <Link href="/">
+            <Link href={showDashboardNav ? "/dashboard" : "/"}>
               <Button size="lg" className="rounded-full px-8 font-semibold shadow-xl shadow-primary/20">
-                Return Home
+                {showDashboardNav ? "Return to Dashboard" : "Return Home"}
               </Button>
             </Link>
             <Link href="/contact">
