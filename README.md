@@ -8,6 +8,7 @@ Used by `STUDENT` roles to browse lessons, attempt practice sets, take mock test
 - **Mock Test Engine:** Timed exam simulation with multiple sections, tracking attempts, and auto-submit.
 - **Content Access:** Role and payment-gated content locking via Razorpay.
 - **Responsive UI:** Fully responsive Next.js application leveraging Shadcn UI components.
+- **Programmatic SEO:** Dynamic SSR routes and sitemap generation for indexing Previous Year Questions (PYQs).
 
 ## 🛠️ Tech Stack
 - **Framework:** Next.js (App Router)
