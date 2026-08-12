@@ -62,7 +62,7 @@ export function MarketingFooter() {
             </li>
             <li>
               <Link
-                href="/privacy-policy"
+                href="/privacy"
                 className="hover:text-white transition-colors"
               >
                 Privacy Policy

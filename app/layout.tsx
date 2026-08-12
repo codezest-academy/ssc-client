@@ -57,10 +57,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${jakarta.variable} h-full antialiased`}
+      className={`${inter.variable} ${jakarta.variable} antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-screen flex flex-col bg-background text-foreground">
         <PostHogProvider>
           <ThemeProvider
             attribute="class"

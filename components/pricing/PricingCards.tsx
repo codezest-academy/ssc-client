@@ -162,8 +162,15 @@ export function PricingCards() {
           </ul>
         </CardContent>
         <CardFooter className="pt-8 mt-auto">
-          <Button className="w-full" variant="outline" disabled>
-            {user?.subscriptionTier === "FREE" ? "Current Plan" : "Included"}
+          <Button 
+            className="w-full" 
+            variant="outline" 
+            disabled={!!user}
+            onClick={() => {
+              if (!user) router.push("/register");
+            }}
+          >
+            {user?.subscriptionTier === "FREE" ? "Current Plan" : user ? "Included" : "Get Started"}
           </Button>
         </CardFooter>
       </Card>
