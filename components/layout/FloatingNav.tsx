@@ -44,9 +44,9 @@ export function FloatingNav() {
   if (!user) return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 px-4 pt-4 pb-2 md:px-6 md:pt-6 pointer-events-none">
+    <div className="relative z-50 w-full">
       <div className="mx-auto max-w-7xl">
-        <header className="pointer-events-auto flex items-center justify-between h-16 px-4 md:px-6 rounded-2xl bg-card/95 backdrop-blur-md shadow-floating border border-border transition-all duration-300">
+        <header className="flex items-center justify-between h-16 px-4 md:px-6 rounded-2xl bg-card shadow-floating border border-border transition-all duration-300">
           {/* Logo & Main Nav */}
           <div className="flex items-center gap-8">
             <Link href="/dashboard" className="flex items-center gap-2 group">

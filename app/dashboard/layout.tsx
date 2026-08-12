@@ -35,10 +35,9 @@ export default function DashboardLayout({
       
       {/* 
         The main dashboard content floats inside its own bordered, rounded canvas.
-        The top padding accounts for the fixed floating nav pill inside the canvas.
       */}
       <main className="client-shell-inner scroll-smooth">
-        <div className="max-w-7xl mx-auto pt-28 pb-12 px-4 md:px-8">
+        <div className="max-w-7xl mx-auto py-6 md:py-8 px-4 md:px-8">
           {children}
         </div>
       </main>
