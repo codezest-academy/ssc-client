@@ -122,6 +122,26 @@ export default function LessonViewerPage() {
   const handleMarkComplete = () => {
     if (!lesson) return;
     const isCompleted = !!lesson.progress?.[0]?.completedAt;
+    
+    if (!isCompleted) {
+      markCompleteMutation.mutate(false); // Mark as complete
+    }
+    
+    // Auto-advance
+    if (chapterLessons) {
+      const currentIndex = chapterLessons.findIndex(l => l.id === lesson.id);
+      if (currentIndex !== -1 && currentIndex < chapterLessons.length - 1) {
+        const nextLesson = chapterLessons[currentIndex + 1];
+        router.push(`/dashboard/learn/${subjectSlug}/${chapterSlug}/${nextLesson.slug}`);
+      } else {
+        router.push(`/dashboard/subjects/${subjectSlug}/chapters/${chapterSlug}`);
+      }
+    }
+  };
+
+  const toggleCompletion = () => {
+    if (!lesson) return;
+    const isCompleted = !!lesson.progress?.[0]?.completedAt;
     markCompleteMutation.mutate(isCompleted);
   };
 
@@ -164,7 +184,7 @@ export default function LessonViewerPage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto pb-24">
+    <div className="max-w-5xl mx-auto pb-12">
       {/* Breadcrumbs */}
       <div className="flex items-center gap-2 mb-6 text-sm font-medium text-slate-500 overflow-x-auto whitespace-nowrap pb-2">
         <Link href="/dashboard" className="hover:text-primary transition-colors">Dashboard</Link>
@@ -181,16 +201,38 @@ export default function LessonViewerPage() {
       </div>
 
       {/* Lesson Header */}
-      <div className="mb-8 flex items-center justify-between">
+      <div className="mb-8 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">{lesson.title}</h1>
           {lesson.description && <p className="text-slate-500 text-lg">{lesson.description}</p>}
         </div>
-        {!lesson.isFree && (
-          <span className="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded flex items-center gap-1 border border-amber-200">
-            Premium
-          </span>
-        )}
+        <div className="flex flex-col items-end gap-3 shrink-0 mt-1">
+          {!lesson.isFree && (
+            <span className="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded flex items-center gap-1 border border-amber-200">
+              Premium
+            </span>
+          )}
+          {hasAccess && (
+            <Button
+              variant={isCompleted ? "secondary" : "outline"}
+              size="sm"
+              onClick={toggleCompletion}
+              disabled={markCompleteMutation.isPending}
+              className={cn(
+                "rounded-full transition-all duration-200 shadow-sm font-medium",
+                isCompleted 
+                  ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200 border-emerald-200"
+                  : "bg-white hover:bg-slate-50 text-slate-600 border-slate-200"
+              )}
+            >
+              {isCompleted ? (
+                <><CheckCircle2 className="w-4 h-4 mr-1.5" /> Completed</>
+              ) : (
+                <><Circle className="w-4 h-4 mr-1.5 text-slate-400" /> Mark as Complete</>
+              )}
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Lesson Content Area */}
@@ -214,40 +256,87 @@ export default function LessonViewerPage() {
                 <div className="flex-1 p-8 md:p-12 lg:p-16 prose prose-lg prose-slate max-w-none prose-headings:font-display prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-slate-900 prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-p:leading-relaxed prose-p:text-slate-600 prose-li:marker:text-primary prose-li:text-slate-600 prose-strong:text-slate-900 prose-hr:border-border">
                   <QuestionRenderer content={articlePages[currentPage]} />
                 </div>
-                
-                {articlePages.length > 1 && (
-                  <div className="flex items-center justify-between p-6 border-t border-border bg-slate-50 mt-auto rounded-b-2xl">
+                {/* Pagination Footer */}
+                <div className="flex items-center justify-between p-6 border-t border-border bg-slate-50 mt-auto rounded-b-2xl">
+                  {articlePages.length > 1 ? (
                     <Button 
                       variant="outline" 
                       onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
                       disabled={currentPage === 0}
                     >
-                      <ArrowLeft className="w-4 h-4 mr-2" /> Previous Page
+                      <ArrowLeft className="w-4 h-4 mr-2" /> Previous
                     </Button>
+                  ) : <div></div>}
+                  
+                  {articlePages.length > 1 && (
                     <span className="text-sm font-medium text-slate-500">
                       Page {currentPage + 1} of {articlePages.length}
                     </span>
+                  )}
+
+                  {isFinalPage ? (
+                    <div className="flex items-center gap-3">
+                      {isCompleted && (
+                        <Button
+                          variant="ghost"
+                          onClick={toggleCompletion}
+                          className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
+                        >
+                          <CheckCircle2 className="w-5 h-5 mr-2" /> Completed
+                        </Button>
+                      )}
+                      <Button
+                        onClick={handleMarkComplete}
+                        disabled={markCompleteMutation.isPending}
+                        className={isCompleted ? "bg-slate-900 hover:bg-slate-800" : ""}
+                      >
+                        {isCompleted ? "Continue" : "Complete & Continue"} <ArrowLeft className="w-4 h-4 ml-2 rotate-180" />
+                      </Button>
+                    </div>
+                  ) : (
                     <Button 
-                      variant={currentPage === articlePages.length - 1 ? "secondary" : "default"}
                       onClick={() => setCurrentPage(prev => Math.min(articlePages.length - 1, prev + 1))}
-                      disabled={currentPage === articlePages.length - 1}
                     >
-                      Next Page <ArrowLeft className="w-4 h-4 ml-2 rotate-180" />
+                      Next <ArrowLeft className="w-4 h-4 ml-2 rotate-180" />
                     </Button>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             ) : lesson.type === "PDF" && lesson.pdfUrl ? (
               <div className="w-full h-[80vh]">
                 <iframe
                   src={lesson.pdfUrl}
-                  className="w-full h-full border-0"
+                  className="w-full h-full border-0 rounded-t-2xl"
                   title="PDF Viewer"
                 />
               </div>
             ) : (
               <div className="p-12 text-center text-slate-400">
                 Content not available for this lesson.
+              </div>
+            )}
+            
+            {/* Video/PDF Action Bar */}
+            {lesson.type !== "ARTICLE" && (
+              <div className="flex items-center justify-end p-6 border-t border-border bg-slate-50 mt-auto rounded-b-2xl">
+                <div className="flex items-center gap-3">
+                  {isCompleted && (
+                    <Button
+                      variant="ghost"
+                      onClick={toggleCompletion}
+                      className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
+                    >
+                      <CheckCircle2 className="w-5 h-5 mr-2" /> Completed
+                    </Button>
+                  )}
+                  <Button
+                    onClick={handleMarkComplete}
+                    disabled={markCompleteMutation.isPending}
+                    className={isCompleted ? "bg-slate-900 hover:bg-slate-800" : ""}
+                  >
+                    {isCompleted ? "Continue" : "Complete & Continue"} <ArrowLeft className="w-4 h-4 ml-2 rotate-180" />
+                  </Button>
+                </div>
               </div>
             )}
           </div>
@@ -296,41 +385,6 @@ export default function LessonViewerPage() {
           </div>
         </div>
       )}
-
-      {/* Fixed Bottom Action Bar */}
-      <div className="fixed bottom-0 left-0 right-0 md:left-64 bg-white/80 backdrop-blur-md border-t border-border p-4 px-6 sm:px-8 z-40">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <Button 
-            variant="ghost" 
-            onClick={() => router.push(`/dashboard/subjects/${lesson.subject?.slug}/chapters/${lesson.chapter?.id}`)}
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" /> Back to Chapter
-          </Button>
-          
-          {isFinalPage ? (
-            <Button
-              onClick={handleMarkComplete}
-              disabled={markCompleteMutation.isPending}
-              variant={isCompleted ? "secondary" : "default"}
-              className={isCompleted ? "text-emerald-700 bg-emerald-100 hover:bg-emerald-200" : ""}
-            >
-              {isCompleted ? (
-                <>
-                  <CheckCircle2 className="w-5 h-5 mr-2" /> Completed
-                </>
-              ) : (
-                <>
-                  <Circle className="w-5 h-5 mr-2" /> Mark as Complete
-                </>
-              )}
-            </Button>
-          ) : (
-            <Button disabled variant="outline" className="text-slate-400">
-              Complete Lesson to Finish
-            </Button>
-          )}
-        </div>
-      </div>
     </div>
   );
 }
