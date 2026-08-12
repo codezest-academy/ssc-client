@@ -4,9 +4,17 @@ import { useAuthStore } from "@/store/auth";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { LogOut, Flame, Sparkles } from "lucide-react";
+import { LogOut, Flame, Sparkles, User, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { api } from "@/lib/axios";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function FloatingNav() {
   const user = useAuthStore((state) => state.user);
@@ -87,16 +95,46 @@ export function FloatingNav() {
               <span className="text-sm">{user.streakDays || 0}</span>
             </div>
 
-            <div className="hidden sm:flex items-center gap-2">
-              <div className="flex flex-col items-end">
-                <span className="text-sm font-semibold leading-none">{user.name}</span>
-                <span className="text-xs text-muted-foreground mt-1 capitalize">{user.subscriptionTier?.toLowerCase() || 'Free'}</span>
-              </div>
-            </div>
-
-            <Button variant="ghost" size="icon" onClick={handleLogout} className="rounded-full hover:bg-destructive/10 hover:text-destructive text-muted-foreground" title="Logout">
-              <LogOut className="w-4 h-4" />
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-10 pl-1.5 pr-3 rounded-full border border-border bg-muted/50 hover:bg-muted flex items-center gap-2">
+                  <span className="sr-only">Open user menu</span>
+                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-xs">
+                    {user.name?.charAt(0).toUpperCase() || <User className="h-4 w-4" />}
+                  </div>
+                  <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{user.name}</p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {user.email}
+                    </p>
+                    <p className="text-[10px] font-bold text-primary uppercase tracking-widest mt-2">
+                      {user.subscriptionTier || 'Free'} Plan
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/profile" className="cursor-pointer">
+                    Profile Settings
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/pricing" className="cursor-pointer text-primary font-medium">
+                    Upgrade Plan
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </header>
       </div>

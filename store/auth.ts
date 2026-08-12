@@ -24,7 +24,7 @@ export interface User {
   name: string;
   role: Role;
   avatarUrl?: string | null;
-  targetExam?: string | null;
+  targetExam?: string[] | null;
   examYear?: number | null;
   subscriptionTier: SubscriptionTier;
   subscriptionExpiresAt: string | null;

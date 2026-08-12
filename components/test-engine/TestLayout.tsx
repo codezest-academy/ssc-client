@@ -46,16 +46,16 @@ export function TestLayout({ children, testTitle }: TestLayoutProps) {
   }, []);
 
   const posthog = usePostHog();
-  const [hasTrackedSubmit, setHasTrackedSubmit] = useState(false);
+  const hasTrackedSubmit = React.useRef(false);
 
   useEffect(() => {
-    if (status === 'SUBMITTED' && !hasTrackedSubmit) {
+    if (status === 'SUBMITTED' && !hasTrackedSubmit.current) {
       posthog?.capture('mock_test_completed', {
         testTitle,
       });
-      setHasTrackedSubmit(true);
+      hasTrackedSubmit.current = true;
     }
-  }, [status, hasTrackedSubmit, posthog, testTitle]);
+  }, [status, posthog, testTitle]);
 
   return (
     <div className="flex flex-col h-screen w-full bg-background overflow-hidden">
