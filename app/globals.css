@@ -242,7 +242,7 @@
 @layer utilities {
   /* Floating Dashboard Shell Architecture */
   .client-shell-outer {
-    @apply min-h-screen bg-muted/30 p-2 sm:p-4 md:p-5 flex flex-col gap-4 relative isolation-auto;
+    @apply h-[100dvh] overflow-hidden bg-muted/30 p-2 sm:p-4 md:p-5 flex flex-col gap-4 relative isolation-auto;
   }
   
   .client-shell-inner {

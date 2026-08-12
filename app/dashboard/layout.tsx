@@ -36,8 +36,8 @@ export default function DashboardLayout({
       {/* 
         The main dashboard content floats inside its own bordered, rounded canvas.
       */}
-      <main className="client-shell-inner scroll-smooth">
-        <div className="max-w-7xl mx-auto py-6 md:py-8 px-4 md:px-8">
+      <main className="client-shell-inner scroll-smooth w-full max-w-7xl mx-auto">
+        <div className="py-6 md:py-8 px-4 md:px-8">
           {children}
         </div>
       </main>
