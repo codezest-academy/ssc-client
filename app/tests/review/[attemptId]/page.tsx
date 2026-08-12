@@ -103,7 +103,7 @@ export default function TestReviewPage() {
         const accuracy = stat.total > 0 ? Math.round((stat.correct / stat.total) * 100) : 0;
         return { name, accuracy, time: stat.time, subject: stat.subject, total: stat.total };
       })
-      .filter(chap => chap.total > 0 && chap.accuracy <= 50 && chap.time > 30)
+      .filter(chap => chap.total > 0 && chap.accuracy <= 50 && (chap.time / chap.total > 30 || chap.time > 120))
       .sort((a, b) => b.time - a.time);
 
     return { avgCorrectTime, avgIncorrectTime, subjectStats, dangerZones };

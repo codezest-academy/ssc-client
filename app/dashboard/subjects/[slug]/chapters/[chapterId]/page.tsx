@@ -25,10 +25,19 @@ interface Lesson {
   progress?: LessonProgress[];
 }
 
+interface PracticeSet {
+  id: string;
+  title: string;
+  _count?: {
+    questions: number;
+  };
+}
+
 interface Chapter {
   id: string;
   name: string;
   description: string;
+  practiceSets?: PracticeSet[];
 }
 
 interface SubjectDetails {
@@ -174,6 +183,34 @@ export default function ChapterPage() {
           })
         )}
       </div>
+
+      {chapter.practiceSets && chapter.practiceSets.length > 0 && (
+        <div className="mt-12">
+          <h2 className="text-xl font-bold mb-6 text-foreground">Practice Sets</h2>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {chapter.practiceSets.map((set) => (
+              <Card key={set.id} className="hover:border-primary/50 transition-colors border-border/40 shadow-sm">
+                <CardContent className="p-5">
+                  <h3 className="font-semibold text-foreground mb-1 line-clamp-1">{set.title}</h3>
+                  <p className="text-sm text-muted-foreground line-clamp-2 mb-4 h-10">
+                    Practice your skills with this test.
+                  </p>
+                  <div className="flex items-center justify-between mt-auto">
+                    <span className="text-xs font-medium text-slate-500 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-md">
+                      {set._count?.questions || 0} Questions
+                    </span>
+                    <Link href={`/tests/overview/${set.id}`}>
+                      <Button size="sm" variant="default">
+                        Take Test
+                      </Button>
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

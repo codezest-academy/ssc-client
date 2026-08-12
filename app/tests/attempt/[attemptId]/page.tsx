@@ -8,6 +8,16 @@ import { Question, PracticeSetQuestion, MockTestSection, MockTestSectionQuestion
 import { TestLayout } from "@/components/test-engine/TestLayout";
 import { QuestionViewer } from "@/components/test-engine/QuestionViewer";
 
+// Fisher-Yates shuffle
+function shuffleArray<T>(array: T[]): T[] {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+}
+
 export default function TestAttemptPage() {
   const params = useParams();
   const attemptId = params?.attemptId as string;
@@ -70,16 +80,19 @@ export default function TestAttemptPage() {
             id: q.id,
             questionText: q.questionText,
             questionImageUrl: q.questionImageUrl,
-            options: parsedOptions.map((opt: Record<string, unknown>) => ({
+            options: shuffleArray(parsedOptions.map((opt: Record<string, unknown>) => ({
               key: opt.key,
               text: opt.text,
               imageUrl: opt.imageUrl,
-            })),
+            }))),
           };
         });
 
+        // 3.5 Shuffle questions if it's a practice set or dynamic test
+        const finalQuestions = attempt.mockTestId ? engineQuestions : shuffleArray(engineQuestions);
+
         // 4. Initialize store
-        initializeTest(engineQuestions, durationSeconds, attemptId);
+        initializeTest(finalQuestions, durationSeconds, attemptId);
         setLoading(false);
 
       } catch (error) {

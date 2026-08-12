@@ -3,6 +3,7 @@ import { api } from "@/lib/axios";
 import Link from "next/link";
 import { ArrowLeft, PlayCircle, Trophy, BarChart3, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { QuestionRenderer } from "@/components/ui/question-renderer";
 import { PyqLandingTracker } from "./tracker";
 
 export async function generateMetadata({
@@ -137,7 +138,9 @@ export default async function ChapterPYQPage({
                   <span className="text-xs font-medium px-2 py-1 bg-slate-100 text-slate-600 rounded">{q.pyqShift}</span>
                 </div>
               </div>
-              <div className="prose prose-slate max-w-none text-slate-900 mb-6" dangerouslySetInnerHTML={{ __html: q.content }} />
+              <div className="prose prose-slate max-w-none text-slate-900 mb-6">
+                <QuestionRenderer content={q.content} />
+              </div>
               
               <div className="flex justify-between items-center pt-4 border-t border-slate-100">
                 <span className="text-sm text-slate-500">Difficulty: <span className="font-medium text-slate-900">{q.difficulty}</span></span>

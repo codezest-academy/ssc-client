@@ -69,3 +69,10 @@ ssc-client/
 
 ## 🤖 AI Assistant Guidelines
 Please refer to [GEMINI.md](GEMINI.md) and [CLAUDE.md](CLAUDE.md) for strict architectural and typing rules (e.g., no `any` types allowed).
+
+## 🆕 Recent Updates
+- **Test Engine Shuffling:** Introduced Fisher-Yates array shuffling for questions (in Practice Sets) and options (all tests) while dynamically labeling options (A, B, C, D) in the UI.
+- **Danger Zone Analytics:** Enhanced post-test analytics to flag chapters with < 50% accuracy and > 30s average time per question.
+- **PYQ Rendering:** Replaced raw HTML rendering with `<QuestionRenderer>` across PYQ landing pages for consistent KaTeX support.
+- **Chapter UI:** Added Practice Sets directly to Chapter pages.
+

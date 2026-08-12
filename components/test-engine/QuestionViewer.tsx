@@ -47,8 +47,9 @@ export function QuestionViewer() {
           </div>
 
           <div className="space-y-3">
-            {currentQuestion.options.map((option) => {
+            {currentQuestion.options.map((option, index) => {
               const isSelected = currentAnswer === option.key;
+              const dynamicLabel = String.fromCharCode(65 + index); // A, B, C, D...
               
               return (
                 <button
@@ -70,13 +71,13 @@ export function QuestionViewer() {
                         : 'bg-muted/50 border-border text-muted-foreground group-hover:border-primary/40'
                     )}
                   >
-                    {option.key}
+                    {dynamicLabel}
                   </span>
                   <span className="mt-1 text-base flex-1">
                     <QuestionRenderer content={option.text} />
                     {option.imageUrl && (
                       <div className="mt-2">
-                        <img src={option.imageUrl} alt={`Option ${option.key}`} className="max-w-full rounded-md max-h-32" />
+                        <img src={option.imageUrl} alt={`Option ${dynamicLabel}`} className="max-w-full rounded-md max-h-32" />
                       </div>
                     )}
                   </span>

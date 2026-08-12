@@ -3,6 +3,7 @@ import { api } from "@/lib/axios";
 import Link from "next/link";
 import { ArrowLeft, PlayCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { QuestionRenderer } from "@/components/ui/question-renderer";
 
 export async function generateMetadata({
   params,
@@ -97,7 +98,9 @@ export default async function PaperPYQPage({
                 <span className="text-sm font-semibold text-slate-500">Question {i + 1}</span>
                 <span className="text-xs font-medium px-2 py-1 bg-slate-100 text-slate-600 rounded">{formattedExam} {params.year} {formattedShift}</span>
               </div>
-              <div className="prose prose-slate max-w-none text-slate-900 mb-6" dangerouslySetInnerHTML={{ __html: q.content }} />
+              <div className="prose prose-slate max-w-none text-slate-900 mb-6">
+                <QuestionRenderer content={q.content} />
+              </div>
               
               <div className="space-y-3 mb-6">
                 {q.options.map((opt) => (
