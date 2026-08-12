@@ -96,8 +96,15 @@ export function PricingCards() {
     }
   };
 
-  const proProduct = products?.find(p => p.name.toLowerCase().includes("pro"));
-  const eliteProduct = products?.find(p => p.name.toLowerCase().includes("elite"));
+  const [isYearly, setIsYearly] = useState(false);
+
+  const proProductMonthly = products?.find(p => p.id === "prod-pro-monthly");
+  const proProductYearly = products?.find(p => p.id === "prod-pro-yearly");
+  const eliteProductMonthly = products?.find(p => p.id === "prod-elite-monthly");
+  const eliteProductYearly = products?.find(p => p.id === "prod-elite-yearly");
+
+  const proProduct = isYearly ? proProductYearly : proProductMonthly;
+  const eliteProduct = isYearly ? eliteProductYearly : eliteProductMonthly;
 
   if (isLoading || !isHydrated) {
     return (
@@ -110,7 +117,24 @@ export function PricingCards() {
   }
 
   return (
-    <div className="grid md:grid-cols-3 gap-8 items-start w-full">
+    <div className="w-full flex flex-col items-center">
+      {/* Monthly / Yearly Toggle */}
+      <div className="mb-12 flex items-center gap-3 bg-muted/50 p-1 rounded-full border border-border">
+        <button
+          onClick={() => setIsYearly(false)}
+          className={`px-6 py-2 rounded-full text-sm font-bold transition-all ${!isYearly ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+        >
+          Monthly
+        </button>
+        <button
+          onClick={() => setIsYearly(true)}
+          className={`px-6 py-2 rounded-full text-sm font-bold transition-all flex items-center gap-2 ${isYearly ? 'bg-primary shadow-md text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+        >
+          Yearly <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ${isYearly ? 'bg-white/20 text-white' : 'bg-primary/10 text-primary'}`}>Save 20%</span>
+        </button>
+      </div>
+
+      <div className="grid md:grid-cols-3 gap-8 items-start w-full">
       {/* Free/Basic Plan */}
       <Card className="border-border shadow-sm flex flex-col">
         <CardHeader>
@@ -159,7 +183,7 @@ export function PricingCards() {
           </CardDescription>
           <div className="mt-4">
             <span className="text-4xl font-extrabold text-white">₹{proProduct ? proProduct.price : "499"}</span>
-            <span className="text-slate-400 font-medium">/ month</span>
+            <span className="text-slate-400 font-medium">{isYearly ? '/ year' : '/ month'}</span>
           </div>
         </CardHeader>
         <CardContent className="flex-1 space-y-4 mt-4">
@@ -196,8 +220,10 @@ export function PricingCards() {
               <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Processing...</>
             ) : user?.subscriptionTier === "PRO" ? (
               "Current Plan"
-            ) : (
+            ) : user ? (
               "Upgrade to Pro"
+            ) : (
+              "Get Started"
             )}
           </Button>
         </CardFooter>
@@ -215,7 +241,7 @@ export function PricingCards() {
           </CardDescription>
           <div className="mt-4">
             <span className="text-4xl font-extrabold text-amber-900">₹{eliteProduct ? eliteProduct.price : "999"}</span>
-            <span className="text-amber-700 font-medium">/ month</span>
+            <span className="text-amber-700 font-medium">{isYearly ? '/ year' : '/ month'}</span>
           </div>
         </CardHeader>
         <CardContent className="flex-1 space-y-4 mt-4">
@@ -248,12 +274,15 @@ export function PricingCards() {
               <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Processing...</>
             ) : user?.subscriptionTier === "ELITE" ? (
               "Current Plan"
-            ) : (
+            ) : user ? (
               "Upgrade to Elite"
+            ) : (
+              "Get Started"
             )}
           </Button>
         </CardFooter>
       </Card>
+      </div>
     </div>
   );
 }

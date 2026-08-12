@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TestimonialsSection } from "@/components/marketing/testimonials";
+import { MarketingNav } from "@/components/layout/MarketingNav";
+import { MarketingFooter } from "@/components/layout/MarketingFooter";
 
 export default function Home() {
   const jsonLd = {
@@ -38,58 +40,17 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-primary/20 flex flex-col font-sans">
+    <div className="min-h-screen flex flex-col font-sans selection:bg-primary/20 bg-background text-foreground">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
       {/* 1. Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <GraduationCap className="w-5 h-5 text-white" />
-            </div>
-            <span className="font-bold text-xl tracking-tight">
-              Code Zest Academy
-            </span>
-          </div>
+      <MarketingNav />
 
-          <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-muted-foreground">
-            <a
-              href="#features"
-              className="hover:text-foreground transition-colors"
-            >
-              Features
-            </a>
-            <a
-              href="#pricing"
-              className="hover:text-foreground transition-colors"
-            >
-              Pricing
-            </a>
-          </nav>
-
-          <div className="flex items-center gap-3">
-            <Link href="/login">
-              <Button
-                variant="ghost"
-                className="font-semibold text-sm hidden sm:flex h-9 px-4"
-              >
-                <LogIn className="w-4 h-4 mr-2" /> Log In
-              </Button>
-            </Link>
-            <Link href="/register">
-              <Button className="font-bold text-sm h-9 px-5 rounded-full shadow-sm hover:shadow-md transition-shadow">
-                Get Started
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
-
-      {/* 2. Hero Section */}
+      <main className="flex-1 relative flex flex-col">
+        {/* 2. Hero Section */}
       <section className="relative overflow-hidden pt-24 pb-32 lg:pt-36 lg:pb-40 border-b">
         {/* Animated Background from globals.css logic */}
         <div className="absolute inset-0 z-0 bg-[#0a0a0f] hidden dark:block">
@@ -254,9 +215,11 @@ export default function Home() {
                   No Video Solutions
                 </li>
               </ul>
-              <Button variant="outline" className="w-full font-bold">
-                Sign Up Free
-              </Button>
+              <Link href="/pricing" className="block">
+                <Button variant="outline" className="w-full font-bold">
+                  Know More
+                </Button>
+              </Link>
             </div>
 
             {/* Pro Tier */}
@@ -269,7 +232,7 @@ export default function Home() {
                 ₹499
                 <span className="text-base font-normal text-muted-foreground">
                   {" "}
-                  /year
+                  /month
                 </span>
               </div>
               <ul className="space-y-4 mb-8">
@@ -290,9 +253,11 @@ export default function Home() {
                   Text Solutions
                 </li>
               </ul>
-              <Button className="w-full font-bold shadow-lg shadow-primary/20">
-                Get Pro Pass
-              </Button>
+              <Link href="/pricing" className="block">
+                <Button className="w-full font-bold shadow-lg shadow-primary/20">
+                  Know More
+                </Button>
+              </Link>
             </div>
 
             {/* Elite Tier */}
@@ -302,7 +267,7 @@ export default function Home() {
                 ₹999
                 <span className="text-base font-normal text-muted-foreground">
                   {" "}
-                  /year
+                  /month
                 </span>
               </div>
               <ul className="space-y-4 mb-8">
@@ -319,88 +284,19 @@ export default function Home() {
                   Live Doubt Solving
                 </li>
               </ul>
-              <Button variant="outline" className="w-full font-bold">
-                Get Infinity
-              </Button>
+              <Link href="/pricing" className="block">
+                <Button variant="outline" className="w-full font-bold">
+                  Know More
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
       </section>
+      </main>
 
       {/* 5. Footer */}
-      <footer className="bg-background border-t py-12 mt-auto">
-        <div className="container mx-auto max-w-7xl px-4 sm:px-6 grid grid-cols-2 md:grid-cols-4 gap-8">
-          <div className="col-span-2">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-6 h-6 bg-primary rounded-md flex items-center justify-center">
-                <GraduationCap className="w-4 h-4 text-white" />
-              </div>
-              <span className="font-bold text-lg tracking-tight">
-                Code Zest Academy
-              </span>
-            </div>
-            <p className="text-sm text-muted-foreground max-w-sm">
-              Empowering students to achieve their government job dreams through
-              technology and quality education.
-            </p>
-          </div>
-
-          <div>
-            <h4 className="font-semibold mb-4">Exams</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>
-                <a href="#" className="hover:text-foreground">
-                  SSC CGL
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-foreground">
-                  SSC CHSL
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-foreground">
-                  SSC MTS
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-foreground">
-                  SSC CPO
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-semibold mb-4">Company</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>
-                <Link href="/about" className="hover:text-foreground">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="hover:text-foreground">
-                  Contact
-                </Link>
-              </li>
-              <li>
-                <Link href="/privacy" className="hover:text-foreground">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="/terms" className="hover:text-foreground">
-                  Terms of Service
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div className="container mx-auto max-w-7xl px-4 sm:px-6 mt-12 pt-8 border-t text-sm text-muted-foreground text-center">
-          © {new Date().getFullYear()} Code Zest Academy. All rights reserved.
-        </div>
-      </footer>
+      <MarketingFooter />
     </div>
   );
 }
