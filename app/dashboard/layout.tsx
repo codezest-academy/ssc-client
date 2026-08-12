@@ -30,15 +30,15 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col font-sans">
+    <div className="client-shell-outer font-sans">
       <FloatingNav />
       
       {/* 
-        The top padding accounts for the fixed floating nav pill.
-        pt-28 gives ample breathing room above the content.
+        The main dashboard content floats inside its own bordered, rounded canvas.
+        The top padding accounts for the fixed floating nav pill inside the canvas.
       */}
-      <main className="flex-1 pt-28 pb-12 px-4 md:px-6">
-        <div className="max-w-7xl mx-auto">
+      <main className="client-shell-inner scroll-smooth">
+        <div className="max-w-7xl mx-auto pt-28 pb-12 px-4 md:px-8">
           {children}
         </div>
       </main>

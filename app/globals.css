@@ -240,6 +240,15 @@
 }
 
 @layer utilities {
+  /* Floating Dashboard Shell Architecture */
+  .client-shell-outer {
+    @apply min-h-screen bg-muted/30 p-2 sm:p-4 md:p-5 flex flex-col gap-4 relative isolation-auto;
+  }
+  
+  .client-shell-inner {
+    @apply flex-1 bg-background rounded-[2rem] sm:rounded-[2.5rem] border border-border/50 shadow-floating overflow-y-auto overflow-x-hidden relative;
+  }
+
   /* Ambient Contextual Gradients for Floating Bento (Client) */
   .bg-ambient-indigo {
     background-image: radial-gradient(circle at top right, color-mix(in oklab, var(--primary) 10%, transparent), transparent 40%),
