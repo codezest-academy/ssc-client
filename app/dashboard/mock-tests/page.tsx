@@ -6,6 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { FileText, Clock, ChevronRight, GraduationCap } from "lucide-react";
 import Link from "next/link";
 import { useAuthStore } from "@/store/auth";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface MockTest {
   id: string;
@@ -45,11 +47,17 @@ export default function MockTestsPage() {
       </div>
 
       {loading ? (
-        <div className="text-slate-400">Loading mock tests...</div>
-      ) : mockTests.length === 0 ? (
-        <div className="text-slate-400 p-8 text-center border-2 border-dashed rounded-xl">
-          No mock tests available yet.
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <Skeleton key={i} className="h-[200px] w-full rounded-xl" />
+          ))}
         </div>
+      ) : mockTests.length === 0 ? (
+        <EmptyState 
+          icon={FileText}
+          title="No mock tests available"
+          description="Check back later for new mock exams."
+        />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {mockTests.map((test) => (

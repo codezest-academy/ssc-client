@@ -6,6 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { BookOpen, Target, ChevronRight, Layers } from "lucide-react";
 import Link from "next/link";
 import { useAuthStore } from "@/store/auth";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface PracticeSet {
   id: string;
@@ -45,11 +47,17 @@ export default function PracticeSetsPage() {
       </div>
 
       {loading ? (
-        <div className="text-slate-400">Loading practice sets...</div>
-      ) : practiceSets.length === 0 ? (
-        <div className="text-slate-400 p-8 text-center border-2 border-dashed rounded-xl">
-          No practice sets available yet.
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <Skeleton key={i} className="h-[200px] w-full rounded-xl" />
+          ))}
         </div>
+      ) : practiceSets.length === 0 ? (
+        <EmptyState 
+          icon={Target}
+          title="No practice sets available"
+          description="Check back later for new practice tests."
+        />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {practiceSets.map((set) => (

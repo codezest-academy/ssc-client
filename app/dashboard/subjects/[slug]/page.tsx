@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { api } from "@/lib/axios";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, ArrowLeft, Layers, ChevronRight } from "lucide-react";
+import { FileText, ArrowLeft, Layers, ChevronRight, FolderX } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Chapter {
   id: string;
@@ -51,7 +53,16 @@ export default function SubjectPage() {
   }, [slug]);
 
   if (loading) {
-    return <div className="text-slate-400">Loading subject details...</div>;
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-[200px] w-full rounded-xl" />
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-24 w-full rounded-xl" />
+          ))}
+        </div>
+      </div>
+    );
   }
 
   if (!subject) {
@@ -85,9 +96,11 @@ export default function SubjectPage() {
 
       <div className="space-y-4">
         {subject.chapters.length === 0 ? (
-          <div className="text-slate-400 p-8 text-center border-2 border-dashed rounded-xl">
-            No chapters available for this subject yet.
-          </div>
+          <EmptyState 
+            icon={FolderX}
+            title="No chapters available"
+            description="Check back later for new content in this subject."
+          />
         ) : (
           subject.chapters.map((chapter) => (
             <Link key={chapter.id} href={`/dashboard/subjects/${subject.slug}/chapters/${chapter.id}`} className="block group">

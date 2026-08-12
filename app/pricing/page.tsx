@@ -4,6 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import { loadRazorpayScript } from "@/lib/razorpay";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Check, Loader2, Package, AlertCircle } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
 import { useState } from "react";
@@ -87,8 +89,18 @@ export default function PricingPage() {
 
   if (isLoading || !isHydrated) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
+      <div className="container max-w-6xl mx-auto py-12 px-4">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-extrabold tracking-tight mb-4">Unlock Premium Learning</h1>
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+            Choose the right plan or combo package to accelerate your SSC exam preparation.
+          </p>
+        </div>
+        <div className="grid md:grid-cols-3 gap-8">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-[400px] w-full rounded-2xl" />
+          ))}
+        </div>
       </div>
     );
   }
@@ -126,20 +138,27 @@ export default function PricingPage() {
             </div>
 
             <Button 
-              className="w-full" 
-              size="lg" 
+              className="w-full font-bold h-12 rounded-xl"
               onClick={() => handleBuy(product.id)}
               disabled={processingId === product.id}
             >
-              {processingId === product.id ? <Loader2 className="w-5 h-5 animate-spin" /> : "Buy Now"}
+              {processingId === product.id ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Processing...
+                </>
+              ) : (
+                "Get Started"
+              )}
             </Button>
           </div>
         ))}
         {(!products || products.length === 0) && (
-          <div className="col-span-full text-center p-12 bg-slate-50 rounded-xl border border-slate-200 border-dashed">
-            <Package className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-slate-900 mb-1">No products available</h3>
-            <p className="text-slate-500">Check back later for new offers and combos.</p>
+          <div className="col-span-full">
+            <EmptyState 
+              icon={Package}
+              title="No products available"
+              description="Check back later for new offers and combos."
+            />
           </div>
         )}
       </div>

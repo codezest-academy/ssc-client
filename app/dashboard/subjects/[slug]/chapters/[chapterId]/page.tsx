@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { api } from "@/lib/axios";
 import { Card, CardContent } from "@/components/ui/card";
-import { PlayCircle, FileText, File, ArrowLeft, Clock, CheckCircle2 } from "lucide-react";
+import { PlayCircle, FileText, File, ArrowLeft, Clock, CheckCircle2, VideoOff, FileQuestion } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface LessonProgress {
   watchedSeconds: number;
@@ -85,7 +87,16 @@ export default function ChapterPage() {
   }, [slug, chapterId]);
 
   if (loading) {
-    return <div className="text-slate-400">Loading chapter details...</div>;
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-[150px] w-full rounded-xl" />
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-24 w-full rounded-xl" />
+          ))}
+        </div>
+      </div>
+    );
   }
 
   if (!chapter) {
@@ -101,18 +112,18 @@ export default function ChapterPage() {
 
   const getLessonIcon = (type: string) => {
     switch (type) {
-      case "VIDEO": return <PlayCircle className="w-5 h-5" />;
-      case "ARTICLE": return <FileText className="w-5 h-5" />;
-      case "PDF": return <File className="w-5 h-5" />;
-      default: return <FileText className="w-5 h-5" />;
+      case "VIDEO": return <VideoOff className="w-5 h-5" />;
+      case "DOCUMENT": return <FileText className="w-5 h-5" />;
+      case "QUIZ": return <FileQuestion className="w-5 h-5" />;
+      default: return <File className="w-5 h-5" />;
     }
   };
 
   const getLessonColor = (type: string) => {
     switch (type) {
       case "VIDEO": return "bg-blue-100 text-blue-600";
-      case "ARTICLE": return "bg-emerald-100 text-emerald-600";
-      case "PDF": return "bg-rose-100 text-rose-600";
+      case "DOCUMENT": return "bg-emerald-100 text-emerald-600";
+      case "QUIZ": return "bg-purple-100 text-purple-600";
       default: return "bg-slate-100 text-slate-600";
     }
   };
@@ -131,9 +142,11 @@ export default function ChapterPage() {
 
       <div className="space-y-4">
         {lessons.length === 0 ? (
-          <div className="text-slate-400 p-8 text-center border-2 border-dashed rounded-xl">
-            No lessons available for this chapter yet.
-          </div>
+          <EmptyState 
+            icon={FileText}
+            title="No lessons available"
+            description="Check back later for new content in this chapter."
+          />
         ) : (
           lessons.map((lesson) => {
             const isCompleted = lesson.progress?.[0]?.completedAt != null;

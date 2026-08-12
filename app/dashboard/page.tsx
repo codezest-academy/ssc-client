@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import {
   BookOpen,
   Book,
@@ -14,6 +15,7 @@ import {
   Trophy,
   ArrowRight,
   Target,
+  Library,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -487,13 +489,17 @@ export default function DashboardPage() {
             </div>
           </div>
         ) : subjects.length === 0 ? (
-          <div className="text-muted-foreground text-center py-16 border-2 border-dashed border-border rounded-2xl">
-            No subjects available yet.
-          </div>
+          <EmptyState 
+            icon={Library}
+            title="No subjects available"
+            description="Subjects for your selected target exams will appear here."
+          />
         ) : targetExams.length === 0 ? (
-          <div className="text-muted-foreground text-center py-16 border-2 border-dashed border-border rounded-2xl">
-            Please update your profile and select a target exam to see your curriculum.
-          </div>
+          <EmptyState 
+            icon={Target}
+            title="No target exam selected"
+            description="Please update your profile and select a target exam to see your curriculum."
+          />
         ) : (
           targetExams.map((exam) => {
             const examLabel = exam.replace(/_/g, " ");

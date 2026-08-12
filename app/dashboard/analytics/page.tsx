@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, Clock, CheckCircle2, Target, Trophy, Flame } from "lucide-react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
+import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
 
 interface Attempt {
   attemptType: string;
@@ -54,26 +56,38 @@ export default function AnalyticsPage() {
   };
 
   if (loading) {
-    return <div className="text-slate-400 p-8">Loading analytics...</div>;
+    return (
+      <div className="space-y-8">
+        <Skeleton className="h-10 w-[200px]" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-32 w-full rounded-xl" />
+          ))}
+        </div>
+        <div className="grid lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-6">
+            <Skeleton className="h-[300px] w-full rounded-xl" />
+          </div>
+          <div className="space-y-6">
+            <Skeleton className="h-[300px] w-full rounded-xl" />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (!data || data.totalTests === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-        <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center text-primary">
-          <Activity className="w-10 h-10" />
-        </div>
-        <h2 className="text-2xl font-bold text-slate-900">No Analytics Yet</h2>
-        <p className="text-slate-500 max-w-sm">
-          You haven't taken any tests yet. Complete a Practice Set or Mock Test to see your performance metrics here!
-        </p>
-        <Link 
-          href="/dashboard/practice-sets" 
-          className="mt-4 px-6 py-2 bg-primary text-primary-foreground rounded-md font-medium hover:bg-primary/90 transition-colors"
-        >
-          Start Practicing
-        </Link>
-      </div>
+      <EmptyState 
+        icon={Activity}
+        title="No Analytics Yet"
+        description="You haven't taken any tests yet. Complete a Practice Set or Mock Test to see your performance metrics here!"
+        action={
+          <a href="/dashboard/practice-sets" className="px-6 py-2 bg-primary text-primary-foreground rounded-full font-medium hover:bg-primary/90 transition-colors text-sm">
+            Start Practicing
+          </a>
+        }
+      />
     );
   }
 

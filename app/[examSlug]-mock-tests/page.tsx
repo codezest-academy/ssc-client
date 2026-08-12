@@ -2,8 +2,8 @@ import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/ca
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Clock, HelpCircle, Trophy } from "lucide-react";
-
+import { Clock, HelpCircle, Trophy, FileText } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
 export default async function ExamMockTestsLandingPage({ params }: { params: Promise<{ examSlug: string }> }) {
   const resolvedParams = await params;
   const examSlug = resolvedParams.examSlug || "";
@@ -95,9 +95,11 @@ export default async function ExamMockTestsLandingPage({ params }: { params: Pro
 
           <div className="space-y-4">
             {mockTests.length === 0 ? (
-              <div className="text-center py-12 border border-border rounded-lg bg-card">
-                <p className="text-muted-foreground">No mock tests available for {examTitle} yet. Check back soon!</p>
-              </div>
+              <EmptyState 
+                icon={FileText}
+                title="No mock tests available"
+                description={`Check back soon for new mock tests for ${examTitle}.`}
+              />
             ) : (
               mockTests.map((test, index) => (
                 <Card key={test.id} className="bg-card border-border overflow-hidden hover:border-primary/50 transition-colors">

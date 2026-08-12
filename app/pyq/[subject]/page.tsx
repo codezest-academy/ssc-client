@@ -2,8 +2,9 @@ import { Metadata } from "next";
 import { api } from "@/lib/axios";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-import { FileText, ChevronRight, ArrowLeft } from "lucide-react";
+import { FileText, ChevronRight, ArrowLeft, FolderX } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export async function generateMetadata({
   params,
@@ -81,9 +82,11 @@ export default async function SubjectPYQPage({
 
       <div className="space-y-4">
         {subject.chapters.length === 0 ? (
-          <div className="text-center p-8 border-2 border-dashed rounded-xl text-slate-500">
-            No chapters available yet.
-          </div>
+          <EmptyState 
+            icon={FolderX}
+            title="No chapters available"
+            description="Check back later for new topics."
+          />
         ) : (
           subject.chapters.map((chapter) => (
             <Link key={chapter.id} href={`/pyq/${subject.slug}/${chapter.id}`} className="block group">
