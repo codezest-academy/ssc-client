@@ -11,6 +11,7 @@ import { useAuthStore } from "@/store/auth";
 import { PaywallGate } from "@/components/ui/paywall-gate";
 import { MockTestSection } from "@/types/api";
 import { usePostHog } from 'posthog-js/react';
+import { ErrorState } from "@/components/ui/error-state";
 
 interface MockTest {
   id: string;
@@ -31,22 +32,26 @@ export default function MockTestOverviewPage() {
   const [mockTest, setMockTest] = useState<MockTest | null>(null);
   const [loading, setLoading] = useState(true);
   const [starting, setStarting] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
 
   const user = useAuthStore((state) => state.user);
 
-  useEffect(() => {
+  const fetchMockTest = async () => {
     if (!id) return;
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await api.get(`/mock-tests/${id}`);
+      setMockTest(response.data.data);
+    } catch (err: any) {
+      console.error("Failed to load mock test:", err);
+      setError(err instanceof Error ? err : new Error(err.response?.data?.message || err.message || "Failed to load mock test"));
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const fetchMockTest = async () => {
-      try {
-        const response = await api.get(`/mock-tests/${id}`);
-        setMockTest(response.data.data);
-      } catch (error) {
-        console.error("Failed to load mock test:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  useEffect(() => {
     fetchMockTest();
   }, [id]);
 
@@ -75,6 +80,16 @@ export default function MockTestOverviewPage() {
 
   if (loading) {
     return <div className="text-slate-400 p-8">Loading mock test details...</div>;
+  }
+
+  if (error) {
+    return (
+      <ErrorState 
+        title="Failed to load mock test" 
+        description={error.message} 
+        retry={fetchMockTest} 
+      />
+    );
   }
 
   if (!mockTest) {

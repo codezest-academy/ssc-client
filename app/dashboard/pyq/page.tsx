@@ -6,6 +6,7 @@ import { api } from "@/lib/axios";
 import { Play, FolderX, Library } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorState } from "@/components/ui/error-state";
 
 export default function PYQExplorerPage() {
   const router = useRouter();
@@ -14,29 +15,34 @@ export default function PYQExplorerPage() {
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [expandedSubject, setExpandedSubject] = useState<string | null>(null);
+  const [error, setError] = useState<Error | null>(null);
+
+  const fetchSubjects = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await api.get("/subjects");
+      const subjectsData = res.data.data;
+      
+      // Fetch detailed subjects with chapters
+      const detailedSubjects = await Promise.all(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        subjectsData.map(async (sub: any) => {
+          const detailRes = await api.get(`/subjects/slug/${sub.slug}`);
+          return detailRes.data.data;
+        })
+      );
+      
+      setSubjects(detailedSubjects);
+    } catch (e: any) {
+      console.error(e);
+      setError(e instanceof Error ? e : new Error(e.response?.data?.message || e.message || "Failed to load PYQ subjects"));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchSubjects = async () => {
-      try {
-        const res = await api.get("/subjects");
-        const subjectsData = res.data.data;
-        
-        // Fetch detailed subjects with chapters
-        const detailedSubjects = await Promise.all(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          subjectsData.map(async (sub: any) => {
-            const detailRes = await api.get(`/subjects/slug/${sub.slug}`);
-            return detailRes.data.data;
-          })
-        );
-        
-        setSubjects(detailedSubjects);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchSubjects();
   }, []);
 
@@ -65,6 +71,16 @@ export default function PYQExplorerPage() {
           ))}
         </div>
       </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <ErrorState 
+        title="Failed to load PYQ subjects" 
+        description={error.message} 
+        retry={fetchSubjects} 
+      />
     );
   }
 

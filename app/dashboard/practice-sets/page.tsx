@@ -8,6 +8,8 @@ import Link from "next/link";
 import { useAuthStore } from "@/store/auth";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorState } from "@/components/ui/error-state";
+import { Button } from "@/components/ui/button";
 
 interface PracticeSet {
   id: string;
@@ -23,30 +25,41 @@ interface PracticeSet {
 export default function PracticeSetsPage() {
   const [practiceSets, setPracticeSets] = useState<PracticeSet[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
   const user = useAuthStore((state) => state.user);
 
+  const fetchPracticeSets = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await api.get("/practice-sets");
+      setPracticeSets(response.data.data);
+    } catch (err: any) {
+      console.error("Failed to load practice sets:", err);
+      setError(err instanceof Error ? err : new Error(err.response?.data?.message || err.message || "Failed to load practice sets"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchPracticeSets = async () => {
-      try {
-        const response = await api.get("/practice-sets");
-        setPracticeSets(response.data.data);
-      } catch (error) {
-        console.error("Failed to load practice sets:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchPracticeSets();
   }, []);
 
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Practice Sets</h2>
-        <p className="text-slate-500 mt-2">Test your knowledge and practice MCQ questions.</p>
+        <h2 className="text-3xl font-bold text-foreground font-display tracking-tight">Practice Sets</h2>
+        <p className="text-muted-foreground mt-2">Test your knowledge and practice MCQ questions.</p>
       </div>
 
-      {loading ? (
+      {error ? (
+        <ErrorState 
+          title="Failed to load practice sets" 
+          description={error.message} 
+          retry={fetchPracticeSets} 
+        />
+      ) : loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <Skeleton key={i} className="h-[200px] w-full rounded-xl" />
@@ -57,6 +70,18 @@ export default function PracticeSetsPage() {
           icon={Target}
           title="No practice sets available"
           description="Check back later for new practice tests."
+          action={
+            <div className="flex flex-col items-start gap-2.5">
+              <Button variant="default" className="group rounded-full px-7 shadow-sm hover:shadow-md transition-all duration-300" asChild>
+                <Link href="/dashboard/curriculum">
+                  Browse Curriculum
+                </Link>
+              </Button>
+              <span className="text-[13px] text-muted-foreground/80 font-medium pl-2">
+                New content added weekly
+              </span>
+            </div>
+          }
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

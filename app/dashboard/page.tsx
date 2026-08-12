@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 import {
   BookOpen,
   Book,
@@ -139,7 +140,7 @@ function PartTimeHero({ userName, agenda }: { userName: string, agenda: DailyAge
           <div className="flex flex-wrap items-center gap-2 mt-4">
             <Link href="/dashboard/practice-sets">
               <Button size="sm" variant="default" className="rounded-2xl font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all">
-                Start Quiz <ArrowRight className="ml-1.5 w-4 h-4" />
+                Start Quiz
               </Button>
             </Link>
             <Link href="/dashboard/mock-tests">
@@ -401,38 +402,56 @@ export default function DashboardPage() {
   const [weakTopics, setWeakTopics] = useState<WeakTopic[]>([]);
   const [agenda, setAgenda] = useState<DailyAgenda | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
   const user = useAuthStore((state) => state.user);
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const [subjectsRes, analyticsRes, weakTopicsRes, agendaRes] = await Promise.allSettled([
-          api.get("/subjects"),
-          api.get("/analytics/dashboard"),
-          api.get("/analytics/weak-topics"),
-          api.get("/dashboard/agenda"),
-        ]);
+  const loadDashboardData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const [subjectsRes, analyticsRes, weakTopicsRes, agendaRes] = await Promise.allSettled([
+        api.get("/subjects"),
+        api.get("/analytics/dashboard"),
+        api.get("/analytics/weak-topics"),
+        api.get("/dashboard/agenda"),
+      ]);
 
-        if (subjectsRes.status === "fulfilled") {
-          setSubjects(subjectsRes.value.data.data);
-        }
-        if (analyticsRes.status === "fulfilled") {
-          setAnalytics(analyticsRes.value.data.data);
-        }
-        if (weakTopicsRes.status === "fulfilled") {
-          setWeakTopics(weakTopicsRes.value.data.data);
-        }
-        if (agendaRes.status === "fulfilled") {
-          setAgenda(agendaRes.value.data.data);
-        }
-      } catch (error) {
-        console.error("Failed to load dashboard:", error);
-      } finally {
-        setLoading(false);
+      if (subjectsRes.status === "rejected") {
+        throw new Error(subjectsRes.reason?.response?.data?.message || "Failed to load curriculum subjects.");
       }
-    };
-    load();
+
+      setSubjects(subjectsRes.value.data.data);
+
+      if (analyticsRes.status === "fulfilled") {
+        setAnalytics(analyticsRes.value.data.data);
+      }
+      if (weakTopicsRes.status === "fulfilled") {
+        setWeakTopics(weakTopicsRes.value.data.data);
+      }
+      if (agendaRes.status === "fulfilled") {
+        setAgenda(agendaRes.value.data.data);
+      }
+    } catch (err: any) {
+      console.error("Failed to load dashboard:", err);
+      setError(err instanceof Error ? err : new Error(err.message || "Failed to load dashboard data"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadDashboardData();
   }, []);
+
+  if (error) {
+    return (
+      <ErrorState 
+        title="Failed to load dashboard" 
+        description={error.message} 
+        retry={loadDashboardData} 
+      />
+    );
+  }
 
   const targetExams: string[] = Array.isArray(user?.targetExam)
     ? user.targetExam

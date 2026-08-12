@@ -7,6 +7,7 @@ export interface ErrorStateProps extends React.HTMLAttributes<HTMLDivElement> {
   title?: string
   description?: string
   onRetry?: () => void
+  retry?: () => void
   fullPage?: boolean
 }
 
@@ -15,10 +16,12 @@ export function ErrorState({
   title = "Something went wrong",
   description = "Please check your connection and try again.",
   onRetry,
+  retry,
   fullPage,
   className,
   ...props
 }: ErrorStateProps) {
+  const handleRetry = onRetry || retry;
   return (
     <div
       className={cn(
@@ -35,9 +38,9 @@ export function ErrorState({
       <p className="mb-8 max-w-sm text-sm text-muted-foreground line-clamp-2">
         {description}
       </p>
-      {onRetry && (
+      {handleRetry && (
         <button
-          onClick={onRetry}
+          onClick={handleRetry}
           className="rounded-full bg-destructive px-6 py-2.5 text-sm font-medium text-destructive-foreground transition-all hover:bg-destructive/90 active:scale-95"
         >
           Try Again

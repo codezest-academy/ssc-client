@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useAuthStore } from "@/store/auth";
 import { PaywallGate } from "@/components/ui/paywall-gate";
 import { PracticeSetQuestion } from "@/types/api";
+import { ErrorState } from "@/components/ui/error-state";
 
 interface PracticeSet {
   id: string;
@@ -29,22 +30,26 @@ export default function PracticeSetOverviewPage() {
   const [practiceSet, setPracticeSet] = useState<PracticeSet | null>(null);
   const [loading, setLoading] = useState(true);
   const [starting, setStarting] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
 
   const user = useAuthStore((state) => state.user);
 
-  useEffect(() => {
+  const fetchPracticeSet = async () => {
     if (!id) return;
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await api.get(`/practice-sets/${id}`);
+      setPracticeSet(response.data.data);
+    } catch (err: any) {
+      console.error("Failed to load practice set:", err);
+      setError(err instanceof Error ? err : new Error(err.response?.data?.message || err.message || "Failed to load practice set"));
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const fetchPracticeSet = async () => {
-      try {
-        const response = await api.get(`/practice-sets/${id}`);
-        setPracticeSet(response.data.data);
-      } catch (error) {
-        console.error("Failed to load practice set:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  useEffect(() => {
     fetchPracticeSet();
   }, [id]);
 
@@ -66,6 +71,16 @@ export default function PracticeSetOverviewPage() {
 
   if (loading) {
     return <div className="text-slate-400 p-8">Loading practice set details...</div>;
+  }
+
+  if (error) {
+    return (
+      <ErrorState 
+        title="Failed to load practice set" 
+        description={error.message} 
+        retry={fetchPracticeSet} 
+      />
+    );
   }
 
   if (!practiceSet) {

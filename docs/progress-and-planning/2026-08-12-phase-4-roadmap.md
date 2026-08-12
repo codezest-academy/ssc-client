@@ -110,7 +110,36 @@ Auto-hides inside test engine routes (`/tests/*`).
 
 ---
 
-## 5. Future: Performance & Scale
+## 5. ✅ Pricing & Routing Consolidation (Phase 10 Extension)
+
+**Status:** ✅ Complete
+
+### Problem
+The `/pricing` route was completely isolated from the premium "Floating Bento" dashboard architecture, lacked Razorpay integration, and read from a test database product. 
+
+### Solution
+1. **Database:** Seeded real `Pro` and `Elite` products into the DB using `seed-e2e-payments.ts`.
+2. **UI Extraction:** Extracted the premium cards from `/dashboard/upgrade` into a reusable `<PricingCards />` component that handles Razorpay checkout via `useQuery` and mutations.
+3. **Route Sharing:** 
+   - `/dashboard/upgrade` uses `<PricingCards />` inside the dashboard's `client-shell-inner` canvas.
+   - `/pricing` uses `<PricingCards />` inside a public-facing `bg-grid-pattern` dark mode shell.
+4. **Auth Locking:** `FloatingNav` and manual navigations auto-route logged-in users away from `/pricing` and straight to `/dashboard/upgrade`.
+
+---
+
+## 6. ✅ Profile Layout Fix
+
+**Status:** ✅ Complete
+
+### Problem
+The `/profile` layout was missing the padding tokens (`p-4 md:p-6 lg:p-8 gap-6`) used by the dashboard's `client-shell-outer`, causing the `FloatingNav` to stick to the very top of the viewport instead of floating.
+
+### Solution
+Updated `app/profile/layout.tsx` to include the standard outer shell paddings and gap tokens, correctly aligning the Floating Nav with the rest of the application.
+
+---
+
+## 7. Future: Performance & Scale
 - **Internationalization (i18n):** Integrate `next-intl` for English and Hindi locales.
 - **Progressive Web App (PWA):** Service workers + offline caching for critical assets.
 - **E2E Testing:** Playwright for core user flow: Register → Onboard → Take Test → View Analytics.

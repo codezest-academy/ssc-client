@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { QuestionRenderer } from "@/components/ui/question-renderer";
 import { useAuthStore } from "@/store/auth";
 import { PaywallGate } from "@/components/ui/paywall-gate";
+import { ErrorState } from "@/components/ui/error-state";
 
 interface LessonProgress {
   watchedSeconds: number;
@@ -50,7 +51,7 @@ export default function LessonViewerPage() {
 
   const user = useAuthStore((state) => state.user);
 
-  const { data: lesson, isLoading: loading } = useQuery<Lesson>({
+  const { data: lesson, isLoading: loading, error: lessonError, refetch: refetchLesson } = useQuery<Lesson>({
     queryKey: ["lesson", slug],
     queryFn: async () => {
       const response = await api.get(`/lessons/${slug}`);
@@ -112,6 +113,16 @@ export default function LessonViewerPage() {
 
   if (loading) {
     return <div className="text-slate-400 p-8">Loading lesson...</div>;
+  }
+
+  if (lessonError) {
+    return (
+      <ErrorState 
+        title="Failed to load lesson" 
+        description={(lessonError as Error).message || "An error occurred while loading the lesson."} 
+        retry={() => refetchLesson()} 
+      />
+    );
   }
 
   if (!lesson) {

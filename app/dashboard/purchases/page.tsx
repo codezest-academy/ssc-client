@@ -7,12 +7,13 @@ import { format } from "date-fns";
 import { useAuthStore } from "@/store/auth";
 import { useRouter } from "next/navigation";
 import { Purchase } from "@/types/api";
+import { ErrorState } from "@/components/ui/error-state";
 
 export default function PurchasesPage() {
   const { isHydrated, user } = useAuthStore();
   const router = useRouter();
 
-  const { data: purchases, isLoading } = useQuery({
+  const { data: purchases, isLoading, error, refetch } = useQuery({
     queryKey: ["user-purchases"],
     queryFn: async () => {
       const res = await api.get("/payments/history");
@@ -26,6 +27,16 @@ export default function PurchasesPage() {
       <div className="flex h-[50vh] items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
       </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <ErrorState 
+        title="Failed to load purchases" 
+        description={(error as Error).message || "An error occurred while loading purchases."} 
+        retry={() => refetch()} 
+      />
     );
   }
 

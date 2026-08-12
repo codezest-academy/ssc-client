@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useAuthStore } from "@/store/auth";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorState } from "@/components/ui/error-state";
 
 interface MockTest {
   id: string;
@@ -23,30 +24,41 @@ interface MockTest {
 export default function MockTestsPage() {
   const [mockTests, setMockTests] = useState<MockTest[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
   const user = useAuthStore((state) => state.user);
 
+  const fetchMockTests = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await api.get("/mock-tests");
+      setMockTests(response.data.data);
+    } catch (err: any) {
+      console.error("Failed to load mock tests:", err);
+      setError(err instanceof Error ? err : new Error(err.response?.data?.message || err.message || "Failed to load mock tests"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchMockTests = async () => {
-      try {
-        const response = await api.get("/mock-tests");
-        setMockTests(response.data.data);
-      } catch (error) {
-        console.error("Failed to load mock tests:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchMockTests();
   }, []);
 
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Mock Tests</h2>
-        <p className="text-slate-500 mt-2">Take full-length mock exams under timed conditions.</p>
+        <h2 className="text-3xl font-bold text-foreground font-display tracking-tight">Mock Tests</h2>
+        <p className="text-muted-foreground mt-2">Take full-length mock exams under timed conditions.</p>
       </div>
 
-      {loading ? (
+      {error ? (
+        <ErrorState 
+          title="Failed to load mock tests" 
+          description={error.message} 
+          retry={fetchMockTests} 
+        />
+      ) : loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <Skeleton key={i} className="h-[200px] w-full rounded-xl" />

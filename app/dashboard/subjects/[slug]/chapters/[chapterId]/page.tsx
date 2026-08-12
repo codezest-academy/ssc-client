@@ -9,6 +9,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorState } from "@/components/ui/error-state";
 
 interface LessonProgress {
   watchedSeconds: number;
@@ -58,31 +59,35 @@ export default function ChapterPage() {
   const [chapter, setChapter] = useState<Chapter | null>(null);
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  const fetchData = async () => {
+    if (!slug || !chapterId) return;
+    try {
+      setLoading(true);
+      setError(null);
+      // Fetch subject to get chapter info (since chapters are public through subjects)
+      const subjectRes = await api.get(`/subjects/${slug}`);
+      const subjectData = subjectRes.data.data;
+      setSubject(subjectData);
+      
+      const currentChapter = subjectData.chapters.find((c: Chapter) => c.id === chapterId);
+      if (currentChapter) {
+        setChapter(currentChapter);
+      }
+
+      // Fetch lessons for this chapter
+      const lessonsRes = await api.get(`/lessons/chapter/${chapterId}`);
+      setLessons(lessonsRes.data.data);
+    } catch (err: any) {
+      console.error("Failed to load chapter data:", err);
+      setError(err instanceof Error ? err : new Error(err.response?.data?.message || err.message || "Failed to load chapter data"));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    if (!slug || !chapterId) return;
-
-    const fetchData = async () => {
-      try {
-        // Fetch subject to get chapter info (since chapters are public through subjects)
-        const subjectRes = await api.get(`/subjects/${slug}`);
-        const subjectData = subjectRes.data.data;
-        setSubject(subjectData);
-        
-        const currentChapter = subjectData.chapters.find((c: Chapter) => c.id === chapterId);
-        if (currentChapter) {
-          setChapter(currentChapter);
-        }
-
-        // Fetch lessons for this chapter
-        const lessonsRes = await api.get(`/lessons/chapter/${chapterId}`);
-        setLessons(lessonsRes.data.data);
-      } catch (error) {
-        console.error("Failed to load chapter data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchData();
   }, [slug, chapterId]);
 
@@ -96,6 +101,16 @@ export default function ChapterPage() {
           ))}
         </div>
       </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <ErrorState 
+        title="Failed to load chapter data" 
+        description={error.message} 
+        retry={fetchData} 
+      />
     );
   }
 

@@ -30,10 +30,10 @@ export default function ProfileLayout({
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col font-sans">
+    <div className="min-h-screen bg-background flex flex-col font-sans p-4 md:p-6 lg:p-8 gap-6">
       <FloatingNav />
       
-      <main className="flex-1 pt-28 pb-12 px-4 md:px-6">
+      <main className="flex-1 w-full">
         <div className="max-w-7xl mx-auto">
           {children}
         </div>

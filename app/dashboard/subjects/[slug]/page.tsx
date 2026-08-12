@@ -9,6 +9,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorState } from "@/components/ui/error-state";
 
 interface Chapter {
   id: string;
@@ -35,20 +36,24 @@ export default function SubjectPage() {
   
   const [subject, setSubject] = useState<SubjectDetails | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  const fetchSubject = async () => {
+    if (!slug) return;
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await api.get(`/subjects/${slug}`);
+      setSubject(response.data.data);
+    } catch (err: any) {
+      console.error("Failed to load subject:", err);
+      setError(err instanceof Error ? err : new Error(err.response?.data?.message || err.message || "Failed to load subject"));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    if (!slug) return;
-
-    const fetchSubject = async () => {
-      try {
-        const response = await api.get(`/subjects/${slug}`);
-        setSubject(response.data.data);
-      } catch (error) {
-        console.error("Failed to load subject:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchSubject();
   }, [slug]);
 
@@ -62,6 +67,16 @@ export default function SubjectPage() {
           ))}
         </div>
       </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <ErrorState 
+        title="Failed to load subject" 
+        description={error.message} 
+        retry={fetchSubject} 
+      />
     );
   }
 

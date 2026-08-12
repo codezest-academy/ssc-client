@@ -30,7 +30,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="client-shell-outer font-sans">
+    <div className="client-shell-outer bg-grid-pattern font-sans">
       <FloatingNav />
       
       {/* 

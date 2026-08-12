@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy, Medal, Star } from "lucide-react";
+import { ErrorState } from "@/components/ui/error-state";
 
 interface LeaderboardEntry {
   rank: number;
@@ -19,23 +20,38 @@ interface LeaderboardEntry {
 export default function LeaderboardPage() {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  const fetchLeaderboard = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await api.get("/analytics/leaderboard/global");
+      setLeaderboard(response.data.data);
+    } catch (err: any) {
+      console.error("Failed to load leaderboard:", err);
+      setError(err instanceof Error ? err : new Error(err.response?.data?.message || err.message || "Failed to load leaderboard"));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchLeaderboard = async () => {
-      try {
-        const response = await api.get("/analytics/leaderboard/global");
-        setLeaderboard(response.data.data);
-      } catch (error) {
-        console.error("Failed to load leaderboard:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchLeaderboard();
   }, []);
 
   if (loading) {
     return <div className="text-slate-400 p-8">Loading leaderboard...</div>;
+  }
+
+  if (error) {
+    return (
+      <ErrorState 
+        title="Failed to load leaderboard" 
+        description={error.message} 
+        retry={fetchLeaderboard} 
+      />
+    );
   }
 
   if (!leaderboard || leaderboard.length === 0) {
@@ -55,8 +71,8 @@ export default function LeaderboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Global Leaderboard</h2>
-        <p className="text-slate-500 mt-2">See how you stack up against the competition.</p>
+        <h2 className="text-3xl font-bold text-foreground font-display tracking-tight">Global Leaderboard</h2>
+        <p className="text-muted-foreground mt-2">See how you stack up against the competition.</p>
       </div>
 
       <Card className="border-border shadow-sm">

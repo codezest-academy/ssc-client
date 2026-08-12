@@ -8,6 +8,7 @@ import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 
 interface Attempt {
   attemptType: string;
@@ -31,18 +32,23 @@ interface AnalyticsData {
 export default function AnalyticsPage() {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  const fetchAnalytics = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await api.get("/analytics/dashboard");
+      setData(response.data.data);
+    } catch (err: any) {
+      console.error("Failed to load analytics:", err);
+      setError(err instanceof Error ? err : new Error(err.response?.data?.message || err.message || "Failed to load analytics"));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchAnalytics = async () => {
-      try {
-        const response = await api.get("/analytics/dashboard");
-        setData(response.data.data);
-      } catch (error) {
-        console.error("Failed to load analytics:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchAnalytics();
   }, []);
 
@@ -76,6 +82,16 @@ export default function AnalyticsPage() {
     );
   }
 
+  if (error) {
+    return (
+      <ErrorState 
+        title="Failed to load analytics" 
+        description={error.message} 
+        retry={fetchAnalytics} 
+      />
+    );
+  }
+
   if (!data || data.totalTests === 0) {
     return (
       <EmptyState 
@@ -94,8 +110,8 @@ export default function AnalyticsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Your Performance</h2>
-        <p className="text-slate-500 mt-2">Track your progress, accuracy, and study time.</p>
+        <h2 className="text-3xl font-bold text-foreground font-display tracking-tight">Your Performance</h2>
+        <p className="text-muted-foreground mt-2">Track your progress, accuracy, and study time.</p>
       </div>
 
       {/* Metrics Grid */}

@@ -44,9 +44,9 @@ export function FloatingNav() {
   if (!user) return null;
 
   return (
-    <div className="relative z-50 w-full">
+    <div className="relative z-50 w-full flex-shrink-0">
       <div className="mx-auto max-w-7xl">
-        <header className="flex items-center justify-between h-16 px-4 md:px-6 rounded-2xl bg-card shadow-floating border border-border transition-all duration-300">
+        <header className="flex items-center justify-between h-16 px-4 md:px-6 rounded-2xl md:rounded-3xl bg-card border border-border/80 shadow-sm transition-all duration-300">
           {/* Logo & Main Nav */}
           <div className="flex items-center gap-8">
             <Link href="/dashboard" className="flex items-center gap-2 group">
@@ -82,7 +82,7 @@ export function FloatingNav() {
           {/* Right Side Tools & Profile */}
           <div className="flex items-center gap-4">
             <Link 
-              href="/pricing" 
+              href="/dashboard/upgrade" 
               className="hidden md:block text-sm font-medium text-primary hover:text-primary/80 transition-colors"
             >
               Upgrade
@@ -124,7 +124,7 @@ export function FloatingNav() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/pricing" className="cursor-pointer text-primary font-medium">
+                  <Link href="/dashboard/upgrade" className="cursor-pointer text-primary font-medium">
                     Upgrade Plan
                   </Link>
                 </DropdownMenuItem>
