@@ -9,6 +9,7 @@ import { ArrowLeft, CheckCircle2, Circle, PlayCircle, FileText, FileBadge } from
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { QuestionRenderer } from "@/components/ui/question-renderer";
+import { MdxRenderer } from "@/components/ui/learning/mdx-renderer";
 import { useAuthStore } from "@/store/auth";
 import { PaywallGate } from "@/components/ui/paywall-gate";
 import { ErrorState } from "@/components/ui/error-state";
@@ -253,8 +254,8 @@ export default function LessonViewerPage() {
               </div>
             ) : lesson.type === "ARTICLE" && articlePages.length > 0 ? (
               <div className="flex flex-col h-full min-h-full">
-                <div className="flex-1 p-8 md:p-12 lg:p-16 prose prose-lg prose-slate max-w-none prose-headings:font-display prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-slate-900 prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-p:leading-relaxed prose-p:text-slate-600 prose-li:marker:text-primary prose-li:text-slate-600 prose-strong:text-slate-900 prose-hr:border-border">
-                  <QuestionRenderer content={articlePages[currentPage]} />
+                <div className="flex-1 p-8 md:p-12 lg:p-16">
+                  <MdxRenderer source={articlePages[currentPage]} />
                 </div>
                 {/* Pagination Footer */}
                 <div className="flex items-center justify-between p-6 border-t border-border bg-slate-50 mt-auto rounded-b-2xl">
