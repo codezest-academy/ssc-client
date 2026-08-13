@@ -36,7 +36,7 @@ export default function ChapterRouterPage({
         const response = await api.get(`/lessons/chapter/${currentChapter.id}`);
         const lessons = response.data.data;
         if (lessons && lessons.length > 0) {
-          router.replace(`/dashboard/learn/${resolvedParams.subjectSlug}/${resolvedParams.chapterSlug}/${lessons[0].slug}`);
+          router.replace(`/learn/${resolvedParams.subjectSlug}/${resolvedParams.chapterSlug}/${lessons[0].slug}`);
         } else {
           router.replace(`/dashboard/syllabus/${resolvedParams.subjectSlug}`);
         }

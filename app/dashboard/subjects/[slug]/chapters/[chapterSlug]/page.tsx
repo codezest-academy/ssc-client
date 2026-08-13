@@ -201,7 +201,7 @@ export default function ChapterPage() {
                     </div>
                     
                     <div className="mt-4 sm:mt-0 flex justify-end">
-                      <Link href={`/dashboard/learn/${slug}/${chapter.slug}/${lesson.slug}`} className="w-full sm:w-auto">
+                      <Link href={`/learn/${slug}/${chapter.slug}/${lesson.slug}`} className="w-full sm:w-auto">
                         <Button variant="secondary" className="w-full">
                           View Lesson
                         </Button>

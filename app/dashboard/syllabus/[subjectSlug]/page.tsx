@@ -146,7 +146,7 @@ export default function SubjectSyllabusPage({
                         {chapter._count.lessons} Lessons
                       </div>
                       
-                      <Link href={`/dashboard/learn/${subject.slug}/${chapter.slug}`}>
+                      <Link href={`/learn/${subject.slug}/${chapter.slug}`}>
                         <Button className="rounded-full shadow-lg h-9">Start Chapter</Button>
                       </Link>
                     </div>
