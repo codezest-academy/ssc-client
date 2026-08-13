@@ -14,6 +14,7 @@ import { TableOfContents } from "@/components/ui/learning/table-of-contents";
 import { useAuthStore } from "@/store/auth";
 import { PaywallGate } from "@/components/ui/paywall-gate";
 import { ErrorState } from "@/components/ui/error-state";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface LessonProgress {
   watchedSeconds: number;
@@ -148,7 +149,49 @@ export default function LessonViewerPage() {
   };
 
   if (loading) {
-    return <div className="text-slate-400 p-8">Loading lesson...</div>;
+    return (
+      <div className="flex w-full max-w-7xl mx-auto px-4 md:px-8 gap-6 lg:gap-8 pb-12 pt-6 justify-start">
+        {/* Left Column Skeleton (Desktop) */}
+        <div className="hidden lg:flex flex-col w-72 shrink-0">
+          <div className="sticky top-32 space-y-6">
+            <div className="bg-white rounded-3xl shadow-sm border border-slate-200/60 p-6">
+              <Skeleton className="h-4 w-24 mb-6" />
+              <div className="flex flex-col gap-4">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <Skeleton className="h-6 w-6 rounded-full shrink-0" />
+                    <Skeleton className="h-4 flex-1" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Center Column Skeleton */}
+        <div className="flex-1 w-full max-w-5xl bg-white rounded-3xl shadow-sm border border-slate-200/60 p-6 md:p-10 lg:p-12 relative">
+          <Skeleton className="h-4 w-64 mb-8" />
+          
+          <div className="mb-10">
+            <Skeleton className="h-10 w-3/4 mb-6" />
+            <div className="flex items-center gap-4">
+              <Skeleton className="h-8 w-24 rounded-full" />
+              <Skeleton className="h-8 w-24 rounded-full" />
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-11/12" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-4/5" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-9/12" />
+            <Skeleton className="h-[200px] w-full rounded-xl mt-8" />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (lessonError) {
@@ -199,7 +242,7 @@ export default function LessonViewerPage() {
   };
 
   return (
-    <div className="flex w-full max-w-7xl mx-auto px-4 md:px-8 gap-8 lg:gap-12 pb-12 pt-6 justify-start">
+    <div className="flex w-full max-w-7xl mx-auto px-4 md:px-8 gap-6 lg:gap-8 pb-12 pt-6 justify-start">
       {/* Left Column: Course Sidebar (Desktop) */}
       <div className="hidden lg:flex flex-col w-72 shrink-0">
         <div className="sticky top-32 space-y-6">
@@ -284,12 +327,12 @@ export default function LessonViewerPage() {
       </div>
 
       {/* Center Column: Main Content */}
-      <div className="flex-1 w-full max-w-4xl bg-white rounded-3xl shadow-sm border border-slate-200/60 p-6 md:p-10 lg:p-12 relative">
+      <div className="flex-1 w-full max-w-5xl bg-white rounded-3xl shadow-sm border border-slate-200/60 p-6 md:p-10 lg:p-12 relative">
         {/* Breadcrumbs */}
         <div className="flex items-center gap-2 mb-8 text-sm font-medium text-slate-500 overflow-x-auto whitespace-nowrap pb-2">
-          <Link href={`/learn/${subjectSlug}`} className="hover:text-primary transition-colors">{lesson.subject?.name}</Link>
+          <Link href={`/dashboard/subjects/${subjectSlug}`} className="hover:text-primary transition-colors">{lesson.subject?.name}</Link>
           <span className="text-slate-300">/</span>
-          <span className="text-slate-700">{lesson.chapter?.name}</span>
+          <Link href={`/dashboard/subjects/${subjectSlug}/chapters/${chapterSlug}`} className="hover:text-primary transition-colors">{lesson.chapter?.name}</Link>
           <span className="text-slate-300">/</span>
           <span className="text-slate-900">{lesson.title}</span>
         </div>
@@ -301,11 +344,6 @@ export default function LessonViewerPage() {
               <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900">
                 {lesson.title}
               </h1>
-              {!lesson.isFree && (
-                <span className="px-3 py-1 bg-amber-100 text-amber-700 text-xs font-bold uppercase tracking-wider rounded-full mt-2 md:mt-0">
-                  Premium
-                </span>
-              )}
             </div>
             
             {/* Top Completion Toggle */}
@@ -414,7 +452,7 @@ export default function LessonViewerPage() {
                       // TODO: Navigate to next chapter/lesson
                     }}
                   >
-                    {isCompleted ? "Continue to Next" : "Mark Complete & Continue"} <ArrowLeft className="w-4 h-4 ml-2 rotate-180" />
+                    {isCompleted ? "Continue to Next" : "Mark Complete & Continue"}
                   </Button>
                 )}
               </div>

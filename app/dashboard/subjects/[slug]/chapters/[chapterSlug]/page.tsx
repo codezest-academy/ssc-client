@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { api } from "@/lib/axios";
+import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
-import { PlayCircle, FileText, File, ArrowLeft, Clock, CheckCircle2, VideoOff, FileQuestion } from "lucide-react";
+import { PlayCircle, FileText, File, ArrowLeft, ChevronRight, Clock, CheckCircle2, VideoOff, FileQuestion } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -96,11 +97,11 @@ export default function ChapterPage() {
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <Skeleton className="h-[150px] w-full rounded-xl" />
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-24 w-full rounded-xl" />
+      <div className="space-y-8">
+        <Skeleton className="h-[120px] w-full rounded-xl" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <Skeleton key={i} className="h-[180px] w-full rounded-xl" />
           ))}
         </div>
       </div>
@@ -139,20 +140,20 @@ export default function ChapterPage() {
 
   const getLessonColor = (type: string) => {
     switch (type) {
-      case "VIDEO": return "bg-blue-100 text-blue-600";
-      case "DOCUMENT": return "bg-emerald-100 text-emerald-600";
-      case "QUIZ": return "bg-purple-100 text-purple-600";
-      default: return "bg-slate-100 text-slate-600";
+      case "VIDEO": return "bg-info/10 text-info";
+      case "DOCUMENT": return "bg-success/10 text-success";
+      case "QUIZ": return "bg-warning/10 text-warning";
+      default: return "bg-muted text-muted-foreground";
     }
   };
 
   return (
     <div className="space-y-8">
       <div>
-        <div className="flex items-center gap-2 mb-2">
-          <Link href={`/dashboard/subjects/${slug}`} className="text-slate-400 hover:text-primary transition-colors text-sm font-medium flex items-center">
-            <ArrowLeft className="w-4 h-4 mr-1" /> {subject?.name || "Subject"}
-          </Link>
+        <div className="flex items-center gap-2 mb-4 text-sm font-medium text-slate-500 overflow-x-auto whitespace-nowrap pb-2">
+          <Link href={`/dashboard/subjects/${slug}`} className="hover:text-primary transition-colors">{subject?.name || "Subject"}</Link>
+          <span className="text-slate-300">/</span>
+          <span className="text-slate-900">{chapter.name}</span>
         </div>
         <h2 className="text-3xl font-bold text-slate-900 tracking-tight">{chapter.name}</h2>
         <p className="text-slate-500 mt-2 max-w-2xl">{chapter.description}</p>
@@ -166,52 +167,73 @@ export default function ChapterPage() {
             description="Check back later for new content in this chapter."
           />
         ) : (
-          lessons.map((lesson) => {
-            const isCompleted = lesson.progress?.[0]?.completedAt != null;
-            return (
-              <Card key={lesson.id} className="border-border hover:border-primary/50 transition-all shadow-sm rounded-xl overflow-hidden">
-                <CardContent className="p-0">
-                  <div className="flex flex-col sm:flex-row sm:items-center p-4 gap-4">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${getLessonColor(lesson.type)}`}>
-                      {getLessonIcon(lesson.type)}
-                    </div>
-                    
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="text-lg font-semibold text-foreground">{lesson.title}</h3>
-                        {lesson.isPremium && (
-                          <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 text-xs font-bold uppercase tracking-wider">Premium</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {lessons.map((lesson, index) => {
+              const isCompleted = lesson.progress?.[0]?.completedAt != null;
+              return (
+                <Link key={lesson.id} href={`/learn/${slug}/${chapter.slug}/${lesson.slug}`} className="group block h-full">
+                  <Card className={cn(
+                    "h-full border-border hover:border-primary/50 transition-colors shadow-sm rounded-xl overflow-hidden flex flex-col",
+                    isCompleted ? "bg-success/5 border-success/20" : "bg-card"
+                  )}>
+                    <CardContent className="p-5 flex flex-col h-full gap-4">
+                      {/* Top Row: Title & Number */}
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1 pr-4">
+                          <div className="flex items-center gap-2 mb-1.5">
+                            <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                              {lesson.title}
+                            </h3>
+                            {lesson.isPremium && (
+                              <span className="px-2 py-0.5 rounded-full bg-warning/10 text-warning text-xs font-bold uppercase tracking-wider shrink-0">Premium</span>
+                            )}
+                          </div>
+                        </div>
+                        <span className="text-4xl font-black text-muted-foreground/10 group-hover:text-muted-foreground/20 transition-colors shrink-0 leading-none">
+                          {(index + 1).toString().padStart(2, '0')}
+                        </span>
+                      </div>
+                      
+                      {/* Description */}
+                      <div className="flex-1 min-w-0">
+                        {lesson.description && (
+                          <p className="text-sm text-muted-foreground line-clamp-2">{lesson.description}</p>
                         )}
                       </div>
-                      <p className="text-sm text-slate-500 line-clamp-1">{lesson.description}</p>
                       
-                      <div className="flex items-center gap-4 mt-3 text-xs font-medium text-slate-400">
-                        <div className="flex items-center">
-                          <Clock className="w-3.5 h-3.5 mr-1" />
-                          {lesson.duration ? `${Math.floor(lesson.duration / 60)} mins` : lesson.type === 'ARTICLE' ? 'Article' : 'N/A'}
+                      {/* Footer: Metadata & Action */}
+                      <div className="flex items-center justify-between mt-auto pt-4 border-t border-border/50">
+                        <div className="flex items-center gap-3 text-xs font-medium text-muted-foreground">
+                          <div className="flex items-center">
+                            <Clock className="w-3.5 h-3.5 mr-1" />
+                            {lesson.duration ? `${Math.floor(lesson.duration / 60)} mins` : lesson.type === 'ARTICLE' ? 'Read' : 'Video'}
+                          </div>
+                          <div className="flex items-center">
+                            {isCompleted ? (
+                              <span className="flex items-center text-success">
+                                <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Completed
+                              </span>
+                            ) : (
+                              <span className="flex items-center">
+                                <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30 mr-2" /> Not started
+                              </span>
+                            )}
+                          </div>
                         </div>
-                        <div className="flex items-center">
-                          {isCompleted ? (
-                            <span className="flex items-center text-emerald-600"><CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Completed</span>
-                          ) : (
-                            <span className="flex items-center"><CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Not started</span>
-                          )}
+                        
+                        <div className={cn(
+                          "flex items-center justify-center w-8 h-8 rounded-full transition-all shrink-0",
+                          isCompleted ? "bg-success/10 text-success" : "bg-accent text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary"
+                        )}>
+                          <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                         </div>
                       </div>
-                    </div>
-                    
-                    <div className="mt-4 sm:mt-0 flex justify-end">
-                      <Link href={`/learn/${slug}/${chapter.slug}/${lesson.slug}`} className="w-full sm:w-auto">
-                        <Button variant="secondary" className="w-full">
-                          View Lesson
-                        </Button>
-                      </Link>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
+          </div>
         )}
       </div>
 
