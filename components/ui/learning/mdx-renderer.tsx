@@ -4,6 +4,8 @@ import React, { ElementType } from "react";
 import Markdown from "markdown-to-jsx";
 import { Callout } from "./callout";
 import { QuestionRenderer } from "@/components/ui/question-renderer";
+import { ZoomableImage } from "./zoomable-image";
+import { Mindmap } from "./mindmap";
 
 interface MdxRendererProps {
   source: string;
@@ -38,6 +40,9 @@ const HeadingWithId = ({ level, children, ...props }: { level: 1 | 2 | 3 | 4 | 5
 
 const customComponents = {
   Callout: { component: Callout },
+  ZoomableImage: { component: ZoomableImage },
+  Mindmap: { component: Mindmap },
+  img: { component: (props: any) => <ZoomableImage src={props.src} alt={props.alt} className={props.className} /> },
   h1: { component: HeadingWithId, props: { level: 1 } },
   h2: { component: HeadingWithId, props: { level: 2 } },
   h3: { component: HeadingWithId, props: { level: 3 } },
