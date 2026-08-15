@@ -156,7 +156,26 @@ export default function ChapterPage() {
           <span className="text-slate-900">{chapter.name}</span>
         </div>
         <h2 className="text-3xl font-bold text-slate-900 tracking-tight">{chapter.name}</h2>
-        <p className="text-slate-500 mt-2 max-w-2xl">{chapter.description}</p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2">
+          <p className="text-slate-500 max-w-2xl">{chapter.description}</p>
+          
+          {/* Resume Learning Button */}
+          {lessons.length > 0 && (
+            <Button 
+              size="lg" 
+              className="w-full sm:w-auto gap-2 rounded-full shadow-md"
+              onClick={() => {
+                // Find first incomplete lesson
+                const firstIncomplete = lessons.find(l => !l.progress?.[0]?.completedAt);
+                const targetLesson = firstIncomplete || lessons[0];
+                router.push(`/learn/${slug}/${chapter.slug}/${targetLesson.slug}`);
+              }}
+            >
+              <PlayCircle className="w-5 h-5" />
+              {lessons.some(l => l.progress?.[0]?.completedAt) ? "Resume Learning" : "Start Chapter"}
+            </Button>
+          )}
+        </div>
       </div>
 
       <div className="space-y-4">
@@ -241,26 +260,49 @@ export default function ChapterPage() {
         <div className="mt-12">
           <h2 className="text-xl font-bold mb-6 text-foreground">Practice Sets</h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {chapter.practiceSets.map((set) => (
-              <Card key={set.id} className="hover:border-primary/50 transition-colors border-border/40 shadow-sm">
-                <CardContent className="p-5">
-                  <h3 className="font-semibold text-foreground mb-1 line-clamp-1">{set.title}</h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2 mb-4 h-10">
-                    Practice your skills with this test.
-                  </p>
-                  <div className="flex items-center justify-between mt-auto">
-                    <span className="text-xs font-medium text-slate-500 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-md">
-                      {set._count?.questions || 0} Questions
-                    </span>
-                    <Link href={`/tests/overview/${set.id}`}>
-                      <Button size="sm" variant="default">
-                        Take Test
-                      </Button>
-                    </Link>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+            {chapter.practiceSets.map((set) => {
+              // Extract the first exam type from the subject if available to apply the exam color system.
+              // We'll fallback to primary if not found.
+              const examColorClass = subject?.slug?.includes("cgl") ? "bg-[oklch(var(--exam-cgl)/0.1)] text-[oklch(var(--exam-cgl))]" :
+                                     subject?.slug?.includes("chsl") ? "bg-[oklch(var(--exam-chsl)/0.1)] text-[oklch(var(--exam-chsl))]" :
+                                     "bg-primary/10 text-primary";
+              const borderClass = subject?.slug?.includes("cgl") ? "border-[oklch(var(--exam-cgl)/0.3)]" :
+                                  subject?.slug?.includes("chsl") ? "border-[oklch(var(--exam-chsl)/0.3)]" :
+                                  "border-primary/30";
+
+              return (
+                <Card key={set.id} className="group hover:shadow-md transition-all border-border/40 overflow-hidden relative flex flex-col">
+                  {/* Decorative Exam Colored Top Bar */}
+                  <div className={cn("h-1.5 w-full", examColorClass.split(" ")[0])} />
+                  
+                  <CardContent className="p-5 flex flex-col flex-1">
+                    <div className="flex items-start gap-3 mb-2">
+                      <div className={cn("w-10 h-10 rounded-lg flex items-center justify-center shrink-0", examColorClass)}>
+                        <FileQuestion className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-foreground line-clamp-1 group-hover:text-primary transition-colors">{set.title}</h3>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {set._count?.questions || 0} Questions
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <p className="text-sm text-muted-foreground line-clamp-2 mt-2 h-10">
+                      Test your understanding of the concepts covered in this chapter.
+                    </p>
+                    
+                    <div className="flex items-center justify-end mt-4 pt-4 border-t">
+                      <Link href={`/tests/overview/${set.id}`}>
+                        <Button size="sm" className="gap-2 group-hover:bg-primary transition-colors">
+                          Take Test <ChevronRight className="w-3.5 h-3.5" />
+                        </Button>
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </div>
       )}

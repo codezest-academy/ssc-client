@@ -31,21 +31,8 @@ export default function ChapterRouterPage({
       return;
     }
 
-    const fetchLessonsAndRedirect = async () => {
-      try {
-        const response = await api.get(`/lessons/chapter/${currentChapter.id}`);
-        const lessons = response.data.data;
-        if (lessons && lessons.length > 0) {
-          router.replace(`/learn/${resolvedParams.subjectSlug}/${resolvedParams.chapterSlug}/${lessons[0].slug}`);
-        } else {
-          router.replace(`/dashboard/syllabus/${resolvedParams.subjectSlug}`);
-        }
-      } catch (err) {
-        router.replace("/dashboard");
-      }
-    };
-
-    fetchLessonsAndRedirect();
+    // Always redirect to the Chapter Dashboard so students can see the syllabus and practice sets
+    router.replace(`/dashboard/subjects/${resolvedParams.subjectSlug}/chapters/${resolvedParams.chapterSlug}`);
   }, [chapters, isLoading, resolvedParams, router]);
 
   return (
