@@ -1,15 +1,25 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { MarketingNav } from "@/components/layout/MarketingNav";
 import { MarketingFooter } from "@/components/layout/MarketingFooter";
 import { FloatingNav } from "@/components/layout/FloatingNav";
 import { useAuthStore } from "@/store/auth";
+import { reportClientError } from "@/lib/error-reporter";
 
 export default function NotFound() {
   const user = useAuthStore((state) => state.user);
   const isHydrated = useAuthStore((state) => state.isHydrated);
+
+  useEffect(() => {
+    reportClientError({
+      message: `404 Not Found: ${window.location.pathname}`,
+      errorBoundary: "not-found",
+      severity: "LOW",
+    });
+  }, []);
 
   const showDashboardNav = isHydrated && user;
 

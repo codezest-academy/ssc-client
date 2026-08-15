@@ -2,6 +2,7 @@
 
 import { ErrorState } from "@/components/ui/error-state";
 import { useEffect } from "react";
+import { reportClientError } from "@/lib/error-reporter";
 
 export default function ErrorBoundary({
   error,
@@ -12,6 +13,12 @@ export default function ErrorBoundary({
 }) {
   useEffect(() => {
     console.error("Route error caught:", error);
+    reportClientError({
+      message: error.message,
+      stack: error.stack,
+      errorBoundary: "page",
+      severity: "HIGH",
+    });
   }, [error]);
 
   return (

@@ -33,6 +33,25 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     
+    // Auto-report 5xx server errors and network errors (0)
+    // Avoid reporting 4xx errors as they are operational (e.g., bad request, unauthorized)
+    if (
+      !originalRequest._isErrorReport && // Prevent infinite loops if reporting itself fails
+      (error.response?.status >= 500 || !error.response)
+    ) {
+      // Lazy import to avoid circular dependency since error-reporter imports axios
+      import('./error-reporter').then(({ reportClientError }) => {
+        reportClientError({
+          message: error.response 
+            ? `API Error: ${error.response.status} on ${originalRequest.method?.toUpperCase()} ${originalRequest.url}`
+            : `Network Error on ${originalRequest.method?.toUpperCase()} ${originalRequest.url}`,
+          severity: 'HIGH',
+          errorBoundary: 'api',
+          stack: error.stack,
+        });
+      });
+    }
+
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
         return new Promise(function (resolve, reject) {

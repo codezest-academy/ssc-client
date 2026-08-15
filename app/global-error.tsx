@@ -2,6 +2,7 @@
 
 import { ErrorState } from "@/components/ui/error-state";
 import { useEffect } from "react";
+import { reportClientError } from "@/lib/error-reporter";
 
 export default function GlobalError({
   error,
@@ -11,8 +12,13 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Log the error to an error reporting service like Sentry
     console.error("Global crash caught:", error);
+    reportClientError({
+      message: error.message,
+      stack: error.stack,
+      errorBoundary: "global",
+      severity: "CRITICAL",
+    });
   }, [error]);
 
   return (
