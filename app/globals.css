@@ -66,6 +66,13 @@
   --color-subject-reason: var(--subject-reason);
   --color-subject-science: var(--subject-science);
 
+  /* Exam Colors */
+  --color-exam-cgl: var(--exam-cgl);
+  --color-exam-chsl: var(--exam-chsl);
+  --color-exam-mts: var(--exam-mts);
+  --color-exam-cpo: var(--exam-cpo);
+  --color-exam-gd: var(--exam-gd);
+
   --color-glass-edge: var(--glass-edge);
 
   --radius-lg: var(--radius);
@@ -147,6 +154,13 @@
     --subject-reason:      oklch(0.65 0.18 145);  /* Green */
     --subject-science:     oklch(0.65 0.18 190);  /* Teal */
 
+    /* ── Exam Colors (L=0.65, C=0.18) ────────────────────────── */
+    --exam-cgl:            oklch(0.65 0.18 275);  /* Indigo/Blue */
+    --exam-chsl:           oklch(0.65 0.18 175);  /* Teal/Green */
+    --exam-mts:            oklch(0.65 0.18 55);   /* Orange/Amber */
+    --exam-cpo:            oklch(0.65 0.18 310);  /* Purple */
+    --exam-gd:             oklch(0.65 0.18 350);  /* Pink/Rose */
+
     /* ── Floating Shell Tokens ───────────────────────────────── */
     --floating-shadow:     0 1px 2px 0 rgb(0 0 0 / 0.04),
                            0 4px 12px -2px rgb(0 0 0 / 0.06),
@@ -222,6 +236,13 @@
     --subject-reason:      oklch(0.60 0.18 145);
     --subject-science:     oklch(0.60 0.18 190);
 
+    /* ── Exam Colors (Slightly adjusted L for dark mode) ─────── */
+    --exam-cgl:            oklch(0.60 0.18 275);
+    --exam-chsl:           oklch(0.60 0.18 175);
+    --exam-mts:            oklch(0.60 0.18 55);
+    --exam-cpo:            oklch(0.60 0.18 310);
+    --exam-gd:             oklch(0.60 0.18 350);
+
     /* ── Floating Shell Tokens ───────────────────────────────── */
     --floating-shadow:     0 1px 2px 0 rgb(0 0 0 / 0.20),
                            0 4px 12px -2px rgb(0 0 0 / 0.30),
@@ -238,6 +259,15 @@
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
+  }
+  
+  /* Hide Scrollbar Completely */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  * {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
   }
 }
 

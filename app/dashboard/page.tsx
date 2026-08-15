@@ -66,6 +66,65 @@ interface DailyAgenda {
   } | null;
 }
 
+const getExamColorClasses = (examId: string) => {
+  switch (examId) {
+    case "SSC_CGL": return { 
+      cardBorder: "border-exam-cgl/10 hover:border-exam-cgl/30",
+      shapeBg: "bg-exam-cgl/5 group-hover:bg-exam-cgl/10",
+      titleHover: "group-hover:text-exam-cgl",
+      text: "text-exam-cgl",
+      progressBg: "bg-exam-cgl/10",
+      progressFill: "bg-exam-cgl",
+      token: "--color-exam-cgl"
+    };
+    case "SSC_CHSL": return { 
+      cardBorder: "border-exam-chsl/10 hover:border-exam-chsl/30",
+      shapeBg: "bg-exam-chsl/5 group-hover:bg-exam-chsl/10",
+      titleHover: "group-hover:text-exam-chsl",
+      text: "text-exam-chsl",
+      progressBg: "bg-exam-chsl/10",
+      progressFill: "bg-exam-chsl",
+      token: "--color-exam-chsl"
+    };
+    case "SSC_MTS": return { 
+      cardBorder: "border-exam-mts/10 hover:border-exam-mts/30",
+      shapeBg: "bg-exam-mts/5 group-hover:bg-exam-mts/10",
+      titleHover: "group-hover:text-exam-mts",
+      text: "text-exam-mts",
+      progressBg: "bg-exam-mts/10",
+      progressFill: "bg-exam-mts",
+      token: "--color-exam-mts"
+    };
+    case "SSC_CPO": return { 
+      cardBorder: "border-exam-cpo/10 hover:border-exam-cpo/30",
+      shapeBg: "bg-exam-cpo/5 group-hover:bg-exam-cpo/10",
+      titleHover: "group-hover:text-exam-cpo",
+      text: "text-exam-cpo",
+      progressBg: "bg-exam-cpo/10",
+      progressFill: "bg-exam-cpo",
+      token: "--color-exam-cpo"
+    };
+    case "SSC_GD": return { 
+      cardBorder: "border-exam-gd/10 hover:border-exam-gd/30",
+      shapeBg: "bg-exam-gd/5 group-hover:bg-exam-gd/10",
+      titleHover: "group-hover:text-exam-gd",
+      text: "text-exam-gd",
+      progressBg: "bg-exam-gd/10",
+      progressFill: "bg-exam-gd",
+      token: "--color-exam-gd"
+    };
+    default: return { 
+      cardBorder: "border-primary/10 hover:border-primary/30",
+      shapeBg: "bg-primary/5 group-hover:bg-primary/10",
+      titleHover: "group-hover:text-primary",
+      text: "text-primary",
+      progressBg: "bg-primary/10",
+      progressFill: "bg-primary",
+      token: "--color-primary"
+    };
+  }
+};
+
 function FullTimeHero({ userName, agenda }: { userName: string, agenda: DailyAgenda | null }) {
   return (
     <div className="relative rounded-3xl overflow-hidden bg-card border border-primary/10 p-5 md:p-6 shadow-sm group">
@@ -376,8 +435,7 @@ function WeakTopicsWidget({ weakTopics }: { weakTopics: WeakTopic[] }) {
 function SubjectCardSkeleton() {
   return (
     <div className="h-full bg-card border border-primary/10 rounded-3xl p-5 flex flex-col relative overflow-hidden">
-      <div className="relative z-10 flex items-start justify-between mb-4">
-        <div className="w-12 h-12 bg-muted animate-pulse rounded-2xl" />
+      <div className="relative z-10 flex justify-end mb-4">
         <div className="w-16 h-6 bg-muted animate-pulse rounded-xl" />
       </div>
       <div className="relative z-10 space-y-2 flex-1 mb-5">
@@ -523,6 +581,7 @@ export default function DashboardPage() {
           targetExams.map((exam) => {
             const examLabel = exam.replace(/_/g, " ");
             const examSubjects = subjects.filter((subject) => subject.examTypes?.includes(exam));
+            const colors = getExamColorClasses(exam);
 
             if (examSubjects.length === 0) return null;
 
@@ -548,17 +607,14 @@ export default function DashboardPage() {
                   {examSubjects.map((subject) => (
                     <Link key={subject.id} href={`/dashboard/subjects/${subject.slug}?exam=${exam}`} className="block group">
                       <div className="h-full bg-card border border-primary/10 hover:border-primary/30 hover:shadow-lg hover:-translate-y-1 hover:scale-[1.02] active:scale-95 transition-all duration-300 rounded-3xl p-5 flex flex-col relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -z-0 group-hover:bg-primary/10 transition-colors" />
-                        <div className="relative z-10 flex items-start justify-between mb-4">
-                          <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center shadow-sm">
-                            <Book className="w-6 h-6 text-primary group-hover:rotate-12 transition-transform duration-300" />
-                          </div>
+                        <div className={`absolute top-0 right-0 w-24 h-24 ${colors.shapeBg} rounded-bl-full -z-0 transition-colors`} />
+                        <div className="relative z-10 flex justify-end mb-4">
                           <div className="bg-muted/50 backdrop-blur-sm border border-border/50 px-2.5 py-1 rounded-xl flex items-center gap-1.5">
                              <BookOpen className="w-3.5 h-3.5 text-muted-foreground" />
                              <span className="text-[10px] font-bold text-muted-foreground uppercase">{subject._count.chapters} Ch</span>
                           </div>
                         </div>
-                        <div className="relative z-10 space-y-1.5 flex-1 mb-5">
+                        <div className="relative z-10 space-y-1.5 flex-1 mb-5 pr-8">
                           <h3 className="text-lg font-black tracking-tight text-foreground group-hover:text-primary transition-colors line-clamp-1">
                             {subject.name}
                           </h3>
@@ -572,7 +628,10 @@ export default function DashboardPage() {
                             <span className="text-xs font-black text-primary">0%</span>
                           </div>
                           <div className="h-2 w-full bg-primary/10 rounded-full overflow-hidden">
-                            <div className="h-full bg-primary rounded-full shadow-[0_0_10px_rgba(var(--primary),0.5)] w-0" />
+                            <div 
+                              className="h-full bg-primary rounded-full w-0"
+                              style={{ boxShadow: "0 0 10px color-mix(in oklab, var(--primary) 50%, transparent)" }}
+                            />
                           </div>
                         </div>
                       </div>

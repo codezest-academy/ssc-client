@@ -43,7 +43,7 @@ export function PagePatternsSection() {
           <div className="absolute inset-0 z-0">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-[#0a0a0f] to-[#0a0a0f] opacity-80" />
             <div className="absolute top-[-10%] left-[-10%] w-[250px] h-[250px] rounded-full bg-primary/20 blur-[80px] animate-float-slow" />
-            <div className="absolute bottom-[-20%] right-[-10%] w-[300px] h-[300px] rounded-full bg-indigo-600/10 blur-[100px] animate-float-slower" />
+            <div className="absolute bottom-[-20%] right-[-10%] w-[300px] h-[300px] rounded-full bg-primary/10 blur-[100px] animate-float-slower" />
             <div className="absolute top-[30%] left-[60%] w-[200px] h-[200px] rounded-full bg-primary/10 blur-[70px] animate-float-slow" style={{ animationDelay: '-5s' }} />
           </div>
           <div className="relative z-10 w-full max-w-[280px]">

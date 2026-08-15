@@ -13,18 +13,19 @@
 4. [The 60-30-10 Rule (Client Context)](#4-the-60-30-10-rule-client-context)
 5. [Token Reference: What Every Variable Means](#5-token-reference-what-every-variable-means)
 6. [Subject Color System](#6-subject-color-system)
-7. [Test State Token System](#7-test-state-token-system)
-8. [Motivational UI Tokens (Streaks, Progress, Achievements)](#8-motivational-ui-tokens-streaks-progress-achievements)
-9. [Focus Mode: The Test-Taking Experience](#9-focus-mode-the-test-taking-experience)
-10. [Typography System](#10-typography-system)
-11. [Motion & Animation System](#11-motion--animation-system)
-12. [The Golden Rules for Developers](#12-the-golden-rules-for-developers)
-13. [Common Mistakes and How to Fix Them](#13-common-mistakes-and-how-to-fix-them)
-14. [Audit Checklist](#14-audit-checklist)
-15. [Accessibility Contract](#15-accessibility-contract)
-16. [Component Token Contracts](#16-component-token-contracts)
-17. [Mobile-First Constraints](#17-mobile-first-constraints)
-18. [Enforcement & Tooling](#18-enforcement--tooling)
+7. [Exam Color System](#65-exam-color-system)
+8. [Test State Token System](#7-test-state-token-system)
+9. [Motivational UI Tokens (Streaks, Progress, Achievements)](#8-motivational-ui-tokens-streaks-progress-achievements)
+10. [Focus Mode: The Test-Taking Experience](#9-focus-mode-the-test-taking-experience)
+11. [Typography System](#10-typography-system)
+12. [Motion & Animation System](#11-motion--animation-system)
+13. [The Golden Rules for Developers](#12-the-golden-rules-for-developers)
+14. [Common Mistakes and How to Fix Them](#13-common-mistakes-and-how-to-fix-them)
+15. [Audit Checklist](#14-audit-checklist)
+16. [Accessibility Contract](#15-accessibility-contract)
+17. [Component Token Contracts](#16-component-token-contracts)
+18. [Mobile-First Constraints](#17-mobile-first-constraints)
+19. [Enforcement & Tooling](#18-enforcement--tooling)
 
 ---
 
@@ -126,8 +127,8 @@ The client is slightly more expressive than the admin portal, but still discipli
 30% — Structure and hierarchy (text-foreground, border-border, bg-muted)
        Chapter names, lesson titles, dividers, secondary labels.
 
-10% — Brand + Subject accent (bg-primary, --subject-* colors)
-       Subject pills, active nav items, progress bars, CTAs.
+10% — Brand + Subject/Exam accent (bg-primary, --subject-*, --exam-* colors)
+       Subject/Exam pills, active nav items, progress bars, CTAs.
        EXCEPTION: Hero areas (subject banners) may use up to 15%
        for warmth and motivation — justified by emotional design goals.
 ```
@@ -230,6 +231,36 @@ General Science        → --subject-science → Cyan/Teal      Exploration, sci
     <div className="h-full bg-subject-quant rounded-full" style={{ width: '40%' }} />
   </div>
   <p className="mt-1 text-xs text-muted-foreground">4 / 12 lessons complete</p>
+</div>
+```
+
+---
+
+## 6.5 Exam Color System
+
+Similar to Subject Colors, the Exam Color System provides a consistent visual identity for different target examinations across the platform.
+
+```
+Exam → Token           → Color           → Personality
+────────────────────────────────────────────────────────────────────
+SSC CGL → --exam-cgl    → Indigo/Blue    Authoritative, premium
+SSC CHSL→ --exam-chsl   → Teal/Green     Fresh, accessible
+SSC MTS → --exam-mts    → Orange/Amber   Energetic, foundational
+SSC CPO → --exam-cpo    → Purple         Disciplined, sharp
+SSC GD  → --exam-gd     → Pink/Rose      Dynamic, active
+```
+
+### Exam Color Usage
+
+Exam colors are primarily used in user profile preferences, dashboard targets, and filtering. Like subject colors, they should be used sparingly as background tints with high-contrast text.
+
+```tsx
+// Exam selection card
+<div className="bg-card border border-exam-cgl/30 rounded-2xl p-6">
+  {/* Exam color on background tint with matching text */}
+  <div className="bg-exam-cgl/10 text-exam-cgl px-3 py-1 rounded-full font-bold">
+    SSC CGL
+  </div>
 </div>
 ```
 
@@ -638,6 +669,7 @@ Subject colors are for identification. The `--primary` token is for calls-to-act
 | MCQ option (skipped) | `--muted` family | `--warning`, raw palette |
 | Submit / CTA button | `--primary`, `--primary-foreground` | Raw palette |
 | Subject pill / badge | `--subject-*` family | `--primary`, raw palette |
+| Exam pill / card | `--exam-*` family | Raw palette gradients |
 | Progress bar (lesson) | `--progress-fill` (= `--primary`) | Raw palette |
 | Progress bar (chapter) | Subject color token | `--primary` |
 | Timer (normal) | `--success` | `--primary` |

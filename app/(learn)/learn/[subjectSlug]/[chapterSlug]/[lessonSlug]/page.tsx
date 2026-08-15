@@ -154,7 +154,7 @@ export default function LessonViewerPage() {
         {/* Left Column Skeleton (Desktop) */}
         <div className="hidden lg:flex flex-col w-72 shrink-0">
           <div className="sticky top-32 space-y-6">
-            <div className="bg-white rounded-3xl shadow-sm border border-slate-200/60 p-6">
+            <div className="bg-card rounded-3xl shadow-lg border border-border p-6">
               <Skeleton className="h-4 w-24 mb-6" />
               <div className="flex flex-col gap-4">
                 {[1, 2, 3, 4, 5].map((i) => (
@@ -169,7 +169,7 @@ export default function LessonViewerPage() {
         </div>
 
         {/* Center Column Skeleton */}
-        <div className="flex-1 w-full max-w-5xl bg-white rounded-3xl shadow-sm border border-slate-200/60 p-6 md:p-10 lg:p-12 relative">
+        <div className="flex-1 w-full max-w-5xl bg-card rounded-3xl shadow-xl border border-border p-6 md:p-10 lg:p-12 relative">
           <Skeleton className="h-4 w-64 mb-8" />
           
           <div className="mb-10">
@@ -247,7 +247,7 @@ export default function LessonViewerPage() {
       <div className="hidden lg:flex flex-col w-72 shrink-0">
         <div className="sticky top-32 space-y-6">
           {chapterLessons && chapterLessons.length > 1 && (
-            <div className="bg-white rounded-3xl shadow-sm border border-slate-200/60 p-6">
+            <div className="bg-card rounded-3xl shadow-lg border border-border p-6">
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4 px-2">{lesson.chapter?.name}</h3>
               <div className="flex flex-col gap-1">
                 {chapterLessons?.map((l, index) => {
@@ -260,22 +260,22 @@ export default function LessonViewerPage() {
                       className={cn(
                         "flex items-center gap-3 p-2.5 rounded-lg transition-all duration-200",
                         isCurrent 
-                          ? "bg-slate-100 text-slate-900" 
-                          : "hover:bg-slate-50 text-slate-600"
+                          ? "bg-accent text-accent-foreground" 
+                          : "hover:bg-muted text-muted-foreground"
                       )}
                     >
                       <div className={cn(
                         "flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center border",
                         isFinished 
-                          ? "bg-emerald-100 border-emerald-200 text-emerald-600" 
+                          ? "bg-success/10 border-success/30 text-success" 
                           : isCurrent 
-                            ? "bg-slate-900 text-white border-slate-900"
-                            : "bg-transparent border-slate-300 text-slate-400"
+                            ? "bg-primary text-primary-foreground border-primary"
+                            : "bg-transparent border-muted-foreground/30 text-muted-foreground"
                       )}>
                         {isFinished ? <CheckCircle2 className="w-4 h-4" /> : <span className="text-[10px] font-bold">{index + 1}</span>}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className={cn("text-sm leading-snug font-medium", isCurrent ? "text-primary" : "text-slate-700")}>
+                        <p className={cn("text-sm leading-snug font-medium", isCurrent ? "text-primary" : "text-foreground")}>
                           {l.title}
                         </p>
                       </div>
@@ -288,7 +288,7 @@ export default function LessonViewerPage() {
 
           {/* Page Navigation */}
           {lesson.type === "ARTICLE" && articlePages.length > 1 && (
-            <div className="bg-white rounded-3xl shadow-sm border border-slate-200/60 p-6">
+            <div className="bg-card rounded-3xl shadow-lg border border-border p-6">
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4 px-2">On This Topic</h3>
               <div className="flex flex-col gap-1">
                 {articlePages.map((pageSource, idx) => {
@@ -305,12 +305,12 @@ export default function LessonViewerPage() {
                         "flex items-center gap-3 p-2.5 rounded-lg transition-all duration-200 text-left",
                         isCurrent 
                           ? "bg-primary/10 text-primary font-semibold" 
-                          : "hover:bg-slate-50 text-slate-600"
+                          : "hover:bg-muted text-muted-foreground"
                       )}
                     >
                       <div className={cn(
                         "flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center border text-[10px] font-bold",
-                        isCurrent ? "bg-primary text-white border-primary" : "border-slate-300 text-slate-400"
+                        isCurrent ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground"
                       )}>
                         {idx + 1}
                       </div>
@@ -327,21 +327,21 @@ export default function LessonViewerPage() {
       </div>
 
       {/* Center Column: Main Content */}
-      <div className="flex-1 w-full max-w-5xl bg-white rounded-3xl shadow-sm border border-slate-200/60 p-6 md:p-10 lg:p-12 relative">
+      <div className="flex-1 w-full max-w-5xl bg-card rounded-3xl shadow-xl border border-border p-6 md:p-10 lg:p-12 relative">
         {/* Breadcrumbs */}
-        <div className="flex items-center gap-2 mb-8 text-sm font-medium text-slate-500 overflow-x-auto whitespace-nowrap pb-2">
+        <div className="flex items-center gap-2 mb-8 text-sm font-medium text-muted-foreground overflow-x-auto whitespace-nowrap pb-2">
           <Link href={`/dashboard/subjects/${subjectSlug}`} className="hover:text-primary transition-colors">{lesson.subject?.name}</Link>
-          <span className="text-slate-300">/</span>
+          <span className="text-muted-foreground/30">/</span>
           <Link href={`/dashboard/subjects/${subjectSlug}/chapters/${chapterSlug}`} className="hover:text-primary transition-colors">{lesson.chapter?.name}</Link>
-          <span className="text-slate-300">/</span>
-          <span className="text-slate-900">{lesson.title}</span>
+          <span className="text-muted-foreground/30">/</span>
+          <span className="text-foreground">{lesson.title}</span>
         </div>
 
         {/* Lesson Header */}
         <div className="mb-10">
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-6">
             <div className="flex items-center gap-4 flex-wrap">
-              <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900">
+              <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-foreground">
                 {lesson.title}
               </h1>
             </div>
@@ -353,7 +353,7 @@ export default function LessonViewerPage() {
                   <Button
                     variant="outline"
                     onClick={toggleCompletion}
-                    className="text-emerald-700 border-emerald-200 bg-emerald-50 hover:bg-emerald-100 hover:text-emerald-800 shadow-sm transition-colors rounded-full px-4"
+                    className="text-success border-success/30 bg-success/10 hover:bg-success/20 shadow-sm transition-colors rounded-full px-4"
                   >
                     <CheckCircle2 className="w-4 h-4 mr-2" /> Completed
                   </Button>
@@ -362,15 +362,15 @@ export default function LessonViewerPage() {
                     variant="outline"
                     onClick={handleMarkComplete}
                     disabled={markCompleteMutation.isPending}
-                    className="shadow-sm hover:bg-slate-50 text-slate-600 transition-colors rounded-full px-4"
+                    className="shadow-sm hover:bg-muted text-muted-foreground transition-colors rounded-full px-4"
                   >
-                    <CheckCircle2 className="w-4 h-4 mr-2 text-slate-400" /> Mark as Complete
+                    <CheckCircle2 className="w-4 h-4 mr-2 text-muted-foreground/60" /> Mark as Complete
                   </Button>
                 )}
               </div>
             )}
           </div>
-          {lesson.description && <p className="text-slate-500 text-xl leading-relaxed">{lesson.description}</p>}
+          {lesson.description && <p className="text-muted-foreground text-xl leading-relaxed">{lesson.description}</p>}
         </div>
 
         {/* Lesson Content Area */}
@@ -400,18 +400,18 @@ export default function LessonViewerPage() {
                 />
               </div>
             ) : (
-              <div className="py-12 text-center text-slate-400">
+              <div className="py-12 text-center text-muted-foreground">
                 Content not available for this lesson.
               </div>
             )}
             
             {/* Unified Bottom Action / Pagination Bar */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-6 border-t border-slate-200 mt-8">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-6 border-t border-border mt-8">
               
               {/* Left Side: Page Indicator (only if paginated) */}
               <div className="flex items-center">
                 {lesson.type === "ARTICLE" && articlePages.length > 1 && (
-                  <span className="text-sm font-medium text-slate-500">
+                  <span className="text-sm font-medium text-muted-foreground">
                     Page {currentPage + 1} of {articlePages.length}
                   </span>
                 )}

@@ -22,11 +22,11 @@ const studyPrefsSchema = z.object({
 type StudyPrefsFormValues = z.infer<typeof studyPrefsSchema>;
 
 const EXAM_OPTIONS = [
-  { id: "SSC_CGL", label: "SSC CGL", color: "from-blue-500/20 to-indigo-500/20", text: "text-indigo-600" },
-  { id: "SSC_CHSL", label: "SSC CHSL", color: "from-emerald-500/20 to-teal-500/20", text: "text-teal-600" },
-  { id: "SSC_MTS", label: "SSC MTS", color: "from-orange-500/20 to-amber-500/20", text: "text-orange-600" },
-  { id: "SSC_CPO", label: "SSC CPO", color: "from-purple-500/20 to-fuchsia-500/20", text: "text-purple-600" },
-  { id: "SSC_GD", label: "SSC GD", color: "from-rose-500/20 to-pink-500/20", text: "text-rose-600" },
+  { id: "SSC_CGL", label: "SSC CGL", color: "bg-exam-cgl", text: "text-exam-cgl" },
+  { id: "SSC_CHSL", label: "SSC CHSL", color: "bg-exam-chsl", text: "text-exam-chsl" },
+  { id: "SSC_MTS", label: "SSC MTS", color: "bg-exam-mts", text: "text-exam-mts" },
+  { id: "SSC_CPO", label: "SSC CPO", color: "bg-exam-cpo", text: "text-exam-cpo" },
+  { id: "SSC_GD", label: "SSC GD", color: "bg-exam-gd", text: "text-exam-gd" },
 ];
 
 export default function StudyPreferencesForm({ user }: { user: any }) {
@@ -81,11 +81,11 @@ export default function StudyPreferencesForm({ user }: { user: any }) {
                       : "border-border hover:border-primary/30 hover:bg-muted/50"
                   }`}
                 >
-                  <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${exam.color} rounded-bl-full -z-10 opacity-50 group-hover:opacity-100 transition-opacity`} />
+                  <div className={`absolute top-0 right-0 w-24 h-24 ${exam.color}/20 rounded-bl-full -z-10 opacity-50 group-hover:opacity-100 transition-opacity`} />
                   
                   {isChecked && (
-                    <div className="absolute top-3 right-3 text-primary animate-in zoom-in">
-                      <CheckCircle2 className="w-5 h-5 fill-primary text-primary-foreground" />
+                    <div className={`absolute top-3 right-3 ${exam.text} animate-in zoom-in`}>
+                      <CheckCircle2 className="w-5 h-5 fill-current text-card" />
                     </div>
                   )}
 
