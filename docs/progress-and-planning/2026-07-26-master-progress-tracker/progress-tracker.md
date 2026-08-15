@@ -50,10 +50,10 @@
 | **Exam Color System** — OKLCH `--exam-*` tokens + dashboard curriculum cards | ✅ Complete |
 | **MDX Interactive Components** — `<ZoomableImage />` + `<Mindmap />` via Mermaid.js | ✅ Complete |
 | **Chapter Dashboard** — Removed auto-redirect; unified Lessons + Practice Sets view with "Resume Learning" CTA | ✅ Complete |
-| **`<ErrorState />` component + API error handling (all 16 pages)** | 🔴 Not Started |
-| **Global error boundaries (`global-error.tsx`, `error.tsx`)** | 🔴 Not Started |
-| **`app/not-found.tsx` — branded 404 page** | 🔴 Not Started |
-| **Axios interceptor upgrade (auto-toast on mutations, 401 redirect)** | 🔴 Not Started |
+| **`<ErrorState />` component + API error handling (all 16 pages)** | ✅ Complete |
+| **Global error boundaries (`global-error.tsx`, `error.tsx`)** | ✅ Complete |
+| **`app/not-found.tsx` — branded 404 page** | ✅ Complete |
+| **Axios interceptor upgrade (auto-toast on mutations, 401 redirect)** | ✅ Complete |
 | **`<MarketingNav />` + `(marketing)` route group layout** | 🔴 Not Started |
 | **Mobile bottom navigation bar (dashboard)** | 🔴 Not Started |
 
@@ -83,58 +83,3 @@
 | **Phase 4 Roadmap** | [2026-08-12-phase-4-roadmap.md](../2026-08-12-phase-4-roadmap.md) |
 
 
-
----
-
-## Platform Summary
-
-| Item | Detail |
-|---|---|
-| **Product** | SSC Competitive Exam Education Platform — Student App |
-| **Repo** | `ssc-client` |
-| **API Repo** | `ssc-api` |
-| **Framework** | React (Next.js App Router) + Zustand + React Query + Shadcn UI |
-| **Users** | `STUDENT` |
-
----
-
-## Phase Status
-
-| Phase | Scope | Status | Depends On |
-|---|---|---|---|
-| **Phase 1** | Project scaffolding, routing, global themes, API client setup | ✅ Complete | API Phase 1 |
-| **Phase 2** | Auth — Register, Verify Email, Login (Layout synced), Logout | ✅ Complete | API Phase 2 |
-| **Phase 3** | Onboarding — Target exam selection, profile setup | ✅ Complete | API Phase 3 |
-| **Phase 4** | Learning — Subject → Chapter → Lesson browser | ✅ Complete | API Phase 4 |
-| **Phase 5** | Lesson viewer (video player, article renderer, PDF viewer) | ✅ Complete | API Phase 4 |
-| **Phase 6** | Practice Set — attempt MCQs, instant result | ✅ Complete | API Phase 7 |
-| **Phase 7** | Mock Test — Test Engine UI (Focus Mode, Palette, Timer, Submit) | ✅ Complete | API Phase 7 |
-| **Phase 8** | Analytics Dashboard — accuracy, streak, recent attempts | ✅ Complete | API Phase 8 |
-| **Phase 9** | Leaderboard | ✅ Complete | API Phase 8 |
-| **Phase 10** | Premium / Subscription gate UI | ✅ Complete | API Phase 10 |
-| **Phase 11** | Persona Onboarding Wizard (4-step) + Persona-Aware Dashboard | ✅ Complete | API Phase 13 |
-| **Phase 12** | Continuous Feedback Loop | ✅ Complete | API Phase 14 |
-
----
-
-## Status Legend
-
-| Symbol | Meaning |
-|---|---|
-| ✅ | Complete |
-| 🟡 | In Progress |
-| 🔴 | Not Started |
-| ⏸️ | Blocked / On Hold |
-
----
-
-## Key Documents
-
-| Document | Link |
-|---|---|
-| Core Architecture | [core-architecture.md](../../architecture-and-infrastructure/2026-07-26-core-architecture/core-architecture.md) |
-| API Response Shapes | [client-data-models.md](../../database-and-schema/2026-07-26-client-data-models/client-data-models.md) |
-| Theme System | [theme-system.md](../../frontend-and-ux/2026-07-26-theme-system/theme-system.md) |
-| UX/UI Guidelines | [ux-ui-guidelines.md](../../frontend-and-ux/2026-07-26-ux-ui-guidelines/ux-ui-guidelines.md) |
-| **Onboarding Flow Spec (NEW)** | [onboarding-flow.md](../../frontend-and-ux/2026-08-08-onboarding-flow/onboarding-flow.md) |
-| **User Personas (NEW)** | [user-personas.md](../../../../../ssc-api/docs/product/user-personas.md) |
