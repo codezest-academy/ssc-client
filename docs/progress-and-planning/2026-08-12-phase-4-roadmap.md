@@ -2,7 +2,7 @@
 
 **Date:** 2026-08-12  
 **Status:** 🟡 In Progress  
-**Last Updated:** 2026-08-12
+**Last Updated:** 2026-08-16
 
 With the MVP features (Phases 1–12) completed, `ssc-client` is now in a production-readiness and UX polish sprint. This phase covers error handling, layout consistency, skeleton loading states, and mobile navigation.
 
@@ -44,7 +44,81 @@ Replaced all "Loading..." plain text with animated skeleton placeholders. Each p
 
 ---
 
-## 2. 🟡 Error Handling: Industry Standard Implementation
+## 2. ✅ Exam Color System
+
+**Status:** ✅ Complete (2026-08-15)
+
+### What Was Done
+- Defined five OKLCH-based `--exam-*` CSS custom properties in `index.css`:
+  - `--exam-cgl` (Indigo/Blue) — SSC CGL
+  - `--exam-chsl` (Teal/Green) — SSC CHSL
+  - `--exam-mts` (Orange/Amber) — SSC MTS
+  - `--exam-cpo` (Purple) — SSC CPO
+  - `--exam-gd` (Pink/Rose) — SSC GD
+- Applied exam color tokens to the Dashboard curriculum cards (semi-circle accent in top-right corner).
+- Added comprehensive documentation to `docs/frontend-and-ux/2026-07-26-theme-system/theme-system.md` (Section 6.5).
+- Updated `GEMINI.md` with exam color usage rules.
+
+**Files modified:**
+- `app/index.css` — token definitions
+- `app/dashboard/page.tsx` — applied to curriculum cards
+- `docs/frontend-and-ux/2026-07-26-theme-system/theme-system.md`
+- `GEMINI.md`
+
+---
+
+## 3. ✅ MDX Interactive Components
+
+**Status:** ✅ Complete (2026-08-15)
+
+### What Was Done
+Extended the `MdxRenderer` with two new rich interactive components to enable visual learning content:
+
+#### `<ZoomableImage />` (`components/ui/learning/zoomable-image.tsx`)
+- Full-screen lightbox for any image in MDX content.
+- Backdrop blur, smooth `scale` animation, `Esc` key to close, accessible ARIA labels.
+- Auto-registered in `MdxRenderer` as the `img` component override — authors write standard markdown images and get lightbox for free.
+
+#### `<Mindmap />` (`components/ui/learning/mindmap.tsx`)
+- Client-side SVG diagram rendering via the `mermaid` library.
+- CSS variables mapped to the design system (indigo accents follow `--primary`).
+- Graceful error boundary for invalid diagram syntax.
+- Authors write fenced code blocks with ` ```mindmap ` to trigger it.
+
+**Files modified:**
+- `components/ui/learning/zoomable-image.tsx` — [NEW]
+- `components/ui/learning/mindmap.tsx` — [NEW]
+- `components/ui/learning/mdx-renderer.tsx` — registered both components
+- `docs/frontend-and-ux/2026-08-16-mdx-components/mdx-interactive-components.md` — [NEW]
+
+---
+
+## 4. ✅ Chapter Dashboard (Industry-Standard UX)
+
+**Status:** ✅ Complete (2026-08-16)
+
+### Problem (Before)
+`app/(learn)/learn/[subjectSlug]/[chapterSlug]/page.tsx` performed an unconditional `router.replace()` to the first lesson of the chapter as soon as the data loaded. This meant:
+- Students could never see **what was in a chapter** before starting.
+- Students couldn't navigate directly to a **specific lesson** or **practice set**.
+- No concept of "progress" visibility before entering the chapter.
+- **This is an anti-pattern** in modern EdTech (Coursera, Khan Academy, BYJU's all use a Chapter Outline first).
+
+### Solution (After)
+- `ChapterRouterPage` now simply redirects to the Chapter Dashboard: `/dashboard/subjects/[subjectSlug]/chapters/[chapterSlug]`.
+- The Chapter Dashboard (`app/dashboard/subjects/[slug]/chapters/[chapterSlug]/page.tsx`) now shows:
+  - A **chapter description header** with a prominent "**Resume Learning**" / "**Start Chapter**" button.
+  - The **Lessons grid** (video, article, pdf cards with progress indicators).
+  - The **Practice Sets section** below lessons, styled with the Exam Color System.
+- **"Resume Learning" intelligence:** Finds the student's first incomplete lesson and navigates directly to it. Falls back to the first lesson if all are complete.
+
+**Files modified:**
+- `app/(learn)/learn/[subjectSlug]/[chapterSlug]/page.tsx` — replaced lesson-fetch redirect with dashboard redirect
+- `app/dashboard/subjects/[slug]/chapters/[chapterSlug]/page.tsx` — added Resume button + Practice Sets Exam Color styling
+
+---
+
+## 5. 🟡 Error Handling: Industry Standard Implementation
 
 **Status:** Planned — Ready to Implement
 
@@ -82,7 +156,7 @@ Replaced all "Loading..." plain text with animated skeleton placeholders. Each p
 
 ---
 
-## 3. 🔴 Layout: Marketing Nav & Route Group
+## 6. 🔴 Layout: Marketing Nav & Route Group
 
 **Status:** Not Started — Planned
 
@@ -96,7 +170,7 @@ All public/marketing pages (`/`, `/pyq`, `/pricing`, `/[examSlug]-mock-tests`, e
 
 ---
 
-## 4. 🔴 Layout: Mobile Bottom Navigation
+## 7. 🔴 Layout: Mobile Bottom Navigation
 
 **Status:** Not Started — Planned
 
@@ -110,7 +184,7 @@ Auto-hides inside test engine routes (`/tests/*`).
 
 ---
 
-## 5. ✅ Pricing & Routing Consolidation (Phase 10 Extension)
+## 8. ✅ Pricing & Routing Consolidation (Phase 10 Extension)
 
 **Status:** ✅ Complete
 
@@ -127,7 +201,7 @@ The `/pricing` route was completely isolated from the premium "Floating Bento" d
 
 ---
 
-## 6. ✅ Profile Layout Fix
+## 9. ✅ Profile Layout Fix
 
 **Status:** ✅ Complete
 
@@ -139,7 +213,7 @@ Updated `app/profile/layout.tsx` to include the standard outer shell paddings an
 
 ---
 
-## 7. Future: Performance & Scale
+## 10. Future: Performance & Scale
 - **Internationalization (i18n):** Integrate `next-intl` for English and Hindi locales.
 - **Progressive Web App (PWA):** Service workers + offline caching for critical assets.
 - **E2E Testing:** Playwright for core user flow: Register → Onboard → Take Test → View Analytics.

@@ -1,6 +1,6 @@
 # SSC Client — Master Progress Tracker
 
-**Last Updated:** 2026-08-12  
+**Last Updated:** 2026-08-16  
 **Overall Status:** ✅ Phases 1–12 Complete. 🟡 Phase 4 Polish Sprint In Progress.
 
 ---
@@ -43,10 +43,13 @@
 | `<EmptyState />` component + rollout to all pages | ✅ Complete |
 | `<Skeleton />` component + loading state upgrade across all pages | ✅ Complete |
 | Question & option shuffling (Fisher-Yates) | ✅ Complete |
-| Danger Zone analytics (< 50% accuracy AND > 30s avg time) | ✅ Complete |
+| Danger Zone analytics (< 50% accuracy AND > 30s avg time per question) | ✅ Complete |
 | `<QuestionRenderer />` (KaTeX) rollout to PYQ pages | ✅ Complete |
 | Practice Sets surfaced on Chapter detail pages | ✅ Complete |
 | `pyqShift` and `pyqDate` fields added (admin + API) | ✅ Complete |
+| **Exam Color System** — OKLCH `--exam-*` tokens + dashboard curriculum cards | ✅ Complete |
+| **MDX Interactive Components** — `<ZoomableImage />` + `<Mindmap />` via Mermaid.js | ✅ Complete |
+| **Chapter Dashboard** — Removed auto-redirect; unified Lessons + Practice Sets view with "Resume Learning" CTA | ✅ Complete |
 | **`<ErrorState />` component + API error handling (all 16 pages)** | 🔴 Not Started |
 | **Global error boundaries (`global-error.tsx`, `error.tsx`)** | 🔴 Not Started |
 | **`app/not-found.tsx` — branded 404 page** | 🔴 Not Started |

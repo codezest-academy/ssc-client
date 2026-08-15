@@ -264,7 +264,30 @@ Exam colors are primarily used in user profile preferences, dashboard targets, a
 </div>
 ```
 
----
+#### Chapter Dashboard — Practice Set Cards
+
+On the Chapter Dashboard, Practice Set cards receive a thin colored top-bar accent derived from the subject's associated exam token:
+
+```tsx
+// Practice Set card with exam accent bar
+<Card className="overflow-hidden border-border/40">
+  {/* Exam-color top accent bar — 6px */}
+  <div className="h-1.5 w-full bg-exam-cgl/10" />
+
+  <CardContent className="p-5">
+    {/* Exam-color icon badge */}
+    <div className="w-10 h-10 rounded-lg bg-exam-cgl/10 text-exam-cgl flex items-center justify-center">
+      <FileQuestion className="w-5 h-5" />
+    </div>
+    <h3 className="font-semibold text-foreground">{set.title}</h3>
+    <p className="text-xs text-muted-foreground">{set._count?.questions} Questions</p>
+  </CardContent>
+</Card>
+```
+
+> **Rule:** The exam color is used as a `bg-exam-*/10` tint only. Card background stays `bg-card` and text uses `text-foreground`. Never apply the raw exam color as a full background.
+
+
 
 ## 7. Test State Token System
 
