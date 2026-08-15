@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import { MarketingNav } from "@/components/layout/MarketingNav";
-import { MarketingFooter } from "@/components/layout/MarketingFooter";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
@@ -10,7 +8,6 @@ export const metadata: Metadata = {
 export default function TermsPage() {
   return (
     <div className="min-h-screen flex flex-col font-sans bg-background text-foreground bg-grid-pattern">
-      <MarketingNav />
       <main className="flex-1 relative flex flex-col py-16 md:py-24">
         <div className="container mx-auto max-w-4xl px-4 sm:px-6 relative z-10">
           <div className="text-center mb-12">
@@ -42,7 +39,6 @@ export default function TermsPage() {
           </div>
         </div>
       </main>
-      <MarketingFooter />
     </div>
   );
 }

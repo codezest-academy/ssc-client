@@ -11,8 +11,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TestimonialsSection } from "@/components/marketing/testimonials";
-import { MarketingNav } from "@/components/layout/MarketingNav";
-import { MarketingFooter } from "@/components/layout/MarketingFooter";
 
 export default function Home() {
   const jsonLd = {
@@ -47,7 +45,6 @@ export default function Home() {
       />
 
       {/* 1. Header */}
-      <MarketingNav />
 
       <main className="flex-1 relative flex flex-col">
         {/* 2. Hero Section */}
@@ -296,7 +293,6 @@ export default function Home() {
       </main>
 
       {/* 5. Footer */}
-      <MarketingFooter />
     </div>
   );
 }

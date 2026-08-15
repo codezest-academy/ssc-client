@@ -4,8 +4,6 @@ import { PricingCards } from "@/components/pricing/PricingCards";
 import { useAuthStore } from "@/store/auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { MarketingNav } from "@/components/layout/MarketingNav";
-import { MarketingFooter } from "@/components/layout/MarketingFooter";
 
 export default function PricingPage() {
   const { user, isHydrated } = useAuthStore();
@@ -19,7 +17,6 @@ export default function PricingPage() {
 
   return (
     <div className="min-h-screen flex flex-col font-sans bg-background text-foreground bg-grid-pattern">
-      <MarketingNav />
       <main className="flex-1 relative flex flex-col">
         <div className="flex-1 py-24">
           <div className="container mx-auto max-w-7xl px-4 sm:px-6">
@@ -36,7 +33,6 @@ export default function PricingPage() {
           </div>
         </div>
       </main>
-      <MarketingFooter />
     </div>
   );
 }
