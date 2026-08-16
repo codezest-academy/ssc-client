@@ -96,7 +96,7 @@ export default function TestReviewPage() {
       return { name, accuracy, time: stat.time };
     });
 
-    // Danger Zones: Chapters with < 50% accuracy and substantial time spent (e.g. > 60s total)
+    // Danger Zones: Chapters with <= 50% accuracy and substantial average time per question (>30s) or high total time (>120s)
     const dangerZones = Object.keys(chapterMap)
       .map(name => {
         const stat = chapterMap[name];

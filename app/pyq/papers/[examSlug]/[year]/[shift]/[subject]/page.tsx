@@ -105,11 +105,19 @@ export default async function PaperPYQPage({
               <div className="space-y-3 mb-6">
                 {q.options.map((opt) => (
                   <div key={opt.key} className={`p-4 rounded-lg border ${opt.key === q.correctOption ? "bg-success/10 border-success/30 text-success" : "border-border text-slate-700 bg-slate-50"}`}>
-                    <div className="font-semibold mb-1">Option {opt.key}: {opt.text}</div>
+                    <div className="font-semibold mb-1 flex items-start gap-2">
+                      <span className="shrink-0 mt-0.5">Option {opt.key}:</span>
+                      <div className="prose prose-sm dark:prose-invert">
+                        <QuestionRenderer content={opt.text} />
+                      </div>
+                    </div>
                     {opt.rationale && (
-                       <p className="text-sm opacity-90">
-                         <strong>Rationale:</strong> {opt.rationale}
-                       </p>
+                       <div className="text-sm opacity-90 flex items-start gap-2 mt-2">
+                         <strong className="shrink-0">Rationale:</strong> 
+                         <div className="prose prose-sm dark:prose-invert">
+                           <QuestionRenderer content={opt.rationale} />
+                         </div>
+                       </div>
                     )}
                   </div>
                 ))}
