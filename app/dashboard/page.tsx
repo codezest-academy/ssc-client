@@ -492,16 +492,16 @@ function GamificationWidget({ profile }: { profile: GamificationProfile | null }
   if (!profile) return null;
 
   const nextTierThresholds: Record<string, number> = {
-    ASPIRANT: 10000,
-    CHALLENGER: 50000,
-    ACHIEVER: 250000,
-    MASTER: 1000000,
-    LEGEND: 1000000 // Max tier
+    ASPIRANT: 500,
+    CONSTABLE: 2000,
+    SUB_INSPECTOR: 5000,
+    INSPECTOR: 10000,
+    COMMISSIONER: 1000000 // Max tier
   };
 
   const currentTier = profile.rankTier || 'ASPIRANT';
-  const threshold = nextTierThresholds[currentTier] || 10000;
-  const progressPercent = currentTier === 'LEGEND' ? 100 : Math.min(100, Math.round((profile.xpPoints / threshold) * 100));
+  const threshold = nextTierThresholds[currentTier] || 500;
+  const progressPercent = currentTier === 'COMMISSIONER' ? 100 : Math.min(100, Math.round((profile.xpPoints / threshold) * 100));
 
   return (
     <div className="bg-card border border-primary/10 rounded-3xl p-5 shadow-sm group hover:shadow-md transition-all">
@@ -538,7 +538,7 @@ function GamificationWidget({ profile }: { profile: GamificationProfile | null }
           style={{ width: `${progressPercent}%` }}
         />
       </div>
-      {currentTier !== 'LEGEND' && (
+      {currentTier !== 'COMMISSIONER' && (
         <p className="text-xs text-center text-muted-foreground font-medium mt-2">
           <strong className="text-foreground">{(threshold - profile.xpPoints).toLocaleString()} XP</strong> to next rank
         </p>
