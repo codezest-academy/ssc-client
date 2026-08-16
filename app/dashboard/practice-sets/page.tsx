@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/axios";
-import { Play, FolderX, Target, Zap } from "lucide-react";
+import { Play, FolderX, Target, Zap, ChevronDown, BookOpen } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/ui/error-state";
@@ -68,7 +68,7 @@ export default function PracticeSetsPage() {
         <Skeleton className="h-[120px] w-full rounded-3xl" />
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-24 w-full rounded-2xl" />
+            <Skeleton key={i} className="h-24 w-full rounded-3xl" />
           ))}
         </div>
       </div>
@@ -87,18 +87,22 @@ export default function PracticeSetsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-gradient-to-r from-primary to-accent text-primary-foreground rounded-3xl p-8 shadow-lg relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 opacity-50" />
-        <div className="relative z-10">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="bg-white/20 p-2 rounded-xl">
-              <Target className="w-6 h-6 text-white" />
+      {/* Hero Banner */}
+      <div className="relative rounded-3xl overflow-hidden bg-card border border-primary/10 p-6 md:p-8 shadow-sm group">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-primary/5 to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-bl-full -z-0 transition-colors" />
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-5">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="bg-primary/10 p-1.5 rounded-xl">
+                <Target className="w-5 h-5 text-primary" />
+              </div>
+              <h1 className="text-2xl font-black tracking-tight text-foreground">Dynamic Practice Sets</h1>
             </div>
-            <h1 className="text-3xl font-bold">Dynamic Practice Sets</h1>
+            <p className="text-muted-foreground text-sm max-w-2xl leading-relaxed mt-2">
+              Generate 20-question practice tests tailored to your weak areas. Questions are freshly shuffled and drawn from our entire question bank so you never see the same set twice!
+            </p>
           </div>
-          <p className="opacity-90 max-w-2xl mt-2">
-            Generate 20-question practice tests tailored to your weak areas. Questions are freshly shuffled and drawn from our entire question bank so you never see the same set twice!
-          </p>
         </div>
       </div>
 
@@ -111,42 +115,48 @@ export default function PracticeSetsPage() {
       ) : (
         <div className="grid gap-6">
           {subjects.map((sub) => (
-            <div key={sub.id} className="bg-card border rounded-2xl shadow-sm overflow-hidden transition-all hover:shadow-md">
+            <div key={sub.id} className="bg-card border border-primary/10 rounded-3xl shadow-sm overflow-hidden transition-all hover:shadow-md hover:border-primary/30 group">
               <div
-                className="w-full p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer hover:bg-muted/30 transition-colors"
+                className="w-full p-5 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer relative"
                 onClick={() => setExpandedSubject(expandedSubject === sub.id ? null : sub.id)}
               >
-                <div className="text-left flex-1">
-                  <h3 className="font-bold text-xl text-foreground">{sub.name}</h3>
-                  <p className="text-sm text-muted-foreground mt-1">{sub.chapters?.length || 0} Topics available</p>
+                {/* Decorative background curve */}
+                <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full -z-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                
+                <div className="text-left flex-1 relative z-10">
+                  <h3 className="font-black text-xl text-foreground group-hover:text-primary transition-colors">{sub.name}</h3>
+                  <div className="flex items-center gap-1.5 mt-1.5 text-muted-foreground">
+                    <BookOpen className="w-3.5 h-3.5" />
+                    <p className="text-xs font-bold uppercase tracking-wider">{sub.chapters?.length || 0} Topics available</p>
+                  </div>
                 </div>
                 
-                <div className="flex items-center gap-4 shrink-0" onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-center gap-3 shrink-0 relative z-10" onClick={(e) => e.stopPropagation()}>
                   <Button 
                     onClick={() => generatePracticeTest({ subjectId: sub.id })}
                     disabled={generating}
-                    className="rounded-xl font-bold shadow-sm"
+                    className="rounded-full font-bold shadow-sm h-10 px-5 bg-primary hover:bg-primary/90 text-primary-foreground"
                   >
                     <Zap className="w-4 h-4 mr-2" />
                     Mixed Subject Test
                   </Button>
                   <button
                     onClick={() => setExpandedSubject(expandedSubject === sub.id ? null : sub.id)}
-                    className={`p-2 rounded-full hover:bg-muted transform transition-transform ${expandedSubject === sub.id ? "rotate-180" : ""}`}
+                    className="p-2.5 rounded-full bg-muted/50 hover:bg-primary/10 hover:text-primary text-muted-foreground transform transition-all duration-300 outline-none"
                   >
-                    ▼
+                    <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${expandedSubject === sub.id ? "rotate-180" : ""}`} />
                   </button>
                 </div>
               </div>
 
               {expandedSubject === sub.id && (
-                <div className="border-t bg-muted/10 p-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div className="border-t border-primary/5 bg-muted/20 p-5 md:p-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                   {sub.chapters?.map((chap: any) => (
-                    <div key={chap.id} className="bg-background border rounded-xl p-5 flex flex-col justify-between group hover:border-primary/50 transition-colors shadow-sm">
-                      <div>
-                        <h4 className="font-bold text-foreground mb-2 line-clamp-2" title={chap.name}>{chap.name}</h4>
-                        <p className="text-xs text-muted-foreground line-clamp-2">
+                    <div key={chap.id} className="bg-card border border-primary/10 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/40 hover:shadow-md transition-all shadow-sm group/chap">
+                      <div className="mb-4">
+                        <h4 className="font-black text-foreground mb-1.5 line-clamp-2 leading-tight group-hover/chap:text-primary transition-colors" title={chap.name}>{chap.name}</h4>
+                        <p className="text-xs text-muted-foreground font-medium line-clamp-2 leading-relaxed">
                           {chap.description || "Master this specific topic with a targeted quiz."}
                         </p>
                       </div>
@@ -154,15 +164,15 @@ export default function PracticeSetsPage() {
                         onClick={() => generatePracticeTest({ chapterId: chap.id })}
                         disabled={generating}
                         variant="secondary"
-                        className="mt-5 w-full rounded-lg font-bold group-hover:bg-primary group-hover:text-primary-foreground transition-all"
+                        className="mt-auto w-full rounded-full font-bold group-hover/chap:bg-primary group-hover/chap:text-primary-foreground transition-all shadow-sm h-9"
                       >
-                        <Play className="w-4 h-4 mr-2" />
+                        <Play className="w-3.5 h-3.5 mr-2" />
                         {generating ? "Generating..." : "Generate Test"}
                       </Button>
                     </div>
                   ))}
                   {(!sub.chapters || sub.chapters.length === 0) && (
-                    <div className="col-span-full">
+                    <div className="col-span-full py-4">
                       <EmptyState 
                         icon={FolderX}
                         title="No topics available"
@@ -170,11 +180,11 @@ export default function PracticeSetsPage() {
                       />
                     </div>
                   )}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );
