@@ -3,6 +3,7 @@
 import { ErrorState } from "@/components/ui/error-state";
 import { useEffect } from "react";
 import { reportClientError } from "@/lib/error-reporter";
+import { api } from "@/lib/axios";
 
 export default function GlobalError({
   error,
@@ -21,6 +22,14 @@ export default function GlobalError({
     });
   }, [error]);
 
+  const handleSubmitTicket = async (userMessage: string) => {
+    const fullMessage = `[GLOBAL CRASH] User Context: ${userMessage}\n\nCrash Route: ${window.location.pathname}\nError: ${error.message}\nDigest: ${error.digest || 'N/A'}`;
+    await api.post("/feedback", {
+      type: "ISSUE",
+      message: fullMessage,
+    });
+  };
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
@@ -28,8 +37,16 @@ export default function GlobalError({
           <ErrorState
             title="Fatal Error"
             description="The application crashed. We've been notified."
-            onRetry={() => reset()}
+            onRetry={() => {
+              if (typeof window !== "undefined") {
+                window.location.href = "/dashboard";
+              } else {
+                reset();
+              }
+            }}
             fullPage
+            allowFeedback={true}
+            onSubmitTicket={handleSubmitTicket}
           />
         </main>
       </body>

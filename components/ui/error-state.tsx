@@ -1,6 +1,9 @@
 import * as React from "react"
-import { LucideIcon, ServerCrash } from "lucide-react"
+import { useState } from "react"
+import { LucideIcon, ServerCrash, Loader2, CheckCircle2 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Button } from "./button"
+import { Textarea } from "./textarea"
 
 export interface ErrorStateProps extends React.HTMLAttributes<HTMLDivElement> {
   icon?: LucideIcon
@@ -9,6 +12,8 @@ export interface ErrorStateProps extends React.HTMLAttributes<HTMLDivElement> {
   onRetry?: () => void
   retry?: () => void
   fullPage?: boolean
+  allowFeedback?: boolean
+  onSubmitTicket?: (message: string) => Promise<void>
 }
 
 export function ErrorState({
@@ -18,10 +23,32 @@ export function ErrorState({
   onRetry,
   retry,
   fullPage,
+  allowFeedback,
+  onSubmitTicket,
   className,
   ...props
 }: ErrorStateProps) {
   const handleRetry = onRetry || retry;
+  
+  const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!onSubmitTicket || !message.trim()) return;
+
+    setIsSubmitting(true);
+    try {
+      await onSubmitTicket(message);
+      setIsSuccess(true);
+    } catch (err) {
+      console.error("Failed to submit ticket:", err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div
       className={cn(
@@ -35,15 +62,50 @@ export function ErrorState({
         <Icon className="h-10 w-10 text-destructive" strokeWidth={1.5} />
       </div>
       <h3 className="mb-2 text-xl font-bold text-foreground">{title}</h3>
-      <p className="mb-8 max-w-sm text-sm text-muted-foreground line-clamp-2">
+      <p className="mb-6 max-w-sm text-sm text-muted-foreground line-clamp-2">
         {description}
       </p>
+
+      {allowFeedback && (
+        <div className="mb-8 w-full max-w-md rounded-2xl border border-destructive/20 bg-card p-5 text-left shadow-sm">
+          {isSuccess ? (
+            <div className="flex flex-col items-center py-4 text-center animate-in zoom-in-95">
+              <CheckCircle2 className="mb-2 h-8 w-8 text-success" />
+              <p className="font-semibold text-foreground">Ticket Submitted</p>
+              <p className="text-sm text-muted-foreground">We'll look into this right away.</p>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+              <label className="text-sm font-medium text-foreground">
+                Help us fix this. What were you doing right before the crash?
+              </label>
+              <Textarea
+                placeholder="I clicked on..."
+                className="min-h-[80px] text-sm resize-none"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                required
+              />
+              <Button
+                type="submit"
+                variant="default"
+                disabled={isSubmitting || !message.trim()}
+                className="w-full"
+              >
+                {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                Submit Ticket
+              </Button>
+            </form>
+          )}
+        </div>
+      )}
+
       {handleRetry && (
         <button
           onClick={handleRetry}
           className="rounded-full bg-destructive px-6 py-2.5 text-sm font-medium text-destructive-foreground transition-all hover:bg-destructive/90 active:scale-95"
         >
-          Try Again
+          {isSuccess ? "Return to Dashboard" : "Try Again"}
         </button>
       )}
     </div>
