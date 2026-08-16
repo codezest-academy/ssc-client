@@ -34,11 +34,6 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         
         {/* Bottom Navigation */}
         <div className="mt-10 flex flex-wrap justify-center items-center gap-x-6 gap-y-4">
-          <Link href="/" className="group flex items-center text-sm font-medium text-slate-400 hover:text-primary hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.5)] transition-all duration-300">
-            <Home className="w-4 h-4 mr-2 opacity-70 group-hover:opacity-100 group-hover:-translate-x-0.5 transition-all" />
-            Home
-          </Link>
-          <div className="w-1 h-1 rounded-full bg-slate-800" />
           <Link href="/pricing" className="group flex items-center text-sm font-medium text-slate-400 hover:text-primary hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.5)] transition-all duration-300">
             <CreditCard className="w-4 h-4 mr-2 opacity-70 group-hover:opacity-100 transition-opacity" />
             Pricing
