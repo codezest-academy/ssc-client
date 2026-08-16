@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "./button";
 import { Textarea } from "./textarea";
 import { api } from "@/lib/axios";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "./dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
 
 type FeedbackType = "ISSUE" | "FEATURE_REQUEST" | "TESTIMONIAL";
@@ -17,16 +17,17 @@ interface ActionDef {
   icon: React.ElementType;
   label: string;
   title: string;
+  description: string;
   placeholder: string;
   colorClass: string;
   tooltipClass: string;
 }
 
 const ACTIONS: ActionDef[] = [
-  { type: "ISSUE", icon: Bug, label: "Report Issue", title: "Report an Issue", placeholder: "Please describe the bug or issue...", colorClass: "text-destructive bg-destructive/10 border-destructive/20 hover:border-destructive/50 hover:bg-destructive/20", tooltipClass: "bg-destructive text-destructive-foreground border-destructive" },
-  { type: "TESTIMONIAL", icon: MessageSquare, label: "Share Feedback", title: "Share Feedback", placeholder: "What's on your mind?", colorClass: "text-primary bg-primary/10 border-primary/20 hover:border-primary/50 hover:bg-primary/20", tooltipClass: "bg-primary text-primary-foreground border-primary" },
-  { type: "TESTIMONIAL", icon: Star, label: "Testimonial", title: "Share a Testimonial", placeholder: "What do you love about Code Zest?", colorClass: "text-warning bg-warning/10 border-warning/20 hover:border-warning/50 hover:bg-warning/20", tooltipClass: "bg-warning text-warning-foreground border-warning" },
-  { type: "FEATURE_REQUEST", icon: Lightbulb, label: "Feature Addition", title: "Suggest a Feature", placeholder: "What feature would you like to see?", colorClass: "text-success bg-success/10 border-success/20 hover:border-success/50 hover:bg-success/20", tooltipClass: "bg-success text-success-foreground border-success" },
+  { type: "ISSUE", icon: Bug, label: "Report Issue", title: "Report an Issue", description: "Found a bug or glitch? Let us know so we can squash it quickly.", placeholder: "Please describe the bug or issue...", colorClass: "text-destructive bg-destructive/10 border-destructive/20 hover:border-destructive/50 hover:bg-destructive/20", tooltipClass: "bg-destructive text-destructive-foreground border-destructive" },
+  { type: "TESTIMONIAL", icon: MessageSquare, label: "Share Feedback", title: "Share Feedback", description: "We're always looking to improve. What are your thoughts on the platform?", placeholder: "What's on your mind?", colorClass: "text-primary bg-primary/10 border-primary/20 hover:border-primary/50 hover:bg-primary/20", tooltipClass: "bg-primary text-primary-foreground border-primary" },
+  { type: "TESTIMONIAL", icon: Star, label: "Testimonial", title: "Share a Testimonial", description: "Loving Code Zest? We'd love to hear your success story!", placeholder: "What do you love about Code Zest?", colorClass: "text-warning bg-warning/10 border-warning/20 hover:border-warning/50 hover:bg-warning/20", tooltipClass: "bg-warning text-warning-foreground border-warning" },
+  { type: "FEATURE_REQUEST", icon: Lightbulb, label: "Feature Addition", title: "Suggest a Feature", description: "Have an idea that would make your prep easier? Tell us about it.", placeholder: "What feature would you like to see?", colorClass: "text-success bg-success/10 border-success/20 hover:border-success/50 hover:bg-success/20", tooltipClass: "bg-success text-success-foreground border-success" },
 ];
 
 export function FeedbackWidget() {
@@ -121,47 +122,53 @@ export function FeedbackWidget() {
 
       {/* Modal Dialog */}
       <Dialog open={!!activeModal} onOpenChange={(open) => !open && setActiveModal(null)}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md border-0 p-0 overflow-hidden bg-card rounded-2xl shadow-2xl">
           {activeModal && (
-            <>
-              <DialogHeader>
-                <DialogTitle className="flex items-center gap-2">
-                  <activeModal.icon className="w-5 h-5 text-primary" />
+            <div className="bg-gradient-to-br from-primary/10 via-background to-background p-6">
+              <DialogHeader className="pt-2 space-y-3">
+                <div className={cn("mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-1", activeModal.colorClass.split(' ').slice(0, 2).join(' '))}>
+                  <activeModal.icon className="w-6 h-6" />
+                </div>
+                <DialogTitle className="text-xl text-center font-bold tracking-tight">
                   {activeModal.title}
                 </DialogTitle>
+                <DialogDescription className="text-center text-sm">
+                  {activeModal.description}
+                </DialogDescription>
               </DialogHeader>
               
               {isSuccess ? (
-                <div className="flex flex-col items-center justify-center py-10 text-center animate-in fade-in zoom-in duration-300">
-                  <CheckCircle2 className="mb-4 h-12 w-12 text-success" />
+                <div className="flex flex-col items-center justify-center py-6 text-center animate-in fade-in zoom-in duration-300">
+                  <CheckCircle2 className="mb-3 h-10 w-10 text-success" />
                   <p className="text-lg font-medium text-foreground">Thank You!</p>
                   <p className="text-sm text-muted-foreground mt-1">
                     Your feedback helps us improve.
                   </p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-2">
+                <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-6">
                   <Textarea
                     placeholder={activeModal.placeholder}
-                    className="min-h-[120px] resize-none bg-background focus-visible:ring-primary/20"
+                    className="min-h-[120px] resize-none bg-background focus-visible:ring-primary/20 rounded-xl"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     required
                     autoFocus
                   />
-                  <div className="flex justify-end gap-3 mt-4">
+                  <div className="flex justify-end gap-3 mt-2">
                     <Button
                       type="button"
-                      variant="outline"
+                      variant="ghost"
                       onClick={() => setActiveModal(null)}
                       disabled={isSubmitting}
+                      className="rounded-xl"
                     >
                       Cancel
                     </Button>
                     <Button
                       type="submit"
                       disabled={isSubmitting || !message.trim()}
-                      className="min-w-[100px]"
+                      className="min-w-[120px] rounded-xl font-semibold shadow-md"
                     >
                       {isSubmitting ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
@@ -172,7 +179,7 @@ export function FeedbackWidget() {
                   </div>
                 </form>
               )}
-            </>
+            </div>
           )}
         </DialogContent>
       </Dialog>
