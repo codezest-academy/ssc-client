@@ -179,7 +179,7 @@ function FullTimeHero({ userName, agenda }: { userName: string, agenda: DailyAge
             { label: "Lessons", target: agenda?.targets.lessons || 2, current: agenda?.progress.lessonsCompletedToday || 0, icon: Book },
             { label: "Practice", target: agenda?.targets.practice || 1, current: agenda?.progress.practiceCompletedToday || 0, icon: Target },
           ].map((item) => (
-            <div key={item.label} className="flex items-center gap-3 bg-background/50 backdrop-blur-md border border-white/10 rounded-2xl px-3 py-2 min-w-[120px]">
+            <div key={item.label} className="flex items-center gap-3 bg-background/50 backdrop-blur-md border border-border/50 dark:border-white/10 rounded-2xl px-3 py-2 min-w-[120px] shadow-sm">
               <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
                 <item.icon className="w-4 h-4" />
               </div>
@@ -227,7 +227,7 @@ function PartTimeHero({ userName, agenda }: { userName: string, agenda: DailyAge
           </div>
         </div>
         <div className="flex md:flex-col gap-2 shrink-0">
-          <div className="flex items-center gap-3 bg-background/50 backdrop-blur-md border border-white/10 rounded-2xl px-3 py-2 min-w-[120px]">
+          <div className="flex items-center gap-3 bg-background/50 backdrop-blur-md border border-border/50 dark:border-white/10 rounded-2xl px-3 py-2 min-w-[120px] shadow-sm">
             <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
               <Clock className="w-4 h-4" />
             </div>
