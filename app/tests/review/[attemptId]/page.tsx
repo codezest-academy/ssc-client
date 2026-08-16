@@ -176,7 +176,16 @@ export default function TestReviewPage() {
       .filter(chap => chap.total > 0 && chap.accuracy <= 50 && (chap.time / chap.total > 30 || chap.time > 120))
       .sort((a, b) => b.time - a.time);
 
-    return { avgCorrectTime, avgIncorrectTime, subjectStats, dangerZones };
+    const chapterStats = Object.keys(chapterMap)
+      .map(name => {
+        const stat = chapterMap[name];
+        const accuracy = stat.total > 0 ? Math.round((stat.correct / stat.total) * 100) : 0;
+        return { name, accuracy, subject: stat.subject, correct: stat.correct, total: stat.total };
+      })
+      .filter(c => c.total > 0)
+      .sort((a, b) => a.accuracy - b.accuracy); // weakest first
+
+    return { avgCorrectTime, avgIncorrectTime, subjectStats, dangerZones, chapterStats };
   }, [attempt]);
 
   if (loading) {
@@ -284,6 +293,54 @@ export default function TestReviewPage() {
                   </div>
                 </div>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* Lesson Breakdown */}
+        {analytics && analytics.chapterStats.length > 0 && (
+          <div className="pt-6 border-t space-y-4">
+            <div>
+              <h2 className="text-xl font-bold text-foreground">Lesson Breakdown</h2>
+              <p className="text-sm text-muted-foreground mt-0.5">How you performed per topic — weakest first</p>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {analytics.chapterStats.map((chap) => {
+                const isStrong = chap.accuracy >= 75;
+                const isOk = chap.accuracy >= 50 && chap.accuracy < 75;
+                const isWeak = chap.accuracy < 50;
+                return (
+                  <div key={chap.name} className="bg-card border border-border rounded-2xl p-4 flex flex-col gap-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-sm text-foreground leading-snug line-clamp-2">{chap.name}</p>
+                        <p className="text-[11px] text-muted-foreground mt-0.5 truncate">{chap.subject}</p>
+                      </div>
+                      <span className={`shrink-0 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                        isStrong ? "text-success bg-success/10" :
+                        isOk ? "text-warning bg-warning/10" :
+                        "text-destructive bg-destructive/10"
+                      }`}>
+                        {isStrong ? "Strong" : isOk ? "Review" : "Needs Work"}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full ${
+                            isStrong ? "bg-success" : isOk ? "bg-warning" : "bg-destructive"
+                          }`}
+                          style={{ width: `${chap.accuracy}%` }}
+                        />
+                      </div>
+                      <span className={`text-xs font-black ${
+                        isStrong ? "text-success" : isOk ? "text-warning" : "text-destructive"
+                      }`}>{chap.accuracy}%</span>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground">{chap.correct}/{chap.total} correct</p>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
