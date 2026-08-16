@@ -74,12 +74,13 @@ export default function ChapterPage() {
       setSubject(subjectData);
       
       const currentChapter = subjectData.chapters.find((c: Chapter) => c.slug === chapterSlug);
-      if (currentChapter) {
-        setChapter(currentChapter);
-      }
 
-      // Fetch lessons for this chapter
       if (currentChapter) {
+        // Fetch full chapter to get practice sets
+        const chapterRes = await api.get(`/chapters/${currentChapter.id}`);
+        setChapter(chapterRes.data.data);
+
+        // Fetch lessons for this chapter
         const lessonsRes = await api.get(`/lessons/chapter/${currentChapter.id}`);
         setLessons(lessonsRes.data.data);
       }
