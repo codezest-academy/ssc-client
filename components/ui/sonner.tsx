@@ -15,7 +15,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
 
   return (
     <Sonner
-      position="top-center"
+      position="bottom-right"
       theme={theme as ToasterProps["theme"]}
       className="toaster group"
       icons={{
@@ -27,24 +27,24 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }}
       style={
         {
-          "--normal-bg": "var(--popover)",
-          "--normal-text": "var(--popover-foreground)",
-          "--normal-border": "var(--border)",
+          "--normal-bg": "transparent",
+          "--normal-text": "var(--foreground)",
+          "--normal-border": "rgba(255, 255, 255, 0.1)",
           "--border-radius": "1rem", // rounded-2xl
         } as React.CSSProperties
       }
       toastOptions={{
         classNames: {
-          toast: "group toast transition-all bg-card text-card-foreground border border-border shadow-lg rounded-xl p-4",
-          title: "text-foreground font-medium",
-          description: "text-muted-foreground text-sm",
-          actionButton: "bg-primary text-primary-foreground font-medium rounded-md px-3 py-1.5",
-          cancelButton: "bg-muted text-muted-foreground font-medium rounded-md px-3 py-1.5",
-          success: "!bg-success/10 !border-success/30 [&_[data-title]]:!text-foreground [&_[data-description]]:!text-muted-foreground",
-          error: "!bg-destructive/10 !border-destructive/30 [&_[data-title]]:!text-foreground [&_[data-description]]:!text-muted-foreground",
-          warning: "!bg-warning/10 !border-warning/30 [&_[data-title]]:!text-foreground [&_[data-description]]:!text-muted-foreground",
-          info: "!bg-info/10 !border-info/30 [&_[data-title]]:!text-foreground [&_[data-description]]:!text-muted-foreground",
-          loading: "!bg-muted !text-foreground !border-border",
+          toast: "group toast transition-all bg-background/60 backdrop-blur-xl text-foreground border border-white/10 shadow-2xl shadow-black/40 rounded-2xl p-4",
+          title: "text-foreground font-semibold",
+          description: "text-muted-foreground text-sm font-medium",
+          actionButton: "bg-primary text-primary-foreground font-semibold rounded-md px-3 py-1.5 shadow-sm",
+          cancelButton: "bg-muted text-muted-foreground font-semibold rounded-md px-3 py-1.5",
+          success: "!bg-success/20 !border-success/30 [&_[data-title]]:!text-success-foreground",
+          error: "!bg-destructive/20 !border-destructive/30 [&_[data-title]]:!text-destructive-foreground",
+          warning: "!bg-warning/20 !border-warning/30 [&_[data-title]]:!text-warning-foreground",
+          info: "!bg-info/20 !border-info/30 [&_[data-title]]:!text-info-foreground",
+          loading: "!bg-muted/50 !text-foreground !border-white/10",
         },
       }}
       {...props}
