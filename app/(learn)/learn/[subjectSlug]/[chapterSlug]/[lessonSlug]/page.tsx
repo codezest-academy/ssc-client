@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { QuestionRenderer } from "@/components/ui/question-renderer";
 import { MdxRenderer } from "@/components/ui/learning/mdx-renderer";
 import { TableOfContents } from "@/components/ui/learning/table-of-contents";
+import { LessonKnowledgeCheck } from "@/components/ui/learning/lesson-knowledge-check";
 import { useAuthStore } from "@/store/auth";
 import { PaywallGate } from "@/components/ui/paywall-gate";
 import { ErrorState } from "@/components/ui/error-state";
@@ -406,6 +407,16 @@ export default function LessonViewerPage() {
             )}
             
             {/* Unified Bottom Action / Pagination Bar */}
+            {/* Knowledge Check */}
+            <LessonKnowledgeCheck 
+              lessonId={lesson.id} 
+              onComplete={() => {
+                if (!isCompleted) {
+                  markCompleteMutation.mutate(isCompleted);
+                }
+              }} 
+            />
+
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-6 border-t border-border mt-8">
               
               {/* Left Side: Page Indicator (only if paginated) */}
