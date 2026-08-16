@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { GraduationCap, ArrowLeft } from "lucide-react";
+import { GraduationCap, Home, CreditCard, LayoutList, LifeBuoy } from "lucide-react";
 import { DotPattern } from "@/components/ui/pattern";
 import { Button } from "@/components/ui/button";
 
@@ -32,17 +32,35 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
         {children}
         
-        {/* Bottom Navigation */}
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Button variant="ghost" className="text-slate-400 hover:text-white hover:bg-white/10 rounded-full" asChild>
-            <Link href="/pricing">Pricing</Link>
-          </Button>
-          <Button variant="ghost" className="text-slate-400 hover:text-white hover:bg-white/10 rounded-full" asChild>
-            <Link href="/features">Features</Link>
-          </Button>
-          <Button variant="ghost" className="text-slate-400 hover:text-white hover:bg-white/10 rounded-full" asChild>
-            <Link href="/contact">Contact Support</Link>
-          </Button>
+        {/* Bottom Navigation Dock */}
+        <div className="mt-10 flex justify-center">
+          <div className="flex items-center gap-1 bg-white/5 backdrop-blur-md border border-white/10 rounded-full p-1.5 shadow-xl">
+            <Button variant="ghost" size="sm" className="h-9 px-4 text-slate-300 hover:text-white hover:bg-white/10 rounded-full transition-all" asChild>
+              <Link href="/">
+                <Home className="w-4 h-4 mr-2" />
+                Home
+              </Link>
+            </Button>
+            <div className="w-[1px] h-4 bg-white/10 mx-1" />
+            <Button variant="ghost" size="sm" className="h-9 px-4 text-slate-300 hover:text-white hover:bg-white/10 rounded-full transition-all" asChild>
+              <Link href="/pricing">
+                <CreditCard className="w-4 h-4 mr-2" />
+                Pricing
+              </Link>
+            </Button>
+            <Button variant="ghost" size="sm" className="h-9 px-4 text-slate-300 hover:text-white hover:bg-white/10 rounded-full hidden sm:flex transition-all" asChild>
+              <Link href="/features">
+                <LayoutList className="w-4 h-4 mr-2" />
+                Features
+              </Link>
+            </Button>
+            <Button variant="ghost" size="sm" className="h-9 px-4 text-slate-300 hover:text-white hover:bg-white/10 rounded-full transition-all" asChild>
+              <Link href="/contact">
+                <LifeBuoy className="w-4 h-4 mr-2" />
+                Support
+              </Link>
+            </Button>
+          </div>
         </div>
         
       </div>
