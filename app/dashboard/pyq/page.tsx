@@ -28,7 +28,7 @@ export default function PYQExplorerPage() {
       const detailedSubjects = await Promise.all(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         subjectsData.map(async (sub: any) => {
-          const detailRes = await api.get(`/subjects/slug/${sub.slug}`);
+          const detailRes = await api.get(`/subjects/${sub.slug}`);
           return detailRes.data.data;
         })
       );
