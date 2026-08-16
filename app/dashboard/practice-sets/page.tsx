@@ -49,7 +49,7 @@ export default function PracticeSetsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-3xl font-bold text-foreground font-display tracking-tight">Practice Sets</h2>
+        <h1 className="text-3xl font-bold text-foreground font-display tracking-tight">Practice Sets</h1>
         <p className="text-muted-foreground mt-2">Test your knowledge and practice MCQ questions.</p>
       </div>
 
@@ -108,13 +108,13 @@ export default function PracticeSetsPage() {
                     
                     <div className="flex flex-wrap gap-2 mt-3">
                       {set.subject && (
-                        <span className="inline-flex items-center px-2 py-1 rounded-md bg-slate-100 text-slate-600 text-xs font-medium">
+                        <span className="inline-flex items-center px-2 py-1 rounded-md bg-muted text-muted-foreground text-xs font-medium">
                           <BookOpen className="w-3 h-3 mr-1" />
                           {set.subject.name}
                         </span>
                       )}
                       {set.chapter && (
-                        <span className="inline-flex items-center px-2 py-1 rounded-md bg-slate-100 text-slate-600 text-xs font-medium">
+                        <span className="inline-flex items-center px-2 py-1 rounded-md bg-muted text-muted-foreground text-xs font-medium">
                           <Layers className="w-3 h-3 mr-1" />
                           {set.chapter.name}
                         </span>

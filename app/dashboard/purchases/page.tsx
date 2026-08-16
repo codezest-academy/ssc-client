@@ -19,7 +19,7 @@ function PurchasesSkeleton() {
       </div>
       <div className="space-y-4">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="bg-white rounded-xl border border-slate-200 p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div key={i} className="bg-card rounded-xl border border-border p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
                 <Skeleton className="w-48 h-6 rounded-md" />
@@ -76,15 +76,15 @@ export default function PurchasesPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">My Purchases</h1>
-        <p className="text-slate-500 mt-1">View your transaction history and active products.</p>
+        <h1 className="text-2xl font-bold text-foreground font-display">My Purchases</h1>
+        <p className="text-muted-foreground mt-1">View your transaction history and active products.</p>
       </div>
 
       {!purchases || purchases.length === 0 ? (
-        <div className="text-center p-12 bg-white rounded-xl border border-slate-200 border-dashed">
-          <Package className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-slate-900 mb-1">No purchases yet</h3>
-          <p className="text-slate-500 mb-6">You haven't bought any premium content or combos.</p>
+        <div className="text-center p-12 bg-card rounded-xl border border-border border-dashed">
+          <Package className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-foreground mb-1">No purchases yet</h3>
+          <p className="text-muted-foreground mb-6">You haven't bought any premium content or combos.</p>
           <a href="/pricing" className="text-primary font-medium hover:underline">
             View Premium Plans
           </a>
@@ -92,21 +92,21 @@ export default function PurchasesPage() {
       ) : (
         <div className="space-y-4">
           {purchases.map((purchase: Purchase) => (
-            <div key={purchase.id} className="bg-white rounded-xl border border-slate-200 p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div key={purchase.id} className="bg-card rounded-xl border border-border p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <h3 className="font-semibold text-slate-900 text-lg">
+                  <h3 className="font-semibold text-foreground text-lg">
                     {purchase.product?.name || "Unknown Product"}
                   </h3>
                   <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
-                    purchase.status === "SUCCESS" ? "bg-green-100 text-green-700" :
-                    purchase.status === "FAILED" ? "bg-red-100 text-red-700" :
-                    "bg-yellow-100 text-yellow-700"
+                    purchase.status === "SUCCESS" ? "bg-success/10 text-success" :
+                    purchase.status === "FAILED" ? "bg-destructive/10 text-destructive" :
+                    "bg-warning/10 text-warning"
                   }`}>
                     {purchase.status}
                   </span>
                 </div>
-                <div className="flex items-center text-sm text-slate-500 gap-4">
+                <div className="flex items-center text-sm text-muted-foreground gap-4">
                   <span className="flex items-center gap-1">
                     <Calendar className="w-4 h-4" />
                     {format(new Date(purchase.createdAt), "MMM d, yyyy h:mm a")}
@@ -115,10 +115,10 @@ export default function PurchasesPage() {
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-slate-900">
+                <div className="text-2xl font-bold text-foreground">
                   ₹{purchase.amountPaid}
                 </div>
-                <div className="text-sm text-slate-500 uppercase tracking-wider">
+                <div className="text-sm text-muted-foreground uppercase tracking-wider">
                   {purchase.paymentGateway}
                 </div>
               </div>

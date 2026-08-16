@@ -79,7 +79,7 @@ export default function MockTestOverviewPage() {
   };
 
   if (loading) {
-    return <div className="text-slate-400 p-8">Loading mock test details...</div>;
+    return <div className="flex flex-col gap-4 animate-pulse p-4"><div className="h-8 bg-muted rounded-lg w-1/3" /><div className="h-5 bg-muted rounded-lg w-2/3 mt-2" /><div className="h-[200px] bg-muted rounded-xl mt-6" /></div>;
   }
 
   if (error) {
@@ -111,42 +111,42 @@ export default function MockTestOverviewPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-12">
       <div className="flex items-center gap-2 mb-2">
-        <Link href="/dashboard/mock-tests" className="text-slate-400 hover:text-primary transition-colors text-sm font-medium flex items-center">
+        <Link href="/dashboard/mock-tests" className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium flex items-center">
           <ArrowLeft className="w-4 h-4 mr-1" /> Back to Mock Tests
         </Link>
       </div>
 
       <div className="text-center space-y-4 py-8">
-        <div className="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
+        <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
           <FileText className="w-10 h-10 text-indigo-600" />
         </div>
-        <h1 className="text-4xl font-bold text-slate-900 tracking-tight">{mockTest.title}</h1>
-        <p className="text-slate-500 text-lg max-w-2xl mx-auto">
+        <h1 className="text-4xl font-bold text-foreground tracking-tight">{mockTest.title}</h1>
+        <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
           {mockTest.description || "Full-length mock test for your exam preparation."}
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="border-border bg-slate-50 shadow-none">
+        <Card className="border-border bg-muted/50 shadow-none">
           <CardContent className="p-6 flex flex-col items-center justify-center text-center">
             <FileText className="w-8 h-8 text-primary mb-3" />
-            <h3 className="font-semibold text-slate-900 mb-1">Questions</h3>
+            <h3 className="font-semibold text-foreground mb-1">Questions</h3>
             <p className="text-2xl font-bold text-primary">{questionCount}</p>
           </CardContent>
         </Card>
         
-        <Card className="border-border bg-slate-50 shadow-none">
+        <Card className="border-border bg-muted/50 shadow-none">
           <CardContent className="p-6 flex flex-col items-center justify-center text-center">
             <Clock className="w-8 h-8 text-primary mb-3" />
-            <h3 className="font-semibold text-slate-900 mb-1">Duration</h3>
+            <h3 className="font-semibold text-foreground mb-1">Duration</h3>
             <p className="text-2xl font-bold text-primary">{mockTest.durationMinutes} mins</p>
           </CardContent>
         </Card>
 
-        <Card className="border-border bg-slate-50 shadow-none">
+        <Card className="border-border bg-muted/50 shadow-none">
           <CardContent className="p-6 flex flex-col items-center justify-center text-center">
             <AlertCircle className="w-8 h-8 text-primary mb-3" />
-            <h3 className="font-semibold text-slate-900 mb-1">Exam Type</h3>
+            <h3 className="font-semibold text-foreground mb-1">Exam Type</h3>
             <p className="text-xl font-bold text-primary uppercase">{mockTest.examType}</p>
           </CardContent>
         </Card>
@@ -156,8 +156,8 @@ export default function MockTestOverviewPage() {
         <PaywallGate contentType="Mock Test" title="Premium Mock Test" />
       ) : (
         <div className="bg-white border border-border rounded-2xl p-8 shadow-sm text-center">
-          <h3 className="text-xl font-semibold mb-4 text-slate-900">Important Instructions</h3>
-          <ul className="text-slate-600 mb-8 max-w-lg mx-auto text-left list-disc list-inside space-y-2">
+          <h3 className="text-xl font-semibold mb-4 text-foreground">Important Instructions</h3>
+          <ul className="text-muted-foreground mb-8 max-w-lg mx-auto text-left list-disc list-inside space-y-2">
             <li>Ensure you have a stable internet connection.</li>
             <li>Do not refresh or close the browser window once the test starts.</li>
             <li>Use the "Focus Mode" inside the test to minimize distractions.</li>
@@ -168,7 +168,7 @@ export default function MockTestOverviewPage() {
             size="lg" 
             onClick={handleStartMockTest} 
             disabled={starting || questionCount === 0}
-            className="w-full sm:w-auto min-w-[200px] text-lg h-14 bg-indigo-600 hover:bg-indigo-700 text-white"
+            className="w-full sm:w-auto min-w-[200px] text-lg h-14"
           >
             {starting ? (
               "Starting..."

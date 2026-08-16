@@ -54,7 +54,7 @@ export default function MockTestsPage() {
     <>
     <div className="space-y-8">
       <div>
-        <h2 className="text-3xl font-bold text-foreground font-display tracking-tight">Mock Tests</h2>
+        <h1 className="text-3xl font-bold text-foreground font-display tracking-tight">Mock Tests</h1>
         <p className="text-muted-foreground mt-2">Take full-length mock exams under timed conditions.</p>
       </div>
 

@@ -100,7 +100,7 @@ export default function AnalyticsPage() {
 
   const PageHeader = (
     <div>
-      <h2 className="text-3xl font-bold text-foreground font-display tracking-tight">Your Performance</h2>
+      <h1 className="text-3xl font-bold text-foreground font-display tracking-tight">Your Performance</h1>
       <p className="text-muted-foreground mt-2">Track your progress, accuracy, and study time.</p>
     </div>
   );
@@ -133,25 +133,25 @@ export default function AnalyticsPage() {
           <Card className="border-border shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                  <Trophy className="w-5 h-5 text-blue-600" />
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Trophy className="w-5 h-5 text-primary" />
                 </div>
               </div>
-              <p className="text-sm font-medium text-slate-500">Total Tests Taken</p>
-              <h3 className="text-3xl font-bold text-slate-900 mt-1">{data.totalTests}</h3>
+              <p className="text-sm font-medium text-muted-foreground">Total Tests Taken</p>
+              <h3 className="text-3xl font-bold text-foreground mt-1">{data.totalTests}</h3>
             </CardContent>
           </Card>
 
           <Card className="border-border shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
-                  <Target className="w-5 h-5 text-emerald-600" />
+                <div className="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center">
+                  <Target className="w-5 h-5 text-success" />
                 </div>
               </div>
-              <p className="text-sm font-medium text-slate-500">Average Accuracy</p>
+              <p className="text-sm font-medium text-muted-foreground">Average Accuracy</p>
               <div className="flex items-baseline gap-2 mt-1">
-                <h3 className="text-3xl font-bold text-slate-900">{Math.round(data.averageAccuracy)}%</h3>
+                <h3 className="text-3xl font-bold text-foreground">{Math.round(data.averageAccuracy)}%</h3>
               </div>
             </CardContent>
           </Card>
@@ -159,14 +159,14 @@ export default function AnalyticsPage() {
           <Card className="border-border shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
-                  <CheckCircle2 className="w-5 h-5 text-amber-600" />
+                <div className="w-10 h-10 rounded-lg bg-warning/10 flex items-center justify-center">
+                  <CheckCircle2 className="w-5 h-5 text-warning" />
                 </div>
               </div>
-              <p className="text-sm font-medium text-slate-500">Questions Attempted</p>
+              <p className="text-sm font-medium text-muted-foreground">Questions Attempted</p>
               <div className="flex items-baseline gap-2 mt-1">
-                <h3 className="text-3xl font-bold text-slate-900">{data.totalAttempted}</h3>
-                <span className="text-sm font-medium text-emerald-600">({data.totalCorrect} correct)</span>
+                <h3 className="text-3xl font-bold text-foreground">{data.totalAttempted}</h3>
+                <span className="text-sm font-medium text-success">({data.totalCorrect} correct)</span>
               </div>
             </CardContent>
           </Card>
@@ -174,12 +174,12 @@ export default function AnalyticsPage() {
           <Card className="border-border shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
-                  <Clock className="w-5 h-5 text-purple-600" />
+                <div className="w-10 h-10 rounded-lg bg-accent flex items-center justify-center">
+                  <Clock className="w-5 h-5 text-accent-foreground" />
                 </div>
               </div>
-              <p className="text-sm font-medium text-slate-500">Total Time Spent</p>
-              <h3 className="text-3xl font-bold text-slate-900 mt-1">{formatTime(data.totalTimeSeconds)}</h3>
+              <p className="text-sm font-medium text-muted-foreground">Total Time Spent</p>
+              <h3 className="text-3xl font-bold text-foreground mt-1">{formatTime(data.totalTimeSeconds)}</h3>
             </CardContent>
           </Card>
         </div>
@@ -198,7 +198,7 @@ export default function AnalyticsPage() {
               </Button>
             </div>
           )}
-          <CardHeader className="border-b border-border bg-slate-50/50 pb-4">
+          <CardHeader className="border-b border-border bg-muted/30 pb-4">
             <CardTitle className="text-lg flex items-center gap-2">
               <Flame className="w-5 h-5 text-rose-500" />
               Recent Activity
@@ -207,14 +207,14 @@ export default function AnalyticsPage() {
           <CardContent className="p-0">
             <div className="divide-y divide-border">
               {data.recentAttempts.map((attempt, idx) => (
-                <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between p-6 hover:bg-slate-50 transition-colors">
+                <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between p-6 hover:bg-muted/50 transition-colors">
                   <div className="flex items-start gap-4 mb-4 sm:mb-0">
-                    <div className={`mt-1 w-2 h-2 rounded-full ${attempt.attemptType === 'MOCK' ? 'bg-indigo-500' : 'bg-emerald-500'}`} />
+                    <div className={`mt-1 w-2 h-2 rounded-full ${attempt.attemptType === 'MOCK' ? 'bg-primary' : 'bg-success'}`} />
                     <div>
-                      <h4 className="font-semibold text-slate-900 capitalize">
+                      <h4 className="font-semibold text-foreground capitalize">
                         {attempt.attemptType.toLowerCase().replace('_', ' ')}
                       </h4>
-                      <p className="text-sm text-slate-500 mt-0.5">
+                      <p className="text-sm text-muted-foreground mt-0.5">
                         Submitted {formatDistanceToNow(new Date(attempt.submittedAt), { addSuffix: true })}
                       </p>
                     </div>
@@ -222,18 +222,18 @@ export default function AnalyticsPage() {
                   
                   <div className="flex items-center gap-8 text-sm">
                     <div className="flex flex-col items-end">
-                      <span className="text-slate-500 font-medium mb-1">Score</span>
-                      <span className="font-bold text-slate-900">{attempt.marksObtained} marks</span>
+                      <span className="text-muted-foreground font-medium mb-1">Score</span>
+                      <span className="font-bold text-foreground">{attempt.marksObtained} marks</span>
                     </div>
                     <div className="flex flex-col items-end">
-                      <span className="text-slate-500 font-medium mb-1">Accuracy</span>
-                      <span className={`font-bold ${attempt.accuracy >= 70 ? 'text-emerald-600' : attempt.accuracy >= 40 ? 'text-amber-600' : 'text-rose-600'}`}>
+                      <span className="text-muted-foreground font-medium mb-1">Accuracy</span>
+                      <span className={`font-bold ${attempt.accuracy >= 70 ? 'text-success' : attempt.accuracy >= 40 ? 'text-warning' : 'text-destructive'}`}>
                         {Math.round(attempt.accuracy)}%
                       </span>
                     </div>
                     <div className="flex flex-col items-end hidden sm:flex">
-                      <span className="text-slate-500 font-medium mb-1">Time</span>
-                      <span className="font-medium text-slate-700">{formatTime(attempt.timeTakenSeconds)}</span>
+                      <span className="text-muted-foreground font-medium mb-1">Time</span>
+                      <span className="font-medium text-muted-foreground">{formatTime(attempt.timeTakenSeconds)}</span>
                     </div>
                   </div>
                 </div>

@@ -46,7 +46,7 @@ export default function LeaderboardPage() {
 
   const PageHeader = (
     <div>
-      <h2 className="text-3xl font-bold text-foreground font-display tracking-tight">Global Leaderboard</h2>
+      <h1 className="text-3xl font-bold text-foreground font-display tracking-tight">Global Leaderboard</h1>
       <p className="text-muted-foreground mt-2">See how you stack up against the competition.</p>
     </div>
   );
@@ -56,7 +56,7 @@ export default function LeaderboardPage() {
       <div className="space-y-8">
         {PageHeader}
         <Card className="border-border shadow-sm">
-          <CardHeader className="border-b border-border bg-slate-50/50 pb-4">
+          <CardHeader className="border-b border-border bg-muted/30 pb-4">
             <Skeleton className="h-6 w-[150px]" />
           </CardHeader>
           <CardContent className="p-0">
@@ -119,7 +119,7 @@ export default function LeaderboardPage() {
       {PageHeader}
 
       <Card className="border-border shadow-sm">
-        <CardHeader className="border-b border-border bg-slate-50/50 pb-4">
+        <CardHeader className="border-b border-border bg-muted/30 pb-4">
           <CardTitle className="text-lg flex items-center gap-2">
             <Trophy className="w-5 h-5 text-amber-500" />
             Top Performers
@@ -130,24 +130,24 @@ export default function LeaderboardPage() {
             {leaderboard.map((entry) => {
               const isTop3 = entry.rank <= 3;
               return (
-                <div key={entry.student.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-6 hover:bg-slate-50 transition-colors">
+                <div key={entry.student.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-6 hover:bg-muted/50 transition-colors">
                   <div className="flex items-center gap-6 mb-4 sm:mb-0 w-full sm:w-auto">
                     <div className="w-10 text-center">
                       {entry.rank === 1 ? (
-                        <Medal className="w-8 h-8 text-rank-gold mx-auto" style={{ color: '#FFD700' }} />
+                        <Medal className="w-8 h-8 text-rank-gold mx-auto" />
                       ) : entry.rank === 2 ? (
-                        <Medal className="w-7 h-7 text-slate-400 mx-auto" />
+                        <Medal className="w-7 h-7 text-muted-foreground mx-auto" />
                       ) : entry.rank === 3 ? (
-                        <Medal className="w-6 h-6 text-amber-700 mx-auto" style={{ color: '#CD7F32' }} />
+                        <Medal className="w-6 h-6 text-warning mx-auto" />
                       ) : (
-                        <span className="text-xl font-bold text-slate-400">#{entry.rank}</span>
+                        <span className="text-xl font-bold text-muted-foreground">#{entry.rank}</span>
                       )}
                     </div>
                     <div>
-                      <h4 className={`font-bold text-lg ${isTop3 ? 'text-slate-900' : 'text-slate-700'}`}>
+                      <h4 className={`font-bold text-lg ${isTop3 ? 'text-foreground' : 'text-muted-foreground'}`}>
                         {entry.student.name}
                       </h4>
-                      <p className="text-sm text-slate-500 mt-0.5">
+                      <p className="text-sm text-muted-foreground mt-0.5">
                         {entry.testsTaken} {entry.testsTaken === 1 ? 'test' : 'tests'} attempted
                       </p>
                     </div>
@@ -155,13 +155,13 @@ export default function LeaderboardPage() {
                   
                   <div className="flex items-center gap-8 text-sm w-full sm:w-auto justify-end sm:justify-start">
                     <div className="flex flex-col items-end">
-                      <span className="text-slate-500 font-medium mb-1">XP Points</span>
-                      <span className={`font-bold text-xl ${isTop3 ? 'text-primary' : 'text-slate-900'}`}>
+                      <span className="text-muted-foreground font-medium mb-1">XP Points</span>
+                      <span className={`font-bold text-xl ${isTop3 ? 'text-primary' : 'text-foreground'}`}>
                         {entry.xpPoints.toLocaleString()}
                       </span>
                     </div>
                     <div className="flex flex-col items-end">
-                      <span className="text-slate-500 font-medium mb-1">Rank Tier</span>
+                      <span className="text-muted-foreground font-medium mb-1">Rank Tier</span>
                       <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider px-2 py-1 bg-muted rounded-full">
                         {entry.rankTier}
                       </span>
