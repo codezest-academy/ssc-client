@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { api } from "@/lib/axios";
+
 import Link from "next/link";
 import { ArrowLeft, PlayCircle, Trophy, BarChart3, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,8 +12,12 @@ export async function generateMetadata({
   params: { subject: string; chapter: string };
 }): Promise<Metadata> {
   try {
-    const response = await api.get(`/chapters/${params.chapter}`);
-    const chapter = response.data.data;
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+    const absoluteUrl = baseUrl.startsWith('/') ? `http://localhost:5000${baseUrl}` : baseUrl;
+    const response = await fetch(`${absoluteUrl}/chapters/${params.chapter}`, { next: { revalidate: 3600 } });
+    if (!response.ok) throw new Error("Not found");
+    const json = await response.json();
+    const chapter = json.data;
     
     return {
       title: `${chapter.name} PYQs | SSC CGL Practice`,
@@ -53,8 +57,13 @@ export default async function ChapterPYQPage({
   let questions: Question[] = [];
 
   try {
-    const response = await api.get(`/chapters/${params.chapter}`);
-    chapter = response.data.data;
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+    const absoluteUrl = baseUrl.startsWith('/') ? `http://localhost:5000${baseUrl}` : baseUrl;
+    const response = await fetch(`${absoluteUrl}/chapters/${params.chapter}`, { next: { revalidate: 3600 } });
+    if (response.ok) {
+      const json = await response.json();
+      chapter = json.data;
+    }
 
     // We can fetch a preview of questions if we have an endpoint. Let's mock a few for SEO.
     // In a real scenario we'd fetch top 5 PYQs from an API.

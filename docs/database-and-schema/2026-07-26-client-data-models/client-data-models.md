@@ -197,8 +197,8 @@ interface MockTest {
 ### `POST /api/v1/attempts/start` Request Body
 ```typescript
 interface StartAttemptBody {
-  type: 'PRACTICE' | 'MOCK';
-  referenceId: string;    // practiceSetId or mockTestId
+  type: 'PRACTICE' | 'MOCK' | 'DYNAMIC_PRACTICE';
+  referenceId: string | null;    // null for DYNAMIC_PRACTICE, practiceSetId or mockTestId for others
 }
 ```
 

@@ -86,3 +86,19 @@ For non-fatal issues (e.g., content typos, feature suggestions), users must be a
 - **Rule:** Utilize a Floating Action Button (FAB) anchored to the bottom-right corner of the screen (`fixed bottom-6 right-6`).
 - **Interaction:** The FAB should open a lightweight popover offering categorized feedback (e.g., "Report Bug", "Suggest Feature") mapped to our backend `FeedbackType` enum.
 - **Context:** Submissions must retain the current page's URL context automatically.
+
+## 8. Computer Based Testing (CBT) Immersive UI
+
+For high-stakes testing interfaces (Test Engine), we must adopt the **Immersive Floating Layout (Bento Box paradigm)** to minimize cognitive load and replicate modern CBT standards.
+
+### 8.1 Focus & Minimization
+- **Rule:** The UI must visually separate the Timer/Nav (Top), Question (Center), and Palette (Side) into distinct floating cards (`bg-card rounded-2xl border shadow-sm`) over a soft, tinted canvas (`bg-muted/30`).
+- **Why:** Reduces the horizontal distance the eye must travel (unlike edge-to-edge layouts) and minimizes visual distraction.
+
+### 8.2 Frictionless Submission
+- **Rule:** Never use native browser `confirm()` alerts for test submission.
+- **Implementation:** Use a custom, premium modal that summarizes the user's progress (Answered, Unanswered, Marked for Review) before they commit to an irreversible submission.
+
+### 8.3 Post-Submission Experience
+- **Rule:** The success screen must feel rewarding (e.g., subtle glows, glassmorphism on summary cards).
+- **Actions:** Always provide a clear visual hierarchy of next steps: "Review Mistakes" (Primary), "Take Retest" (Secondary), and "Dashboard" (Tertiary).

@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { api } from "@/lib/axios";
+
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { FileText, ChevronRight, ArrowLeft, FolderX } from "lucide-react";
@@ -12,8 +12,12 @@ export async function generateMetadata({
   params: { subject: string };
 }): Promise<Metadata> {
   try {
-    const response = await api.get(`/subjects/${params.subject}`);
-    const subject = response.data.data;
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+    const absoluteUrl = baseUrl.startsWith('/') ? `http://localhost:5000${baseUrl}` : baseUrl;
+    const response = await fetch(`${absoluteUrl}/subjects/${params.subject}`, { next: { revalidate: 3600 } });
+    if (!response.ok) throw new Error("Not found");
+    const json = await response.json();
+    const subject = json.data;
     
     return {
       title: `${subject.name} PYQs - Topic Wise | SSC CGL`,
@@ -48,8 +52,13 @@ export default async function SubjectPYQPage({
 }) {
   let subject: Subject | null = null;
   try {
-    const response = await api.get(`/subjects/${params.subject}`);
-    subject = response.data.data;
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+    const absoluteUrl = baseUrl.startsWith('/') ? `http://localhost:5000${baseUrl}` : baseUrl;
+    const response = await fetch(`${absoluteUrl}/subjects/${params.subject}`, { next: { revalidate: 3600 } });
+    if (response.ok) {
+      const json = await response.json();
+      subject = json.data;
+    }
   } catch (error) {
     console.error("Failed to fetch subject", error);
   }

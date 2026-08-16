@@ -7,6 +7,7 @@ import { useTestEngineStore, EngineQuestion } from "@/store/useTestEngineStore";
 import { Question, PracticeSetQuestion, MockTestSection, MockTestSectionQuestion } from "@/types/api";
 import { TestLayout } from "@/components/test-engine/TestLayout";
 import { QuestionViewer } from "@/components/test-engine/QuestionViewer";
+import { CheckCircle } from "lucide-react";
 
 // Fisher-Yates shuffle
 function shuffleArray<T>(array: T[]): T[] {
@@ -105,6 +106,7 @@ export default function TestAttemptPage() {
   const { initializeTest, status } = useTestEngineStore();
   const [loading, setLoading] = useState(true);
   const [testTitle, setTestTitle] = useState("Practice Test");
+  const [attemptData, setAttemptData] = useState<any>(null);
 
   useEffect(() => {
     if (!attemptId) return;
@@ -114,6 +116,7 @@ export default function TestAttemptPage() {
         // 1. Fetch attempt details
         const attemptRes = await api.get(`/attempts/${attemptId}`);
         const attempt = attemptRes.data.data;
+        setAttemptData(attempt);
 
         if (attempt.status === "SUBMITTED" || attempt.status === "COMPLETED") {
           // If already submitted, update store and stop loading
@@ -203,34 +206,70 @@ export default function TestAttemptPage() {
   }
 
   if (status === "SUBMITTED") {
+    let retestLink = "/dashboard";
+    if (attemptData?.mockTestId) {
+      retestLink = `/tests/overview/${attemptData.mockTestId}`;
+    } else if (attemptData?.practiceSetId) {
+      retestLink = `/tests/overview/${attemptData.practiceSetId}`;
+    } else {
+      retestLink = `/pyq`;
+    }
+
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-6 p-8">
-        <div className="w-20 h-20 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
-          <span className="text-4xl">🎉</span>
-        </div>
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold text-foreground">Test Submitted!</h1>
-          <p className="text-muted-foreground">
-            Your answers have been recorded. Results will be available shortly.
-          </p>
-        </div>
-        <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-md shadow-md space-y-4">
-          <h2 className="font-semibold text-foreground text-center text-lg">Summary</h2>
-          <SummaryGrid />
-        </div>
-        <div className="mt-4 flex items-center gap-4">
-          <a
-            href={`/tests/review/${attemptId}`}
-            className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-full font-semibold shadow hover:bg-primary/90 transition-colors"
-          >
-            Review Mistakes
-          </a>
-          <a
-            href="/dashboard"
-            className="inline-flex items-center gap-2 bg-muted text-foreground px-6 py-3 rounded-full font-semibold hover:bg-muted/80 transition-colors"
-          >
-            Dashboard
-          </a>
+      <div className="min-h-screen bg-muted/30 dark:bg-slate-950 flex flex-col items-center justify-center p-6 relative overflow-hidden">
+        {/* Soft Ambient Background */}
+        <div className="absolute top-0 left-0 w-full h-[400px] bg-gradient-to-b from-primary/10 to-transparent pointer-events-none" />
+        
+        <div className="z-10 flex flex-col items-center w-full max-w-2xl animate-in fade-in slide-in-from-bottom-8 duration-700">
+          
+          {/* Main Success Card */}
+          <div className="bg-card border border-border shadow-2xl rounded-3xl p-8 md:p-12 w-full flex flex-col items-center relative overflow-hidden">
+            {/* Top accent line */}
+            <div className="absolute top-0 left-0 w-full h-1.5 bg-primary" />
+            
+            {/* Icon */}
+            <div className="w-20 h-20 mb-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center ring-8 ring-emerald-50 dark:ring-emerald-900/10">
+              <CheckCircle className="w-10 h-10 text-emerald-600 dark:text-emerald-400" strokeWidth={2.5} />
+            </div>
+            
+            <div className="text-center space-y-3 mb-10 w-full">
+              <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">
+                Submission Successful
+              </h1>
+              <p className="text-muted-foreground font-medium max-w-md mx-auto">
+                Your test attempt has been recorded. You can now review your performance or return to your learning path.
+              </p>
+            </div>
+            
+            <div className="w-full space-y-6">
+              <h2 className="font-semibold text-foreground/80 uppercase tracking-wider text-sm text-left">
+                Test Summary
+              </h2>
+              <SummaryGrid />
+            </div>
+            
+            {/* Action Buttons */}
+            <div className="mt-12 flex flex-col sm:flex-row items-center gap-4 w-full justify-center">
+              <a
+                href={`/tests/review/${attemptId}`}
+                className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 rounded-xl font-bold text-primary-foreground bg-primary shadow-md hover:bg-primary/90 hover:shadow-lg transition-all active:scale-95"
+              >
+                Review Mistakes
+              </a>
+              <a
+                href={retestLink}
+                className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 rounded-xl font-bold text-primary bg-primary/10 hover:bg-primary/20 transition-all active:scale-95"
+              >
+                Take Retest
+              </a>
+              <a
+                href="/dashboard"
+                className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 rounded-xl font-bold text-foreground bg-muted hover:bg-muted-foreground/10 border border-border shadow-sm transition-all active:scale-95"
+              >
+                Dashboard
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     );

@@ -451,16 +451,16 @@ function GamificationWidget({ profile }: { profile: GamificationProfile | null }
   if (!profile) return null;
 
   const nextTierThresholds: Record<string, number> = {
-    BRONZE: 500,
-    SILVER: 2000,
-    GOLD: 5000,
-    PLATINUM: 10000,
-    DIAMOND: 10000 // Max tier
+    ASPIRANT: 10000,
+    CHALLENGER: 50000,
+    ACHIEVER: 250000,
+    MASTER: 1000000,
+    LEGEND: 1000000 // Max tier
   };
 
-  const currentTier = profile.rankTier || 'BRONZE';
-  const threshold = nextTierThresholds[currentTier] || 500;
-  const progressPercent = currentTier === 'DIAMOND' ? 100 : Math.min(100, Math.round((profile.xpPoints / threshold) * 100));
+  const currentTier = profile.rankTier || 'ASPIRANT';
+  const threshold = nextTierThresholds[currentTier] || 10000;
+  const progressPercent = currentTier === 'LEGEND' ? 100 : Math.min(100, Math.round((profile.xpPoints / threshold) * 100));
 
   return (
     <div className="bg-card border border-primary/10 rounded-3xl p-5 shadow-sm group hover:shadow-md transition-all">
@@ -497,9 +497,9 @@ function GamificationWidget({ profile }: { profile: GamificationProfile | null }
           style={{ width: `${progressPercent}%` }}
         />
       </div>
-      {currentTier !== 'DIAMOND' && (
-        <p className="text-xs text-muted-foreground font-medium text-right">
-          {threshold - profile.xpPoints} XP to next rank
+      {currentTier !== 'LEGEND' && (
+        <p className="text-xs text-center text-muted-foreground font-medium mt-2">
+          <strong className="text-foreground">{(threshold - profile.xpPoints).toLocaleString()} XP</strong> to next rank
         </p>
       )}
     </div>
@@ -649,9 +649,11 @@ export default function DashboardPage() {
                     </p>
                   </div>
                   {analytics && analytics.totalTests > 0 && (
-                    <Link href="/dashboard/analytics" className="text-xs font-semibold text-primary hover:underline flex items-center gap-1">
-                      View Analytics <ArrowRight className="w-3 h-3" />
-                    </Link>
+                    <Button variant="secondary" size="sm" className="rounded-full h-8 text-xs font-bold px-4 hover:bg-primary hover:text-primary-foreground transition-colors shadow-sm" asChild>
+                      <Link href="/dashboard/analytics">
+                        View Analytics
+                      </Link>
+                    </Button>
                   )}
                 </div>
 

@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { api } from "@/lib/axios";
+
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Layers, ChevronRight } from "lucide-react";
@@ -23,8 +23,14 @@ interface Subject {
 export default async function PYQIndexPage() {
   let subjects: Subject[] = [];
   try {
-    const response = await api.get('/subjects');
-    subjects = response.data.data;
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+    // Ensure absolute URL for server component
+    const absoluteUrl = baseUrl.startsWith('/') ? `http://localhost:5000${baseUrl}` : baseUrl;
+    const response = await fetch(`${absoluteUrl}/subjects`, { next: { revalidate: 3600 } });
+    if (response.ok) {
+      const json = await response.json();
+      subjects = json.data || [];
+    }
   } catch (error) {
     console.error("Failed to fetch subjects", error);
   }

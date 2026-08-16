@@ -20,8 +20,7 @@ export function QuestionPalette() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-card border border-border rounded-xl overflow-hidden">
-      <div className="p-4 border-b border-border bg-muted/30">
+    <div className="flex flex-col h-full w-full bg-transparent">      <div className="p-4 border-b border-border bg-muted/30">
         <h3 className="font-semibold text-foreground mb-4">Question Palette</h3>
         <div className="grid grid-cols-2 gap-y-3 gap-x-2 text-xs text-muted-foreground">
           <div className="flex items-center gap-2">

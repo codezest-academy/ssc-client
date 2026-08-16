@@ -1,8 +1,17 @@
 import axios from "axios";
 import { useAuthStore } from "../store/auth";
 
+const isServer = typeof window === 'undefined';
+let baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+
+// Node.js (Server Components) requires absolute URLs. If a relative URL like `/api/v1` is provided,
+// we must prepend the host. We default to localhost:5000 for server-to-server calls if not specified.
+if (isServer && baseURL.startsWith('/')) {
+  baseURL = process.env.INTERNAL_API_URL || `http://localhost:5000${baseURL}`;
+}
+
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1",
+  baseURL,
   withCredentials: true,
 });
 
@@ -36,6 +45,7 @@ api.interceptors.response.use(
     // Auto-report 5xx server errors and network errors (0)
     // Avoid reporting 4xx errors as they are operational (e.g., bad request, unauthorized)
     if (
+      originalRequest &&
       !originalRequest._isErrorReport && // Prevent infinite loops if reporting itself fails
       (error.response?.status >= 500 || !error.response)
     ) {
@@ -49,10 +59,12 @@ api.interceptors.response.use(
           errorBoundary: 'api',
           stack: error.stack,
         });
+      }).catch(err => {
+        console.error("Failed to lazy load error-reporter", err);
       });
     }
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (originalRequest && error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
         return new Promise(function (resolve, reject) {
           failedQueue.push({ resolve, reject });
