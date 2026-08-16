@@ -85,25 +85,18 @@ export default function PracticeSetsPage() {
     );
   }
 
+
   return (
     <div className="space-y-6">
-      {/* Hero Banner */}
-      <div className="relative rounded-3xl overflow-hidden bg-card border border-primary/10 p-6 md:p-8 shadow-sm group">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-primary/5 to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
-        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-bl-full -z-0 transition-colors" />
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-5">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="bg-primary/10 p-1.5 rounded-xl">
-                <Target className="w-5 h-5 text-primary" />
-              </div>
-              <h1 className="text-2xl font-black tracking-tight text-foreground">Dynamic Practice Sets</h1>
-            </div>
-            <p className="text-muted-foreground text-sm max-w-2xl leading-relaxed mt-2">
-              Generate 20-question practice tests tailored to your weak areas. Questions are freshly shuffled and drawn from our entire question bank so you never see the same set twice!
-            </p>
-          </div>
-        </div>
+      {/* Page Header */}
+      <div>
+        <h1 className="text-3xl font-bold text-foreground font-display tracking-tight flex items-center gap-2">
+          <Target className="w-8 h-8 text-primary" />
+          Dynamic Practice Sets
+        </h1>
+        <p className="text-muted-foreground mt-1.5">
+          Generate 20-question practice tests tailored to your weak areas. Questions are freshly shuffled so you never see the same set twice!
+        </p>
       </div>
 
       {subjects.length === 0 ? (

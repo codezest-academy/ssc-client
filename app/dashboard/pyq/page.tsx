@@ -3,10 +3,11 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/axios";
-import { Play, FolderX, Library } from "lucide-react";
+import { Play, FolderX, Library, ChevronDown, BookOpen } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/ui/error-state";
+import { Button } from "@/components/ui/button";
 
 export default function PYQExplorerPage() {
   const router = useRouter();
@@ -86,12 +87,17 @@ export default function PYQExplorerPage() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-gradient-to-r from-primary to-accent text-primary-foreground rounded-3xl p-8 shadow-lg">
-        <h1 className="text-3xl font-bold mb-2">Topic-wise PYQ Explorer</h1>
-        <p className="opacity-90 max-w-2xl">
+      {/* Page Header */}
+      <div>
+        <h1 className="text-3xl font-bold text-foreground font-display tracking-tight flex items-center gap-2">
+          <Library className="w-8 h-8 text-primary" />
+          Topic-wise PYQ Explorer
+        </h1>
+        <p className="text-muted-foreground mt-1.5">
           Instantly generate 20-question practice tests consisting entirely of Previous Year Questions. Target your weak areas specifically.
         </p>
       </div>
+
 
       {subjects.length === 0 ? (
         <EmptyState 
@@ -102,40 +108,50 @@ export default function PYQExplorerPage() {
       ) : (
         <div className="grid gap-6">
           {subjects.map((sub) => (
-            <div key={sub.id} className="bg-card border rounded-2xl shadow-sm overflow-hidden">
-              <button
+            <div key={sub.id} className="bg-card border border-primary/10 rounded-3xl shadow-sm overflow-hidden transition-all hover:shadow-md hover:border-primary/30 group">
+              <div
+                className="w-full p-5 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer relative"
                 onClick={() => setExpandedSubject(expandedSubject === sub.id ? null : sub.id)}
-                className="w-full p-6 flex items-center justify-between hover:bg-muted/30 transition-colors"
               >
-                <div className="text-left">
-                  <h3 className="font-bold text-lg text-foreground">{sub.name}</h3>
-                  <p className="text-sm text-muted-foreground">{sub.chapters?.length || 0} Topics</p>
+                <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full -z-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="text-left flex-1 relative z-10">
+                  <h3 className="font-black text-xl text-foreground group-hover:text-primary transition-colors">{sub.name}</h3>
+                  <div className="flex items-center gap-1.5 mt-1.5 text-muted-foreground">
+                    <BookOpen className="w-3.5 h-3.5" />
+                    <p className="text-xs font-bold uppercase tracking-wider">{sub.chapters?.length || 0} Topics</p>
+                  </div>
                 </div>
-                <div className={`transform transition-transform ${expandedSubject === sub.id ? "rotate-180" : ""}`}>
-                  ▼
+                <div className="flex items-center gap-3 shrink-0 relative z-10" onClick={(e) => e.stopPropagation()}>
+                  <button
+                    onClick={() => setExpandedSubject(expandedSubject === sub.id ? null : sub.id)}
+                    className="p-2.5 rounded-full bg-muted/50 hover:bg-primary/10 hover:text-primary text-muted-foreground transform transition-all duration-300 outline-none"
+                  >
+                    <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${expandedSubject === sub.id ? "rotate-180" : ""}`} />
+                  </button>
                 </div>
-              </button>
+              </div>
 
               {expandedSubject === sub.id && (
-                <div className="border-t bg-muted/10 p-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div className="border-t border-primary/5 bg-muted/20 p-5 md:p-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                   {sub.chapters?.map((chap: any) => (
-                    <div key={chap.id} className="bg-background border rounded-xl p-4 flex flex-col justify-between group hover:border-primary/50 transition-colors">
-                      <div>
-                        <h4 className="font-semibold text-foreground mb-1">{chap.name}</h4>
+                    <div key={chap.id} className="bg-card border border-primary/10 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/40 hover:shadow-md transition-all shadow-sm group/chap">
+                      <div className="mb-4">
+                        <h4 className="font-black text-foreground mb-1.5 line-clamp-2 leading-tight group-hover/chap:text-primary transition-colors" title={chap.name}>{chap.name}</h4>
                       </div>
-                      <button
+                      <Button
                         onClick={() => generatePYQTest(chap.id)}
                         disabled={generating}
-                        className="mt-4 flex items-center justify-center gap-2 w-full py-2 bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground rounded-lg font-medium transition-colors disabled:opacity-50"
+                        variant="secondary"
+                        className="mt-auto w-full rounded-full font-bold group-hover/chap:bg-primary group-hover/chap:text-primary-foreground transition-all shadow-sm h-9"
                       >
-                        <Play className="w-4 h-4" />
+                        <Play className="w-3.5 h-3.5 mr-2" />
                         {generating ? "Generating..." : "Generate Test"}
-                      </button>
+                      </Button>
                     </div>
                   ))}
                   {(!sub.chapters || sub.chapters.length === 0) && (
-                    <div className="col-span-full">
+                    <div className="col-span-full py-4">
                       <EmptyState 
                         icon={FolderX}
                         title="No topics available"
@@ -143,11 +159,11 @@ export default function PYQExplorerPage() {
                       />
                     </div>
                   )}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );
