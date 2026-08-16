@@ -18,6 +18,85 @@ function shuffleArray<T>(array: T[]): T[] {
   return newArray;
 }
 
+import { Skeleton } from "@/components/ui/skeleton";
+
+function TestAttemptSkeleton() {
+  return (
+    <div className="flex h-screen bg-background text-foreground flex-col md:flex-row overflow-hidden">
+      {/* Left Main Area */}
+      <div className="flex-1 flex flex-col h-full overflow-hidden">
+        {/* Top Navbar */}
+        <div className="h-16 border-b border-border bg-card flex items-center justify-between px-4 shrink-0">
+          <Skeleton className="h-6 w-48" />
+          <Skeleton className="h-8 w-24 rounded-full" />
+        </div>
+        
+        {/* Question Area */}
+        <div className="flex-1 overflow-y-auto p-6 md:p-8">
+          <div className="max-w-4xl mx-auto space-y-8">
+            <div className="flex justify-between items-center mb-6">
+              <Skeleton className="h-6 w-32" />
+              <div className="flex gap-2">
+                <Skeleton className="h-6 w-20 rounded-full" />
+                <Skeleton className="h-6 w-24 rounded-full" />
+              </div>
+            </div>
+            
+            {/* Question Text */}
+            <div className="space-y-4">
+              <Skeleton className="h-5 w-full" />
+              <Skeleton className="h-5 w-[90%]" />
+              <Skeleton className="h-5 w-[80%]" />
+            </div>
+
+            {/* Options */}
+            <div className="space-y-3 mt-8">
+              {[...Array(4)].map((_, i) => (
+                <Skeleton key={i} className="h-14 w-full rounded-xl" />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="h-[72px] border-t border-border bg-card px-4 md:px-8 flex items-center justify-between shrink-0">
+          <div className="flex gap-3">
+            <Skeleton className="h-10 w-[120px] rounded-full" />
+            <Skeleton className="h-10 w-[140px] rounded-full" />
+          </div>
+          <div className="flex gap-3">
+            <Skeleton className="h-10 w-24 rounded-full" />
+            <Skeleton className="h-10 w-24 rounded-full" />
+          </div>
+        </div>
+      </div>
+
+      {/* Right Sidebar (Hidden on small screens in the real layout, but we show a skeleton for desktop) */}
+      <div className="hidden md:flex w-80 border-l border-border bg-card flex-col shrink-0 h-full">
+        <div className="p-4 border-b border-border">
+          <Skeleton className="h-6 w-32 mb-4" />
+          <div className="grid grid-cols-2 gap-2">
+            {[...Array(4)].map((_, i) => (
+              <Skeleton key={i} className="h-10 w-full rounded-md" />
+            ))}
+          </div>
+        </div>
+        <div className="flex-1 p-4 overflow-y-auto">
+          <Skeleton className="h-5 w-40 mb-4" />
+          <div className="grid grid-cols-5 gap-2">
+            {[...Array(20)].map((_, i) => (
+              <Skeleton key={i} className="h-10 w-10 rounded-md" />
+            ))}
+          </div>
+        </div>
+        <div className="p-4 border-t border-border">
+          <Skeleton className="h-12 w-full rounded-md" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function TestAttemptPage() {
   const params = useParams();
   const attemptId = params?.attemptId as string;
@@ -120,12 +199,7 @@ export default function TestAttemptPage() {
   }, [status]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mb-4"></div>
-        <p className="text-muted-foreground">Loading your test...</p>
-      </div>
-    );
+    return <TestAttemptSkeleton />;
   }
 
   if (status === "SUBMITTED") {

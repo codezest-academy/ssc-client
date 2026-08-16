@@ -23,7 +23,7 @@ import { useRouter } from "next/navigation";
 import { useAuthStore, type StudyPersona } from "@/store/auth";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-
+import DashboardLoading from "./loading";
 interface Subject {
   id: string;
   name: string;
@@ -506,28 +506,6 @@ function GamificationWidget({ profile }: { profile: GamificationProfile | null }
 
 // ─── Main Dashboard Page ──────────────────────────────────────────────────────
 
-function SubjectCardSkeleton() {
-  return (
-    <div className="h-full bg-card border border-primary/10 rounded-3xl p-5 flex flex-col relative overflow-hidden">
-      <div className="relative z-10 flex justify-end mb-4">
-        <div className="w-16 h-6 bg-muted animate-pulse rounded-xl" />
-      </div>
-      <div className="relative z-10 space-y-2 flex-1 mb-5">
-        <div className="w-3/4 h-6 bg-muted animate-pulse rounded-md" />
-        <div className="w-full h-4 bg-muted animate-pulse rounded-md mt-2" />
-        <div className="w-5/6 h-4 bg-muted animate-pulse rounded-md" />
-      </div>
-      <div className="relative z-10 flex flex-col gap-2 mt-auto">
-        <div className="flex justify-between items-end">
-          <div className="w-16 h-3 bg-muted animate-pulse rounded-md" />
-          <div className="w-6 h-3 bg-muted animate-pulse rounded-md" />
-        </div>
-        <div className="h-2 w-full bg-muted animate-pulse rounded-full" />
-      </div>
-    </div>
-  );
-}
-
 export default function DashboardPage() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [analytics, setAnalytics] = useState<AnalyticsSummary | null>(null);
@@ -590,6 +568,10 @@ export default function DashboardPage() {
     );
   }
 
+  if (loading) {
+    return <DashboardLoading />;
+  }
+
   const targetExams: string[] = Array.isArray(user?.targetExam)
     ? user.targetExam
     : typeof user?.targetExam === "string"
@@ -633,21 +615,7 @@ export default function DashboardPage() {
 
       {/* ── Subjects Section ────────────────────────────────── */}
       <div className="space-y-10">
-        {loading ? (
-          <div>
-            <div className="flex items-center justify-between mb-5">
-              <div>
-                <div className="w-48 h-7 bg-muted animate-pulse rounded-md mb-2" />
-                <div className="w-64 h-4 bg-muted animate-pulse rounded-md" />
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {[...Array(3)].map((_, i) => (
-                <SubjectCardSkeleton key={i} />
-              ))}
-            </div>
-          </div>
-        ) : subjects.length === 0 ? (
+        {subjects.length === 0 ? (
           <EmptyState 
             icon={Library}
             title="No subjects available"

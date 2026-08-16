@@ -9,6 +9,55 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, AlertCircle, Clock, CheckCircle2, ShieldAlert } from "lucide-react";
 import { api } from "@/lib/axios";
 
+import { Skeleton } from "@/components/ui/skeleton";
+
+function TestOverviewSkeleton() {
+  return (
+    <div className="min-h-screen bg-background text-foreground py-12 px-6 sm:px-12">
+      <div className="max-w-4xl mx-auto space-y-8">
+        {/* Header Skeleton */}
+        <div>
+          <Skeleton className="h-6 w-24 mb-4 rounded-full" />
+          <Skeleton className="h-10 w-3/4 mb-2" />
+          <div className="flex flex-wrap gap-4 mt-4">
+            <Skeleton className="h-5 w-32" />
+            <Skeleton className="h-5 w-32" />
+            <Skeleton className="h-5 w-32" />
+          </div>
+        </div>
+
+        {/* Instructions Skeleton */}
+        <Card className="bg-card border-border">
+          <CardHeader>
+            <Skeleton className="h-6 w-48" />
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-[90%]" />
+            <Skeleton className="h-4 w-[95%]" />
+            <Skeleton className="h-4 w-[85%]" />
+            <Skeleton className="h-4 w-[80%]" />
+          </CardContent>
+        </Card>
+
+        {/* Action Area Skeleton */}
+        <div className="space-y-6 bg-card border border-border p-6 rounded-lg">
+          <div className="flex items-start space-x-3">
+            <Skeleton className="h-5 w-5 rounded mt-1" />
+            <div className="space-y-2 flex-1">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-[90%]" />
+            </div>
+          </div>
+          <div className="flex justify-end pt-4">
+            <Skeleton className="h-12 w-full sm:w-[200px] rounded-md" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function TestOverviewPage({ params }: { params: Promise<{ testId: string }> }) {
   const resolvedParams = use(params);
   const testId = resolvedParams.testId;
@@ -52,11 +101,7 @@ export default function TestOverviewPage({ params }: { params: Promise<{ testId:
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
+    return <TestOverviewSkeleton />;
   }
 
   if (error || !testData) {

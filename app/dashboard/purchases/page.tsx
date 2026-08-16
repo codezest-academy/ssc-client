@@ -8,6 +8,38 @@ import { useAuthStore } from "@/store/auth";
 import { useRouter } from "next/navigation";
 import { Purchase } from "@/types/api";
 import { ErrorState } from "@/components/ui/error-state";
+import { Skeleton } from "@/components/ui/skeleton";
+
+function PurchasesSkeleton() {
+  return (
+    <div>
+      <div className="mb-8">
+        <Skeleton className="w-48 h-8 mb-2 rounded-xl" />
+        <Skeleton className="w-80 h-4 rounded-md" />
+      </div>
+      <div className="space-y-4">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="bg-white rounded-xl border border-slate-200 p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <Skeleton className="w-48 h-6 rounded-md" />
+                <Skeleton className="w-16 h-5 rounded-full" />
+              </div>
+              <div className="flex items-center gap-4">
+                <Skeleton className="w-32 h-4 rounded-md" />
+                <Skeleton className="w-40 h-4 rounded-md" />
+              </div>
+            </div>
+            <div className="text-right shrink-0 flex flex-col items-end">
+              <Skeleton className="w-24 h-8 rounded-md mb-2" />
+              <Skeleton className="w-20 h-4 rounded-md" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function PurchasesPage() {
   const { isHydrated, user } = useAuthStore();
@@ -23,11 +55,7 @@ export default function PurchasesPage() {
   });
 
   if (!isHydrated || isLoading) {
-    return (
-      <div className="flex h-[50vh] items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
-      </div>
-    );
+    return <PurchasesSkeleton />;
   }
 
   if (error) {

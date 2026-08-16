@@ -18,6 +18,76 @@ import {
 } from "recharts";
 import { AlertCircle, Clock, CheckCircle2, XCircle } from "lucide-react";
 
+import { Skeleton } from "@/components/ui/skeleton";
+
+function TestReviewSkeleton() {
+  return (
+    <div className="min-h-screen bg-background p-4 md:p-8">
+      <div className="max-w-5xl mx-auto space-y-8">
+        
+        {/* Header Skeleton */}
+        <div className="flex items-center justify-between pb-4 border-b">
+          <div>
+            <Skeleton className="h-8 w-64 mb-2" />
+            <Skeleton className="h-5 w-48" />
+          </div>
+          <div className="flex gap-4">
+            <Skeleton className="h-10 w-32 rounded-full" />
+            <Skeleton className="h-10 w-32 rounded-full" />
+          </div>
+        </div>
+
+        {/* Analytics Dashboard Skeleton */}
+        <div className="grid md:grid-cols-3 gap-6">
+          <div className="md:col-span-2 bg-card border rounded-2xl p-6 shadow-sm">
+            <Skeleton className="h-6 w-48 mb-4" />
+            <Skeleton className="h-64 w-full" />
+          </div>
+          <div className="space-y-6">
+            <div className="bg-card border rounded-2xl p-6 shadow-sm">
+              <Skeleton className="h-6 w-40 mb-4" />
+              <div className="space-y-4">
+                <Skeleton className="h-12 w-full rounded-xl" />
+                <Skeleton className="h-12 w-full rounded-xl" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Detailed Review Skeleton */}
+        <div className="pt-8 border-t space-y-8">
+          <Skeleton className="h-8 w-48" />
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="bg-card border rounded-2xl p-6 shadow-sm space-y-4">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex gap-4 flex-1">
+                  <Skeleton className="w-8 h-8 rounded-full shrink-0" />
+                  <div className="space-y-3 pt-1 w-full">
+                    <div className="flex gap-2 mb-2">
+                      <Skeleton className="h-5 w-20 rounded-md" />
+                      <Skeleton className="h-5 w-32 rounded-md" />
+                    </div>
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-[90%]" />
+                  </div>
+                </div>
+                <div className="shrink-0">
+                  <Skeleton className="h-6 w-24 rounded-full" />
+                </div>
+              </div>
+              <div className="pl-12 space-y-3">
+                {[...Array(4)].map((_, j) => (
+                  <Skeleton key={j} className="h-14 w-full rounded-xl" />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function TestReviewPage() {
   const params = useParams();
   const attemptId = params?.attemptId as string;
@@ -110,12 +180,7 @@ export default function TestReviewPage() {
   }, [attempt]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mb-4"></div>
-        <p className="text-muted-foreground">Loading review...</p>
-      </div>
-    );
+    return <TestReviewSkeleton />;
   }
 
   if (!attempt) {
