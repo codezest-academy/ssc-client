@@ -1,141 +1,180 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { api } from "@/lib/axios";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, Target, ChevronRight, Layers } from "lucide-react";
-import Link from "next/link";
-import { useAuthStore } from "@/store/auth";
+import { Play, FolderX, Target, Zap } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/ui/error-state";
 import { Button } from "@/components/ui/button";
 
-interface PracticeSet {
-  id: string;
-  title: string;
-  description: string;
-  subject?: { name: string };
-  chapter?: { name: string };
-  _count?: {
-    questions: number;
-  };
-}
-
 export default function PracticeSetsPage() {
-  const [practiceSets, setPracticeSets] = useState<PracticeSet[]>([]);
+  const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [subjects, setSubjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [generating, setGenerating] = useState(false);
+  const [expandedSubject, setExpandedSubject] = useState<string | null>(null);
   const [error, setError] = useState<Error | null>(null);
-  const user = useAuthStore((state) => state.user);
 
-  const fetchPracticeSets = async () => {
+  const fetchSubjects = async () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await api.get("/practice-sets");
-      setPracticeSets(response.data.data);
-    } catch (err: any) {
-      console.error("Failed to load practice sets:", err);
-      setError(err instanceof Error ? err : new Error(err.response?.data?.message || err.message || "Failed to load practice sets"));
+      const res = await api.get("/subjects");
+      const subjectsData = res.data.data;
+      
+      // Fetch detailed subjects with chapters
+      const detailedSubjects = await Promise.all(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        subjectsData.map(async (sub: any) => {
+          const detailRes = await api.get(`/subjects/slug/${sub.slug}`);
+          return detailRes.data.data;
+        })
+      );
+      
+      setSubjects(detailedSubjects);
+    } catch (e: any) {
+      console.error(e);
+      setError(e instanceof Error ? e : new Error(e.response?.data?.message || e.message || "Failed to load subjects"));
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchPracticeSets();
+    fetchSubjects();
   }, []);
 
+  const generatePracticeTest = async (payload: { subjectId?: string, chapterId?: string }) => {
+    try {
+      setGenerating(true);
+      const res = await api.post("/attempts/dynamic", {
+        ...payload,
+        limit: 20
+      });
+      router.push(`/tests/attempt/${res.data.data.id}`);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      alert(e.response?.data?.message || "Failed to generate test. There might not be enough fresh questions available.");
+      setGenerating(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-[120px] w-full rounded-3xl" />
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-24 w-full rounded-2xl" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <ErrorState 
+        title="Failed to load subjects" 
+        description={error.message} 
+        retry={fetchSubjects} 
+      />
+    );
+  }
+
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground font-display tracking-tight">Practice Sets</h1>
-        <p className="text-muted-foreground mt-2">Test your knowledge and practice MCQ questions.</p>
+    <div className="space-y-6">
+      <div className="bg-gradient-to-r from-primary to-accent text-primary-foreground rounded-3xl p-8 shadow-lg relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 opacity-50" />
+        <div className="relative z-10">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="bg-white/20 p-2 rounded-xl">
+              <Target className="w-6 h-6 text-white" />
+            </div>
+            <h1 className="text-3xl font-bold">Dynamic Practice Sets</h1>
+          </div>
+          <p className="opacity-90 max-w-2xl mt-2">
+            Generate 20-question practice tests tailored to your weak areas. Questions are freshly shuffled and drawn from our entire question bank so you never see the same set twice!
+          </p>
+        </div>
       </div>
 
-      {error ? (
-        <ErrorState 
-          title="Failed to load practice sets" 
-          description={error.message} 
-          retry={fetchPracticeSets} 
-        />
-      ) : loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <Skeleton key={i} className="h-[200px] w-full rounded-xl" />
-          ))}
-        </div>
-      ) : practiceSets.length === 0 ? (
+      {subjects.length === 0 ? (
         <EmptyState 
           icon={Target}
-          title="No practice sets available"
-          description="Check back later for new practice tests."
-          action={
-            <div className="flex flex-col items-start gap-2.5">
-              <Button variant="default" className="group rounded-full px-7 shadow-sm hover:shadow-md transition-all duration-300" asChild>
-                <Link href="/dashboard/curriculum">
-                  Browse Curriculum
-                </Link>
-              </Button>
-              <span className="text-[13px] text-muted-foreground/80 font-medium pl-2">
-                New content added weekly
-              </span>
-            </div>
-          }
+          title="No subjects available"
+          description="Curriculum categories will appear here once content is added."
         />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {practiceSets.map((set, index) => (
-            <Link key={set.id} href={`/dashboard/practice-sets/${set.id}`} className="group block h-full">
-              <Card className="h-full border-border hover:border-primary/50 transition-colors shadow-sm rounded-xl overflow-hidden bg-card flex flex-col relative">
-                <div className="absolute top-0 left-0 w-1 h-full bg-primary/80 scale-y-0 group-hover:scale-y-100 transition-transform origin-top z-10" />
-                <CardContent className="p-5 flex flex-col h-full gap-4">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1 pr-4">
-                      <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 mb-1.5">
-                        {set.title}
-                      </h3>
+        <div className="grid gap-6">
+          {subjects.map((sub) => (
+            <div key={sub.id} className="bg-card border rounded-2xl shadow-sm overflow-hidden transition-all hover:shadow-md">
+              <div
+                className="w-full p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer hover:bg-muted/30 transition-colors"
+                onClick={() => setExpandedSubject(expandedSubject === sub.id ? null : sub.id)}
+              >
+                <div className="text-left flex-1">
+                  <h3 className="font-bold text-xl text-foreground">{sub.name}</h3>
+                  <p className="text-sm text-muted-foreground mt-1">{sub.chapters?.length || 0} Topics available</p>
+                </div>
+                
+                <div className="flex items-center gap-4 shrink-0" onClick={(e) => e.stopPropagation()}>
+                  <Button 
+                    onClick={() => generatePracticeTest({ subjectId: sub.id })}
+                    disabled={generating}
+                    className="rounded-xl font-bold shadow-sm"
+                  >
+                    <Zap className="w-4 h-4 mr-2" />
+                    Mixed Subject Test
+                  </Button>
+                  <button
+                    onClick={() => setExpandedSubject(expandedSubject === sub.id ? null : sub.id)}
+                    className={`p-2 rounded-full hover:bg-muted transform transition-transform ${expandedSubject === sub.id ? "rotate-180" : ""}`}
+                  >
+                    ▼
+                  </button>
+                </div>
+              </div>
+
+              {expandedSubject === sub.id && (
+                <div className="border-t bg-muted/10 p-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                  {sub.chapters?.map((chap: any) => (
+                    <div key={chap.id} className="bg-background border rounded-xl p-5 flex flex-col justify-between group hover:border-primary/50 transition-colors shadow-sm">
+                      <div>
+                        <h4 className="font-bold text-foreground mb-2 line-clamp-2" title={chap.name}>{chap.name}</h4>
+                        <p className="text-xs text-muted-foreground line-clamp-2">
+                          {chap.description || "Master this specific topic with a targeted quiz."}
+                        </p>
+                      </div>
+                      <Button
+                        onClick={() => generatePracticeTest({ chapterId: chap.id })}
+                        disabled={generating}
+                        variant="secondary"
+                        className="mt-5 w-full rounded-lg font-bold group-hover:bg-primary group-hover:text-primary-foreground transition-all"
+                      >
+                        <Play className="w-4 h-4 mr-2" />
+                        {generating ? "Generating..." : "Generate Test"}
+                      </Button>
                     </div>
-                    <span className="text-4xl font-black text-muted-foreground/10 group-hover:text-muted-foreground/20 transition-colors shrink-0 leading-none">
-                      {(index + 1).toString().padStart(2, '0')}
-                    </span>
-                  </div>
-                  
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      {set.description || "Practice questions for this topic."}
-                    </p>
-                    
-                    <div className="flex flex-wrap gap-2 mt-3">
-                      {set.subject && (
-                        <span className="inline-flex items-center px-2 py-1 rounded-md bg-muted text-muted-foreground text-xs font-medium">
-                          <BookOpen className="w-3 h-3 mr-1" />
-                          {set.subject.name}
-                        </span>
-                      )}
-                      {set.chapter && (
-                        <span className="inline-flex items-center px-2 py-1 rounded-md bg-muted text-muted-foreground text-xs font-medium">
-                          <Layers className="w-3 h-3 mr-1" />
-                          {set.chapter.name}
-                        </span>
-                      )}
+                  ))}
+                  {(!sub.chapters || sub.chapters.length === 0) && (
+                    <div className="col-span-full">
+                      <EmptyState 
+                        icon={FolderX}
+                        title="No topics available"
+                        description="Topics for this subject will appear here."
+                      />
                     </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-border/50">
-                    <div className="flex items-center text-xs font-medium text-muted-foreground">
-                      <Target className="w-3.5 h-3.5 mr-1" />
-                      {set._count?.questions || 0} Questions
-                    </div>
-                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-accent text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-all">
-                      <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
+                  )}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
       )}
     </div>
   );

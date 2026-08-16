@@ -5,6 +5,8 @@ import { api } from "@/lib/axios";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   BookOpen,
   Book,
@@ -332,8 +334,10 @@ function PersonaHero({
 
 // ─── Daily Target Button ──────────────────────────────────────────────────────
 
-function DailyTargetButton() {
+function DailyTargetButton({ subjects }: { subjects: Subject[] }) {
   const [generating, setGenerating] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [selectedSubject, setSelectedSubject] = useState<string>("mixed");
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
 
@@ -353,11 +357,12 @@ function DailyTargetButton() {
     if (isCompletedToday()) return; // Already done
     try {
       setGenerating(true);
-      const res = await api.post("/attempts/daily");
+      const payload = selectedSubject === "mixed" ? {} : { subjectId: selectedSubject };
+      const res = await api.post("/attempts/dynamic", payload);
       router.push(`/tests/attempt/${res.data.data.id}`);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      alert(error.response?.data?.message || "Failed to generate daily attempt");
+      alert(error.response?.data?.message || "Failed to generate dynamic attempt");
       setGenerating(false);
     }
   };
@@ -371,13 +376,49 @@ function DailyTargetButton() {
   }
 
   return (
-    <Button 
-      onClick={handleGenerate} 
-      disabled={generating}
-      className="rounded-2xl px-6 py-5 text-base font-extrabold shadow-md hover:shadow-lg hover:-translate-y-0.5 hover:scale-[1.02] active:scale-95 transition-all bg-primary hover:bg-primary/90 text-primary-foreground"
-    >
-      {generating ? "Starting..." : "Start Target"}
-    </Button>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button 
+          disabled={generating}
+          className="rounded-2xl px-6 py-5 text-base font-extrabold shadow-md hover:shadow-lg hover:-translate-y-0.5 hover:scale-[1.02] active:scale-95 transition-all bg-primary hover:bg-primary/90 text-primary-foreground"
+        >
+          {generating ? "Starting..." : "Start Target"}
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-md rounded-3xl p-6">
+        <DialogHeader>
+          <DialogTitle className="text-2xl font-black">Daily 10-Min Target</DialogTitle>
+          <CardDescription className="text-base mt-2">
+            What do you want to focus on today?
+          </CardDescription>
+        </DialogHeader>
+        <div className="py-4 space-y-4">
+          <Select value={selectedSubject} onValueChange={setSelectedSubject}>
+            <SelectTrigger className="w-full h-12 rounded-xl border-border focus:ring-primary/20">
+              <SelectValue placeholder="Select Focus" />
+            </SelectTrigger>
+            <SelectContent className="rounded-xl">
+              <SelectItem value="mixed" className="font-bold text-primary">
+                Mixed Bag (All Subjects)
+              </SelectItem>
+              {subjects.map((sub) => (
+                <SelectItem key={sub.id} value={sub.id}>
+                  {sub.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex justify-end gap-3">
+          <Button variant="secondary" onClick={() => setOpen(false)} className="rounded-xl px-6 font-bold">
+            Cancel
+          </Button>
+          <Button onClick={handleGenerate} disabled={generating} className="rounded-xl px-6 font-bold shadow-md hover:-translate-y-0.5 transition-all">
+            {generating ? "Starting..." : "Start Now"}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -607,7 +648,7 @@ export default function DashboardPage() {
             </p>
           </div>
           <div className="shrink-0 relative">
-            <DailyTargetButton />
+            <DailyTargetButton subjects={subjects} />
           </div>
         </div>
       </div>
