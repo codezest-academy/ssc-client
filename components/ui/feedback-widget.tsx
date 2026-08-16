@@ -2,133 +2,175 @@
 
 import * as React from "react";
 import { useState } from "react";
-import { MessageCircleQuestion, X, Loader2, CheckCircle2 } from "lucide-react";
+import { MessageCircleQuestion, X, Loader2, CheckCircle2, Bug, MessageSquare, Star, Lightbulb } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./button";
 import { Textarea } from "./textarea";
 import { api } from "@/lib/axios";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./dialog";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
 
 type FeedbackType = "ISSUE" | "FEATURE_REQUEST" | "TESTIMONIAL";
 
+interface ActionDef {
+  type: FeedbackType;
+  icon: React.ElementType;
+  label: string;
+  title: string;
+  placeholder: string;
+}
+
+const ACTIONS: ActionDef[] = [
+  { type: "ISSUE", icon: Bug, label: "Report Issue", title: "Report an Issue", placeholder: "Please describe the bug or issue..." },
+  { type: "TESTIMONIAL", icon: MessageSquare, label: "Share Feedback", title: "Share Feedback", placeholder: "What's on your mind?" },
+  { type: "TESTIMONIAL", icon: Star, label: "Testimonial", title: "Share a Testimonial", placeholder: "What do you love about Code Zest?" },
+  { type: "FEATURE_REQUEST", icon: Lightbulb, label: "Feature Addition", title: "Suggest a Feature", placeholder: "What feature would you like to see?" },
+];
+
 export function FeedbackWidget() {
   const [isOpen, setIsOpen] = useState(false);
-  const [type, setType] = useState<FeedbackType>("ISSUE");
+  const [activeModal, setActiveModal] = useState<ActionDef | null>(null);
+  
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!message.trim()) return;
+    if (!message.trim() || !activeModal) return;
 
     setIsSubmitting(true);
     try {
       await api.post("/feedback", {
-        type,
+        type: activeModal.type,
         message,
       });
       setIsSuccess(true);
       setTimeout(() => {
-        setIsOpen(false);
+        setActiveModal(null);
         setTimeout(() => {
           setIsSuccess(false);
           setMessage("");
-          setType("ISSUE");
         }, 300);
       }, 2000);
     } catch (err) {
       console.error("Failed to submit feedback:", err);
-      // fallback handling here if needed
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const handleOpenModal = (action: ActionDef) => {
+    setIsOpen(false);
+    setActiveModal(action);
+    setMessage("");
+    setIsSuccess(false);
+  };
+
   return (
-    <div className="fixed bottom-6 right-6 z-50">
-      {/* Widget Button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className={cn(
-          "flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-xl transition-all hover:scale-105 active:scale-95",
-          isOpen && "scale-0 opacity-0 pointer-events-none"
-        )}
-        aria-label="Help and Feedback"
-      >
-        <MessageCircleQuestion className="h-6 w-6" />
-      </button>
-
-      {/* Popover Form */}
-      <div
-        className={cn(
-          "absolute bottom-0 right-0 w-[320px] origin-bottom-right rounded-3xl border border-border bg-card p-5 shadow-2xl transition-all duration-300",
-          isOpen
-            ? "scale-100 opacity-100"
-            : "pointer-events-none scale-95 opacity-0"
-        )}
-      >
-        <div className="mb-4 flex items-center justify-between">
-          <h3 className="font-semibold text-foreground">Feedback & Support</h3>
-          <button
-            onClick={() => setIsOpen(false)}
-            className="rounded-full p-1 text-muted-foreground hover:bg-muted"
+    <>
+      {/* Floating Speed Dial */}
+      <div className="fixed bottom-20 md:bottom-6 right-6 z-50 flex flex-col items-center gap-3">
+        {/* Speed Dial Actions */}
+        <TooltipProvider>
+          <div
+            className={cn(
+              "flex flex-col gap-3 transition-all duration-300",
+              isOpen ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0 pointer-events-none"
+            )}
           >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-
-        {isSuccess ? (
-          <div className="flex flex-col items-center justify-center py-6 text-center animate-in fade-in zoom-in duration-300">
-            <CheckCircle2 className="mb-3 h-10 w-10 text-success" />
-            <p className="font-medium text-foreground">Thank You!</p>
-            <p className="text-sm text-muted-foreground">
-              Your feedback helps us improve.
-            </p>
+            {ACTIONS.map((action, i) => {
+              const Icon = action.icon;
+              return (
+                <Tooltip key={i} delayDuration={100}>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => handleOpenModal(action)}
+                      className="flex h-12 w-12 items-center justify-center rounded-full bg-card border border-border shadow-md transition-all hover:scale-110 active:scale-95 hover:border-primary/50 text-muted-foreground hover:text-primary"
+                      aria-label={action.label}
+                    >
+                      <Icon className="h-5 w-5" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="left" sideOffset={10}>
+                    <p className="font-medium">{action.label}</p>
+                  </TooltipContent>
+                </Tooltip>
+              );
+            })}
           </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium text-muted-foreground">
-                Category
-              </label>
-              <select
-                value={type}
-                onChange={(e) => setType(e.target.value as FeedbackType)}
-                className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <option value="ISSUE">Report an Issue</option>
-                <option value="FEATURE_REQUEST">Suggest a Feature</option>
-                <option value="TESTIMONIAL">Share Feedback</option>
-              </select>
-            </div>
+        </TooltipProvider>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium text-muted-foreground">
-                Message
-              </label>
-              <Textarea
-                placeholder="What's on your mind?"
-                className="min-h-[100px] resize-none text-sm bg-background"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                required
-              />
-            </div>
-
-            <Button
-              type="submit"
-              disabled={isSubmitting || !message.trim()}
-              className="w-full mt-2"
-            >
-              {isSubmitting ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                "Submit"
-              )}
-            </Button>
-          </form>
-        )}
+        {/* Main FAB */}
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className={cn(
+            "flex h-14 w-14 items-center justify-center rounded-full shadow-xl transition-all hover:scale-105 active:scale-95",
+            isOpen ? "bg-muted text-muted-foreground" : "bg-primary text-primary-foreground"
+          )}
+          aria-label="Toggle Feedback Menu"
+        >
+          {isOpen ? <X className="h-6 w-6" /> : <MessageCircleQuestion className="h-6 w-6" />}
+        </button>
       </div>
-    </div>
+
+      {/* Modal Dialog */}
+      <Dialog open={!!activeModal} onOpenChange={(open) => !open && setActiveModal(null)}>
+        <DialogContent className="sm:max-w-md">
+          {activeModal && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <activeModal.icon className="w-5 h-5 text-primary" />
+                  {activeModal.title}
+                </DialogTitle>
+              </DialogHeader>
+              
+              {isSuccess ? (
+                <div className="flex flex-col items-center justify-center py-10 text-center animate-in fade-in zoom-in duration-300">
+                  <CheckCircle2 className="mb-4 h-12 w-12 text-success" />
+                  <p className="text-lg font-medium text-foreground">Thank You!</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Your feedback helps us improve.
+                  </p>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-2">
+                  <Textarea
+                    placeholder={activeModal.placeholder}
+                    className="min-h-[120px] resize-none bg-background focus-visible:ring-primary/20"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    required
+                    autoFocus
+                  />
+                  <div className="flex justify-end gap-3 mt-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setActiveModal(null)}
+                      disabled={isSubmitting}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting || !message.trim()}
+                      className="min-w-[100px]"
+                    >
+                      {isSubmitting ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        "Submit"
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              )}
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
