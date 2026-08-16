@@ -18,6 +18,7 @@ import { Lock } from "lucide-react";
 import { ActivityHeatmap } from "@/components/analytics/ActivityHeatmap";
 import { GamificationProfileCard } from "@/components/analytics/GamificationProfileCard";
 import { SubjectRadarChart } from "@/components/analytics/SubjectRadarChart";
+import { DangerZonesWidget } from "@/components/analytics/DangerZonesWidget";
 
 interface Attempt {
   attemptType: string;
@@ -170,6 +171,9 @@ export default function AnalyticsPage() {
           rankTier={data.gamification.rankTier} 
           streakDays={data.activity?.currentStreak || 0}
         />
+        
+        {/* Danger Zones */}
+        <DangerZonesWidget />
 
         {/* Premium Hero Metrics */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
