@@ -1,136 +1,147 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useAuthStore } from "@/store/auth";
-import { api } from "@/lib/axios";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import Link from "next/link";
-import { BookOpen, Layers, Target, ChevronRight } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Target, BookOpen, ChevronRight, Hash, Bookmark, BookText } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
-interface Subject {
-  id: string;
-  name: string;
-  slug: string;
-  description: string | null;
-  iconUrl: string | null;
-  _count: { chapters: number };
-}
-
-const EXAMS = [
-  { id: "SSC_CGL", name: "SSC CGL" },
-  { id: "SSC_CHSL", name: "SSC CHSL" },
-  { id: "SSC_MTS", name: "SSC MTS" },
-  { id: "SSC_CPO", name: "SSC CPO" },
-  { id: "SSC_GD", name: "SSC GD" },
-];
+// Temporary Mock Data for Syllabus Reference
+const MOCK_EXAM_SYLLABUS = {
+  examName: "SSC CGL Tier 1",
+  examYear: "2024",
+  subjects: [
+    {
+      id: "subj-1",
+      name: "Quantitative Aptitude",
+      weightage: "50 Marks (25 Qs)",
+      description: "Tests numerical ability and number sense.",
+      chapters: [
+        { id: "chap-1", name: "Number System" },
+        { id: "chap-2", name: "Percentages" },
+        { id: "chap-3", name: "Profit and Loss" },
+        { id: "chap-4", name: "Time and Work" },
+        { id: "chap-15", name: "Ratio and Proportion" },
+      ]
+    },
+    {
+      id: "subj-2",
+      name: "General Intelligence & Reasoning",
+      weightage: "50 Marks (25 Qs)",
+      description: "Evaluates logical thinking and problem-solving skills.",
+      chapters: [
+        { id: "chap-5", name: "Analogies" },
+        { id: "chap-6", name: "Coding-Decoding" },
+        { id: "chap-7", name: "Blood Relations" },
+        { id: "chap-8", name: "Syllogism" },
+      ]
+    },
+    {
+      id: "subj-3",
+      name: "English Comprehension",
+      weightage: "50 Marks (25 Qs)",
+      description: "Assesses understanding of English language and vocabulary.",
+      chapters: [
+        { id: "chap-9", name: "Reading Comprehension" },
+        { id: "chap-10", name: "Error Spotting" },
+        { id: "chap-11", name: "Synonyms & Antonyms" },
+        { id: "chap-16", name: "Active / Passive Voice" },
+      ]
+    },
+    {
+      id: "subj-4",
+      name: "General Awareness",
+      weightage: "50 Marks (25 Qs)",
+      description: "Tests knowledge of current events and general knowledge.",
+      chapters: [
+        { id: "chap-12", name: "Current Affairs" },
+        { id: "chap-13", name: "History" },
+        { id: "chap-14", name: "Polity" },
+        { id: "chap-17", name: "Geography" },
+      ]
+    }
+  ]
+};
 
 export default function SyllabusPage() {
-  const { user } = useAuthStore();
-  const [selectedExam, setSelectedExam] = useState<string>("");
-  const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  // Initialize with user's primary target exam if available
-  useEffect(() => {
-    if (user && user.targetExam && user.targetExam.length > 0 && !selectedExam) {
-      setSelectedExam(user.targetExam[0]);
-    } else if (!selectedExam) {
-      setSelectedExam("SSC_CGL"); // Default fallback
-    }
-  }, [user, selectedExam]);
+  const PageHeader = (
+    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div>
+        <h2 className="text-3xl font-bold text-foreground font-display tracking-tight flex items-center gap-2">
+          <BookText className="w-8 h-8 text-primary" />
+          Official Syllabus Reference
+        </h2>
+        <p className="text-muted-foreground mt-2">
+          View the complete syllabus breakdown and topic list for your exams.
+        </p>
+      </div>
+      <Badge variant="outline" className="px-4 py-1.5 bg-primary/5 text-primary border-primary/20 text-sm w-fit">
+        <Target className="w-4 h-4 mr-2 inline" />
+        {MOCK_EXAM_SYLLABUS.examName} {MOCK_EXAM_SYLLABUS.examYear}
+      </Badge>
+    </div>
+  );
 
-  useEffect(() => {
-    async function fetchSubjects() {
-      if (!selectedExam) return;
-      setLoading(true);
-      try {
-        const res = await api.get(`/subjects?examType=${selectedExam}`);
-        setSubjects(res.data.data);
-      } catch (error) {
-        console.error("Failed to fetch subjects:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchSubjects();
-  }, [selectedExam]);
-
-  return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-2">Syllabus</h1>
-          <p className="text-slate-400">Master the syllabus for your target exam.</p>
-        </div>
-        
-        {/* EXAM SWITCHER */}
-        <div className="w-full md:w-64">
-          <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">
-            Viewing Syllabus For
-          </label>
-          <Select value={selectedExam} onValueChange={setSelectedExam}>
-            <SelectTrigger className="w-full h-11 bg-white/5 border-white/10 text-white font-medium focus:ring-0 focus:border-primary">
-              <div className="flex items-center gap-2">
-                <Target className="w-4 h-4 text-primary" />
-                <SelectValue placeholder="Select Exam" />
-              </div>
-            </SelectTrigger>
-            <SelectContent>
-              {EXAMS.map((exam) => (
-                <SelectItem key={exam.id} value={exam.id} className="font-medium">
-                  {exam.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+  if (loading) {
+    return (
+      <div className="space-y-8">
+        <Skeleton className="h-10 w-[300px]" />
+        <Skeleton className="h-4 w-[250px]" />
+        <div className="grid md:grid-cols-2 gap-6 mt-8">
+          <Skeleton className="h-[300px] w-full rounded-xl" />
+          <Skeleton className="h-[300px] w-full rounded-xl" />
         </div>
       </div>
+    );
+  }
 
-      {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-48 rounded-xl bg-white/5 animate-pulse border border-white/10" />
-          ))}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {subjects.map((subject) => (
-            <Link key={subject.id} href={`/dashboard/syllabus/${subject.slug}?exam=${selectedExam}`}>
-              <Card className="h-full border-white/10 bg-white/5 hover:bg-white/10 hover:border-primary/50 transition-all duration-300 cursor-pointer group">
-                <CardHeader>
-                  <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <BookOpen className="w-6 h-6 text-primary" />
-                  </div>
-                  <CardTitle className="text-xl text-white group-hover:text-primary transition-colors">
+  return (
+    <div className="space-y-8 pb-12">
+      {PageHeader}
+
+      {/* Subject Wise breakdown */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {MOCK_EXAM_SYLLABUS.subjects.map((subject, idx) => (
+          <Card key={subject.id} className="border-border shadow-sm hover:shadow-md transition-shadow">
+            <CardHeader className="pb-4 bg-slate-50/50 border-b border-slate-100 rounded-t-xl">
+              <div className="flex justify-between items-start">
+                <div>
+                  <CardTitle className="text-xl flex items-center gap-2 text-slate-900">
+                    <div className="p-2 bg-indigo-100 text-indigo-600 rounded-lg">
+                      <BookOpen className="w-5 h-5" />
+                    </div>
                     {subject.name}
                   </CardTitle>
-                  <CardDescription className="text-slate-400 line-clamp-2 mt-2">
-                    {subject.description || `Complete syllabus for ${subject.name}`}
+                  <CardDescription className="mt-2 text-sm text-slate-500">
+                    {subject.description}
                   </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2 text-slate-300">
-                      <Layers className="w-4 h-4 text-slate-500" />
-                      <span>{subject._count.chapters} Chapters</span>
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-primary group-hover:translate-x-1 transition-all" />
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
-      )}
-
-      {!loading && subjects.length === 0 && (
-        <div className="text-center py-20 border border-white/10 rounded-2xl bg-white/5">
-          <BookOpen className="w-12 h-12 text-slate-500 mx-auto mb-4 opacity-50" />
-          <h3 className="text-lg font-semibold text-white mb-2">No subjects found</h3>
-          <p className="text-slate-400">There are no subjects mapped to {EXAMS.find(e => e.id === selectedExam)?.name} yet.</p>
-        </div>
-      )}
+                </div>
+                <Badge variant="secondary" className="bg-slate-200/50 text-slate-700 whitespace-nowrap">
+                  {subject.weightage}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-2 mb-4 text-sm font-semibold text-slate-700 uppercase tracking-wider">
+                <Bookmark className="w-4 h-4 text-slate-400" />
+                Topics to Cover
+              </div>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {subject.chapters.map((chapter) => (
+                  <li key={chapter.id} className="flex items-start gap-2 p-3 rounded-lg border border-slate-100 bg-white hover:border-primary/30 transition-colors">
+                    <Hash className="w-4 h-4 text-primary/40 mt-0.5 shrink-0" />
+                    <span className="text-sm font-medium text-slate-700 leading-tight">
+                      {chapter.name}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }

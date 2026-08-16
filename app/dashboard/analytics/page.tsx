@@ -9,6 +9,7 @@ import { formatDistanceToNow } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
+import { Button } from "@/components/ui/button";
 
 interface Attempt {
   attemptType: string;
@@ -92,27 +93,34 @@ export default function AnalyticsPage() {
     );
   }
 
+  const PageHeader = (
+    <div>
+      <h2 className="text-3xl font-bold text-foreground font-display tracking-tight">Your Performance</h2>
+      <p className="text-muted-foreground mt-2">Track your progress, accuracy, and study time.</p>
+    </div>
+  );
+
   if (!data || data.totalTests === 0) {
     return (
-      <EmptyState 
-        icon={Activity}
-        title="No Analytics Yet"
-        description="You haven't taken any tests yet. Complete a Practice Set or Mock Test to see your performance metrics here!"
-        action={
-          <a href="/dashboard/practice-sets" className="px-6 py-2 bg-primary text-primary-foreground rounded-full font-medium hover:bg-primary/90 transition-colors text-sm">
-            Start Practicing
-          </a>
-        }
-      />
+      <div className="space-y-8">
+        {PageHeader}
+        <EmptyState 
+          icon={Activity}
+          title="No Analytics Yet"
+          description="You haven't taken any tests yet. Complete a Practice Set or Mock Test to see your performance metrics here!"
+          action={
+            <Button variant="default" className="rounded-full px-6" asChild>
+              <Link href="/dashboard/practice-sets">Start Practicing</Link>
+            </Button>
+          }
+        />
+      </div>
     );
   }
 
   return (
     <div className="space-y-8">
-      <div>
-        <h2 className="text-3xl font-bold text-foreground font-display tracking-tight">Your Performance</h2>
-        <p className="text-muted-foreground mt-2">Track your progress, accuracy, and study time.</p>
-      </div>
+      {PageHeader}
 
       {/* Metrics Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

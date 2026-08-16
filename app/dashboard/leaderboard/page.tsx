@@ -5,6 +5,10 @@ import { api } from "@/lib/axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy, Medal, Star } from "lucide-react";
 import { ErrorState } from "@/components/ui/error-state";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface LeaderboardEntry {
   rank: number;
@@ -40,40 +44,79 @@ export default function LeaderboardPage() {
     fetchLeaderboard();
   }, []);
 
+  const PageHeader = (
+    <div>
+      <h2 className="text-3xl font-bold text-foreground font-display tracking-tight">Global Leaderboard</h2>
+      <p className="text-muted-foreground mt-2">See how you stack up against the competition.</p>
+    </div>
+  );
+
   if (loading) {
-    return <div className="text-slate-400 p-8">Loading leaderboard...</div>;
+    return (
+      <div className="space-y-8">
+        {PageHeader}
+        <Card className="border-border shadow-sm">
+          <CardHeader className="border-b border-border bg-slate-50/50 pb-4">
+            <Skeleton className="h-6 w-[150px]" />
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="divide-y divide-border">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="flex p-6 justify-between items-center">
+                  <div className="flex items-center gap-6">
+                    <Skeleton className="w-10 h-10 rounded-full" />
+                    <div>
+                      <Skeleton className="h-5 w-[150px] mb-2" />
+                      <Skeleton className="h-4 w-[100px]" />
+                    </div>
+                  </div>
+                  <div className="flex gap-8">
+                     <Skeleton className="h-10 w-[60px]" />
+                     <Skeleton className="h-10 w-[60px]" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <ErrorState 
-        title="Failed to load leaderboard" 
-        description={error.message} 
-        retry={fetchLeaderboard} 
-      />
+      <div className="space-y-8">
+        {PageHeader}
+        <ErrorState 
+          title="Failed to load leaderboard" 
+          description={error.message} 
+          retry={fetchLeaderboard} 
+        />
+      </div>
     );
   }
 
   if (!leaderboard || leaderboard.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-        <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center text-primary">
-          <Trophy className="w-10 h-10" />
-        </div>
-        <h2 className="text-2xl font-bold text-slate-900">No Leaders Yet</h2>
-        <p className="text-slate-500 max-w-sm">
-          No tests have been submitted yet. Be the first to take a mock test and get on the leaderboard!
-        </p>
+      <div className="space-y-8">
+        {PageHeader}
+        <EmptyState 
+          icon={Trophy}
+          title="No Leaders Yet"
+          description="No tests have been submitted yet. Be the first to take a mock test and get on the leaderboard!"
+          action={
+            <Button variant="default" className="rounded-full px-6" asChild>
+              <Link href="/dashboard/mock-tests">Take a Mock Test</Link>
+            </Button>
+          }
+        />
       </div>
     );
   }
 
   return (
     <div className="space-y-8">
-      <div>
-        <h2 className="text-3xl font-bold text-foreground font-display tracking-tight">Global Leaderboard</h2>
-        <p className="text-muted-foreground mt-2">See how you stack up against the competition.</p>
-      </div>
+      {PageHeader}
 
       <Card className="border-border shadow-sm">
         <CardHeader className="border-b border-border bg-slate-50/50 pb-4">

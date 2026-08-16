@@ -4,7 +4,7 @@ import { useAuthStore } from "@/store/auth";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { LogOut, Flame, Sparkles, User, ChevronDown, BookOpen, Target, PenTool, BarChart3, Trophy } from "lucide-react";
+import { LogOut, Flame, Sparkles, User, ChevronDown, BookOpen, Target, PenTool, BarChart3, Trophy, Map } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { api } from "@/lib/axios";
 import {
@@ -35,6 +35,7 @@ export function FloatingNav() {
 
   const navLinks = [
     { name: "Curriculum", href: "/dashboard", icon: BookOpen },
+    { name: "Syllabus", href: "/dashboard/syllabus", icon: Map },
     { name: "Practice", href: "/dashboard/practice-sets", icon: Target },
     { name: "Tests", href: "/dashboard/mock-tests", icon: PenTool },
     { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
@@ -81,12 +82,14 @@ export function FloatingNav() {
 
           {/* Right Side Tools & Profile */}
           <div className="flex items-center gap-4">
-            <Link 
-              href="/dashboard/upgrade" 
-              className="hidden md:block text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-            >
-              Upgrade
-            </Link>
+            {(!user.subscriptionTier || user.subscriptionTier === 'FREE') && (
+              <Link 
+                href="/dashboard/upgrade" 
+                className="hidden md:block text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+              >
+                Upgrade
+              </Link>
+            )}
             
             <div className="h-4 w-px bg-border hidden sm:block" />
             
@@ -123,11 +126,13 @@ export function FloatingNav() {
                     Profile Settings
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/dashboard/upgrade" className="cursor-pointer text-primary font-medium">
-                    Upgrade Plan
-                  </Link>
-                </DropdownMenuItem>
+                {(!user.subscriptionTier || user.subscriptionTier === 'FREE') && (
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard/upgrade" className="cursor-pointer text-primary font-medium">
+                      Upgrade Plan
+                    </Link>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive">
                   <LogOut className="mr-2 h-4 w-4" />

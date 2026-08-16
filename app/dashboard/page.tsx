@@ -471,9 +471,11 @@ function GamificationWidget({ profile }: { profile: GamificationProfile | null }
           </div>
           <h3 className="text-lg font-bold text-foreground">Your Rank</h3>
         </div>
-        <Link href="/dashboard/leaderboard" className="text-xs font-semibold text-primary hover:underline flex items-center gap-1">
-          Leaderboard <ArrowRight className="w-3 h-3" />
-        </Link>
+        <Button variant="secondary" size="sm" className="rounded-full h-8 text-xs font-bold px-4 hover:bg-primary hover:text-primary-foreground transition-colors shadow-sm" asChild>
+          <Link href="/dashboard/leaderboard">
+            Leaderboard
+          </Link>
+        </Button>
       </div>
       
       <div className="flex items-end justify-between mb-2">

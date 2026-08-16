@@ -17,7 +17,7 @@ interface PracticeSet {
   description: string;
   subject?: { name: string };
   chapter?: { name: string };
-  _count: {
+  _count?: {
     questions: number;
   };
 }
@@ -85,44 +85,52 @@ export default function PracticeSetsPage() {
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {practiceSets.map((set) => (
-            <Link key={set.id} href={`/dashboard/practice-sets/${set.id}`} className="block group">
-              <Card className="h-full border-border hover:border-primary/50 hover:bg-slate-50 transition-colors duration-200 shadow-sm relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-1 h-full bg-primary/80 scale-y-0 group-hover:scale-y-100 transition-transform origin-top" />
-                <CardHeader>
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                      <Target className="w-5 h-5 text-primary" />
+          {practiceSets.map((set, index) => (
+            <Link key={set.id} href={`/dashboard/practice-sets/${set.id}`} className="group block h-full">
+              <Card className="h-full border-border hover:border-primary/50 transition-colors shadow-sm rounded-xl overflow-hidden bg-card flex flex-col relative">
+                <div className="absolute top-0 left-0 w-1 h-full bg-primary/80 scale-y-0 group-hover:scale-y-100 transition-transform origin-top z-10" />
+                <CardContent className="p-5 flex flex-col h-full gap-4">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1 pr-4">
+                      <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 mb-1.5">
+                        {set.title}
+                      </h3>
+                    </div>
+                    <span className="text-4xl font-black text-muted-foreground/10 group-hover:text-muted-foreground/20 transition-colors shrink-0 leading-none">
+                      {(index + 1).toString().padStart(2, '0')}
+                    </span>
+                  </div>
+                  
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {set.description || "Practice questions for this topic."}
+                    </p>
+                    
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      {set.subject && (
+                        <span className="inline-flex items-center px-2 py-1 rounded-md bg-slate-100 text-slate-600 text-xs font-medium">
+                          <BookOpen className="w-3 h-3 mr-1" />
+                          {set.subject.name}
+                        </span>
+                      )}
+                      {set.chapter && (
+                        <span className="inline-flex items-center px-2 py-1 rounded-md bg-slate-100 text-slate-600 text-xs font-medium">
+                          <Layers className="w-3 h-3 mr-1" />
+                          {set.chapter.name}
+                        </span>
+                      )}
                     </div>
                   </div>
-                  <CardTitle className="text-lg text-foreground group-hover:text-primary transition-colors">
-                    {set.title}
-                  </CardTitle>
-                  <CardDescription className="line-clamp-2">
-                    {set.description || "Practice questions for this topic."}
-                  </CardDescription>
                   
-                  <div className="flex flex-wrap gap-2 mt-3">
-                    {set.subject && (
-                      <span className="inline-flex items-center px-2 py-1 rounded-md bg-slate-100 text-slate-600 text-xs font-medium">
-                        <BookOpen className="w-3 h-3 mr-1" />
-                        {set.subject.name}
-                      </span>
-                    )}
-                    {set.chapter && (
-                      <span className="inline-flex items-center px-2 py-1 rounded-md bg-slate-100 text-slate-600 text-xs font-medium">
-                        <Layers className="w-3 h-3 mr-1" />
-                        {set.chapter.name}
-                      </span>
-                    )}
+                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-border/50">
+                    <div className="flex items-center text-xs font-medium text-muted-foreground">
+                      <Target className="w-3.5 h-3.5 mr-1" />
+                      {set._count?.questions || 0} Questions
+                    </div>
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-accent text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-all">
+                      <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                    </div>
                   </div>
-                </CardHeader>
-                <CardContent className="flex items-center justify-between text-sm mt-auto pt-4 border-t border-border">
-                  <div className="flex items-center text-slate-500 font-medium">
-                    <BookOpen className="w-4 h-4 mr-2" />
-                    {set._count.questions} Questions
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                 </CardContent>
               </Card>
             </Link>
