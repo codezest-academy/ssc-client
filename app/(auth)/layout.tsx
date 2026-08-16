@@ -32,35 +32,27 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
         {children}
         
-        {/* Bottom Navigation Dock */}
-        <div className="mt-10 flex justify-center">
-          <div className="flex items-center gap-1 bg-white/5 backdrop-blur-md border border-white/10 rounded-full p-1.5 shadow-xl">
-            <Button variant="ghost" size="sm" className="h-9 px-4 text-slate-300 hover:text-white hover:bg-white/10 rounded-full transition-all" asChild>
-              <Link href="/">
-                <Home className="w-4 h-4 mr-2" />
-                Home
-              </Link>
-            </Button>
-            <div className="w-[1px] h-4 bg-white/10 mx-1" />
-            <Button variant="ghost" size="sm" className="h-9 px-4 text-slate-300 hover:text-white hover:bg-white/10 rounded-full transition-all" asChild>
-              <Link href="/pricing">
-                <CreditCard className="w-4 h-4 mr-2" />
-                Pricing
-              </Link>
-            </Button>
-            <Button variant="ghost" size="sm" className="h-9 px-4 text-slate-300 hover:text-white hover:bg-white/10 rounded-full hidden sm:flex transition-all" asChild>
-              <Link href="/features">
-                <LayoutList className="w-4 h-4 mr-2" />
-                Features
-              </Link>
-            </Button>
-            <Button variant="ghost" size="sm" className="h-9 px-4 text-slate-300 hover:text-white hover:bg-white/10 rounded-full transition-all" asChild>
-              <Link href="/contact">
-                <LifeBuoy className="w-4 h-4 mr-2" />
-                Support
-              </Link>
-            </Button>
-          </div>
+        {/* Bottom Navigation */}
+        <div className="mt-10 flex flex-wrap justify-center items-center gap-x-6 gap-y-4">
+          <Link href="/" className="group flex items-center text-sm font-medium text-slate-400 hover:text-primary hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.5)] transition-all duration-300">
+            <Home className="w-4 h-4 mr-2 opacity-70 group-hover:opacity-100 group-hover:-translate-x-0.5 transition-all" />
+            Home
+          </Link>
+          <div className="w-1 h-1 rounded-full bg-slate-800" />
+          <Link href="/pricing" className="group flex items-center text-sm font-medium text-slate-400 hover:text-primary hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.5)] transition-all duration-300">
+            <CreditCard className="w-4 h-4 mr-2 opacity-70 group-hover:opacity-100 transition-opacity" />
+            Pricing
+          </Link>
+          <div className="w-1 h-1 rounded-full bg-slate-800 hidden sm:block" />
+          <Link href="/features" className="group hidden sm:flex items-center text-sm font-medium text-slate-400 hover:text-primary hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.5)] transition-all duration-300">
+            <LayoutList className="w-4 h-4 mr-2 opacity-70 group-hover:opacity-100 transition-opacity" />
+            Features
+          </Link>
+          <div className="w-1 h-1 rounded-full bg-slate-800" />
+          <Link href="/contact" className="group flex items-center text-sm font-medium text-slate-400 hover:text-primary hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.5)] transition-all duration-300">
+            <LifeBuoy className="w-4 h-4 mr-2 opacity-70 group-hover:opacity-100 transition-opacity" />
+            Support
+          </Link>
         </div>
         
       </div>
