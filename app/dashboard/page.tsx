@@ -704,7 +704,7 @@ export default function DashboardPage() {
                       <div className="h-full bg-card border border-primary/10 hover:border-primary/30 hover:shadow-lg hover:-translate-y-1 hover:scale-[1.02] active:scale-95 transition-all duration-300 rounded-3xl p-5 flex flex-col relative overflow-hidden">
                         <div className={`absolute top-0 right-0 w-24 h-24 ${colors.shapeBg} rounded-bl-full -z-0 transition-colors`} />
                         <div className="relative z-10 flex justify-end mb-4">
-                          <div className="bg-muted/50 backdrop-blur-sm border border-border/50 px-2.5 py-1 rounded-xl flex items-center gap-1.5">
+                          <div className="bg-card shadow-sm border border-border/60 px-2.5 py-1 rounded-xl flex items-center gap-1.5">
                              <BookOpen className="w-3.5 h-3.5 text-muted-foreground" />
                              <span className="text-[10px] font-bold text-muted-foreground uppercase">{subject._count.chapters} Ch</span>
                           </div>
