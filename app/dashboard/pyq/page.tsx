@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/axios";
-import { Play, FolderX, Library, ChevronDown, BookOpen } from "lucide-react";
+import { Play, FolderX, Library, ChevronDown } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/ui/error-state";
@@ -89,8 +89,7 @@ export default function PYQExplorerPage() {
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-3xl font-bold text-foreground font-display tracking-tight flex items-center gap-2">
-          <Library className="w-8 h-8 text-primary" />
+        <h1 className="text-3xl font-bold text-foreground font-display tracking-tight">
           Topic-wise PYQ Explorer
         </h1>
         <p className="text-muted-foreground mt-1.5">
@@ -116,10 +115,7 @@ export default function PYQExplorerPage() {
                 <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full -z-0 opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="text-left flex-1 relative z-10">
                   <h3 className="font-black text-xl text-foreground group-hover:text-primary transition-colors">{sub.name}</h3>
-                  <div className="flex items-center gap-1.5 mt-1.5 text-muted-foreground">
-                    <BookOpen className="w-3.5 h-3.5" />
-                    <p className="text-xs font-bold uppercase tracking-wider">{sub.chapters?.length || 0} Topics</p>
-                  </div>
+                  <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider mt-1">{sub.chapters?.length || 0} Topics</p>
                 </div>
                 <div className="flex items-center gap-3 shrink-0 relative z-10" onClick={(e) => e.stopPropagation()}>
                   <button
@@ -145,7 +141,6 @@ export default function PYQExplorerPage() {
                         variant="secondary"
                         className="mt-auto w-full rounded-full font-bold group-hover/chap:bg-primary group-hover/chap:text-primary-foreground transition-all shadow-sm h-9"
                       >
-                        <Play className="w-3.5 h-3.5 mr-2" />
                         {generating ? "Generating..." : "Generate Test"}
                       </Button>
                     </div>
