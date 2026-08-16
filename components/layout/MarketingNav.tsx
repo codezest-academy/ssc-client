@@ -28,6 +28,12 @@ export function MarketingNav() {
             >
               Pricing
             </Link>
+            <Link
+              href="/blog"
+              className="hover:text-foreground transition-colors"
+            >
+              Blog
+            </Link>
           </nav>
 
           <div className="flex items-center gap-3">

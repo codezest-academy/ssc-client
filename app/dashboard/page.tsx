@@ -66,6 +66,21 @@ interface DailyAgenda {
   } | null;
 }
 
+interface GamificationProfile {
+  xpPoints: number;
+  rankTier: string;
+  streakDays: number;
+  badges: Array<{
+    id: string;
+    badge: {
+      id: string;
+      name: string;
+      iconUrl: string;
+      description: string;
+    }
+  }>;
+}
+
 const getExamColorClasses = (examId: string) => {
   switch (examId) {
     case "SSC_CGL": return { 
@@ -430,6 +445,65 @@ function WeakTopicsWidget({ weakTopics }: { weakTopics: WeakTopic[] }) {
   );
 }
 
+// ─── Gamification Widget ──────────────────────────────────────────────────────
+
+function GamificationWidget({ profile }: { profile: GamificationProfile | null }) {
+  if (!profile) return null;
+
+  const nextTierThresholds: Record<string, number> = {
+    BRONZE: 500,
+    SILVER: 2000,
+    GOLD: 5000,
+    PLATINUM: 10000,
+    DIAMOND: 10000 // Max tier
+  };
+
+  const currentTier = profile.rankTier || 'BRONZE';
+  const threshold = nextTierThresholds[currentTier] || 500;
+  const progressPercent = currentTier === 'DIAMOND' ? 100 : Math.min(100, Math.round((profile.xpPoints / threshold) * 100));
+
+  return (
+    <div className="bg-card border border-primary/10 rounded-3xl p-5 shadow-sm group hover:shadow-md transition-all">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <div className="bg-primary/10 p-1.5 rounded-xl text-primary">
+            <Trophy className="w-5 h-5" />
+          </div>
+          <h3 className="text-lg font-bold text-foreground">Your Rank</h3>
+        </div>
+        <Link href="/dashboard/leaderboard" className="text-xs font-semibold text-primary hover:underline flex items-center gap-1">
+          Leaderboard <ArrowRight className="w-3 h-3" />
+        </Link>
+      </div>
+      
+      <div className="flex items-end justify-between mb-2">
+        <div>
+          <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider">{currentTier}</p>
+          <p className="text-2xl font-black text-foreground">{profile.xpPoints.toLocaleString()} <span className="text-sm font-bold text-muted-foreground">XP</span></p>
+        </div>
+        <div className="text-right">
+          <div className="flex items-center justify-end gap-1 text-orange-500 mb-1">
+            <Flame className="w-4 h-4 fill-orange-500 text-orange-500" />
+            <span className="font-bold">{profile.streakDays || 0} Day Streak</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="h-2.5 w-full bg-muted rounded-full overflow-hidden mb-2">
+        <div 
+          className="h-full bg-primary rounded-full transition-all duration-1000"
+          style={{ width: `${progressPercent}%` }}
+        />
+      </div>
+      {currentTier !== 'DIAMOND' && (
+        <p className="text-xs text-muted-foreground font-medium text-right">
+          {threshold - profile.xpPoints} XP to next rank
+        </p>
+      )}
+    </div>
+  );
+}
+
 // ─── Main Dashboard Page ──────────────────────────────────────────────────────
 
 function SubjectCardSkeleton() {
@@ -459,6 +533,7 @@ export default function DashboardPage() {
   const [analytics, setAnalytics] = useState<AnalyticsSummary | null>(null);
   const [weakTopics, setWeakTopics] = useState<WeakTopic[]>([]);
   const [agenda, setAgenda] = useState<DailyAgenda | null>(null);
+  const [gamification, setGamification] = useState<GamificationProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const user = useAuthStore((state) => state.user);
@@ -467,11 +542,12 @@ export default function DashboardPage() {
     try {
       setLoading(true);
       setError(null);
-      const [subjectsRes, analyticsRes, weakTopicsRes, agendaRes] = await Promise.allSettled([
+      const [subjectsRes, analyticsRes, weakTopicsRes, agendaRes, gamificationRes] = await Promise.allSettled([
         api.get("/subjects"),
         api.get("/analytics/dashboard"),
         api.get("/analytics/weak-topics"),
         api.get("/dashboard/agenda"),
+        api.get("/gamification/profile"),
       ]);
 
       if (subjectsRes.status === "rejected") {
@@ -488,6 +564,9 @@ export default function DashboardPage() {
       }
       if (agendaRes.status === "fulfilled") {
         setAgenda(agendaRes.value.data.data);
+      }
+      if (gamificationRes.status === "fulfilled") {
+        setGamification(gamificationRes.value.data.data);
       }
     } catch (err: any) {
       console.error("Failed to load dashboard:", err);
@@ -527,22 +606,25 @@ export default function DashboardPage() {
         agenda={agenda}
       />
 
-      {/* ── Daily 10-Min Target Widget ──────────────────────── */}
-      <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20 rounded-3xl p-5 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-5 shadow-sm group relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 opacity-50 group-hover:opacity-100 transition-opacity duration-700" />
-        <div className="relative">
-          <div className="flex items-center gap-2 mb-1.5">
-            <div className="bg-primary/10 p-1.5 rounded-xl">
-              <Flame className="w-5 h-5 text-primary" />
+      {/* ── Gamification and Target Widgets ─────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <GamificationWidget profile={gamification} />
+        <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20 rounded-3xl p-5 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-5 shadow-sm group relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 opacity-50 group-hover:opacity-100 transition-opacity duration-700" />
+          <div className="relative">
+            <div className="flex items-center gap-2 mb-1.5">
+              <div className="bg-primary/10 p-1.5 rounded-xl">
+                <Flame className="w-5 h-5 text-primary" />
+              </div>
+              <h3 className="text-xl font-black text-foreground tracking-tight">Daily 10-Min Target</h3>
             </div>
-            <h3 className="text-xl font-black text-foreground tracking-tight">Daily 10-Min Target</h3>
+            <p className="text-muted-foreground text-sm max-w-xl leading-relaxed">
+              Keep your streak alive! Complete today&apos;s dynamic 10-question practice set covering mixed topics.
+            </p>
           </div>
-          <p className="text-muted-foreground text-sm max-w-xl leading-relaxed">
-            Keep your streak alive! Complete today&apos;s dynamic 10-question practice set covering mixed topics.
-          </p>
-        </div>
-        <div className="shrink-0 relative">
-          <DailyTargetButton />
+          <div className="shrink-0 relative">
+            <DailyTargetButton />
+          </div>
         </div>
       </div>
 

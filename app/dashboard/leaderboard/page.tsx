@@ -12,8 +12,8 @@ interface LeaderboardEntry {
     id: string;
     name: string;
   };
-  totalScore: number;
-  averageAccuracy: number;
+  xpPoints: number;
+  rankTier: string;
   testsTaken: number;
 }
 
@@ -112,15 +112,15 @@ export default function LeaderboardPage() {
                   
                   <div className="flex items-center gap-8 text-sm w-full sm:w-auto justify-end sm:justify-start">
                     <div className="flex flex-col items-end">
-                      <span className="text-slate-500 font-medium mb-1">Total Score</span>
+                      <span className="text-slate-500 font-medium mb-1">XP Points</span>
                       <span className={`font-bold text-xl ${isTop3 ? 'text-primary' : 'text-slate-900'}`}>
-                        {entry.totalScore}
+                        {entry.xpPoints.toLocaleString()}
                       </span>
                     </div>
                     <div className="flex flex-col items-end">
-                      <span className="text-slate-500 font-medium mb-1">Avg Accuracy</span>
-                      <span className="font-bold text-slate-700">
-                        {entry.averageAccuracy}%
+                      <span className="text-slate-500 font-medium mb-1">Rank Tier</span>
+                      <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider px-2 py-1 bg-muted rounded-full">
+                        {entry.rankTier}
                       </span>
                     </div>
                   </div>
