@@ -54,6 +54,8 @@
 | **Global error boundaries (`global-error.tsx`, `error.tsx`)** | ✅ Complete |
 | **`app/not-found.tsx` — branded 404 page** | ✅ Complete |
 | **Axios interceptor upgrade (auto-toast on mutations, 401 redirect)** | ✅ Complete |
+| **Syllabus Browser** (`/dashboard/syllabus` + `/dashboard/syllabus/[subjectSlug]`) | ✅ Complete |
+| **Freemium Paywall** (`<PaywallModal />`, `FloatingNav` upgrade CTA, Mock Test & Analytics locks) | ✅ Complete |
 | **`<MarketingNav />` + `(marketing)` route group layout** | 🔴 Not Started |
 | **Mobile bottom navigation bar (dashboard)** | 🔴 Not Started |
 

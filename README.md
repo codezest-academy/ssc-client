@@ -15,6 +15,8 @@ Used by `STUDENT` roles to browse lessons, attempt practice sets, take mock test
 - **Empty States:** All zero-data screens show polished `<EmptyState />` components with icons and context.
 - **Programmatic SEO:** Dynamic SSR routes and sitemap generation for indexing PYQs.
 - **KaTeX Math Rendering:** `<QuestionRenderer />` handles all LaTeX math across question and explanation content.
+- **Syllabus Browser:** Read-only, exam-specific, year-versioned syllabus viewer (`/dashboard/syllabus`) with subject-level drill-down.
+- **Freemium Paywall:** `<PaywallModal />` with per-feature lock icons on Premium Mock Tests and Advanced Analytics for `FREE` tier users. Dynamic "Upgrade to Pro" CTA in `FloatingNav`.
 
 ## 🛠️ Tech Stack
 - **Framework:** Next.js (App Router)

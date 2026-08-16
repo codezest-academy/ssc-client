@@ -156,6 +156,27 @@ Extended the `MdxRenderer` with two new rich interactive components to enable vi
 
 ---
 
+## 5. ✅ Pillar 2: Syllabus Browser
+
+**Status:** ✅ Complete (2026-08-16)
+
+- Added `/dashboard/syllabus` — subject-level index page listing all exams with year selectors.
+- Added `/dashboard/syllabus/[subjectSlug]` — hierarchical `SyllabusNode` tree viewer with collapsible sections.
+- Read-only: no progress tracking. Separate from the learning journey routes.
+
+---
+
+## 5b. ✅ Pillar 4: Freemium Model & Marketing Hooks
+
+**Status:** ✅ Complete (2026-08-16)
+
+- **`<PaywallModal />`** (`components/pricing/PaywallModal.tsx`) — Reusable modal with premium feature highlights and Upgrade CTA.
+- **`FloatingNav`** — "Upgrade to Pro" gradient pill button, shown only for `FREE` tier users.
+- **Mock Tests** — Premium tests (tier = `PREMIUM`) are visually locked with a `<Lock />` icon; clicking triggers `<PaywallModal />` instead of navigating.
+- **Analytics** — "Recent Activity" timeline hidden under a frosted-glass blur overlay for free users; unlock CTA triggers `<PaywallModal />`.
+
+---
+
 ## 6. 🔴 Layout: Marketing Nav & Route Group
 
 **Status:** Not Started — Planned
