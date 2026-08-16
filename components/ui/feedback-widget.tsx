@@ -18,13 +18,14 @@ interface ActionDef {
   label: string;
   title: string;
   placeholder: string;
+  colorClass: string;
 }
 
 const ACTIONS: ActionDef[] = [
-  { type: "ISSUE", icon: Bug, label: "Report Issue", title: "Report an Issue", placeholder: "Please describe the bug or issue..." },
-  { type: "TESTIMONIAL", icon: MessageSquare, label: "Share Feedback", title: "Share Feedback", placeholder: "What's on your mind?" },
-  { type: "TESTIMONIAL", icon: Star, label: "Testimonial", title: "Share a Testimonial", placeholder: "What do you love about Code Zest?" },
-  { type: "FEATURE_REQUEST", icon: Lightbulb, label: "Feature Addition", title: "Suggest a Feature", placeholder: "What feature would you like to see?" },
+  { type: "ISSUE", icon: Bug, label: "Report Issue", title: "Report an Issue", placeholder: "Please describe the bug or issue...", colorClass: "text-destructive bg-destructive/10 border-destructive/20 hover:border-destructive/50 hover:bg-destructive/20" },
+  { type: "TESTIMONIAL", icon: MessageSquare, label: "Share Feedback", title: "Share Feedback", placeholder: "What's on your mind?", colorClass: "text-primary bg-primary/10 border-primary/20 hover:border-primary/50 hover:bg-primary/20" },
+  { type: "TESTIMONIAL", icon: Star, label: "Testimonial", title: "Share a Testimonial", placeholder: "What do you love about Code Zest?", colorClass: "text-warning bg-warning/10 border-warning/20 hover:border-warning/50 hover:bg-warning/20" },
+  { type: "FEATURE_REQUEST", icon: Lightbulb, label: "Feature Addition", title: "Suggest a Feature", placeholder: "What feature would you like to see?", colorClass: "text-success bg-success/10 border-success/20 hover:border-success/50 hover:bg-success/20" },
 ];
 
 export function FeedbackWidget() {
@@ -86,7 +87,10 @@ export function FeedbackWidget() {
                   <TooltipTrigger asChild>
                     <button
                       onClick={() => handleOpenModal(action)}
-                      className="flex h-12 w-12 items-center justify-center rounded-full bg-card border border-border shadow-md transition-all hover:scale-110 active:scale-95 hover:border-primary/50 text-muted-foreground hover:text-primary"
+                      className={cn(
+                        "flex h-12 w-12 items-center justify-center rounded-full border shadow-md transition-all hover:scale-110 active:scale-95",
+                        action.colorClass
+                      )}
                       aria-label={action.label}
                     >
                       <Icon className="h-5 w-5" />
