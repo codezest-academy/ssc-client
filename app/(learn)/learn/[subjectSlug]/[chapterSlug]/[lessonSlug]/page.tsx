@@ -70,7 +70,7 @@ export default function LessonViewerPage() {
 
   const articlePages = useMemo(() => {
     if (lesson?.type !== "ARTICLE" || !lesson?.articleHtml) return [];
-    return lesson.articleHtml.split(/<hr\s*\/?>/i).map(page => page.trim()).filter(Boolean);
+    return lesson.articleHtml.split(/<hr\s*\/?>|\n---\n/i).map(page => page.trim()).filter(Boolean);
   }, [lesson?.articleHtml, lesson?.type]);
 
   useEffect(() => {

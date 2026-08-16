@@ -4,7 +4,7 @@ import { useAuthStore } from "@/store/auth";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { LogOut, Flame, Sparkles, User, ChevronDown } from "lucide-react";
+import { LogOut, Flame, Sparkles, User, ChevronDown, BookOpen, Target, PenTool, BarChart3, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { api } from "@/lib/axios";
 import {
@@ -34,11 +34,11 @@ export function FloatingNav() {
   };
 
   const navLinks = [
-    { name: "Curriculum", href: "/dashboard" },
-    { name: "Practice Sets", href: "/dashboard/practice-sets" },
-    { name: "Mock Tests", href: "/dashboard/mock-tests" },
-    { name: "Analytics", href: "/dashboard/analytics" },
-    { name: "Leaderboard", href: "/dashboard/leaderboard" },
+    { name: "Curriculum", href: "/dashboard", icon: BookOpen },
+    { name: "Practice", href: "/dashboard/practice-sets", icon: Target },
+    { name: "Tests", href: "/dashboard/mock-tests", icon: PenTool },
+    { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
+    { name: "Leaderboard", href: "/dashboard/leaderboard", icon: Trophy },
   ];
 
   if (!user) return null;
@@ -138,6 +138,29 @@ export function FloatingNav() {
           </div>
         </header>
       </div>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-md border-t border-border flex items-center justify-around pb-4 pt-2 px-2 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
+        {navLinks.map((link) => {
+          const isActive = pathname === link.href;
+          const Icon = link.icon;
+          return (
+            <Link
+              key={link.name}
+              href={link.href}
+              className={cn(
+                "flex flex-col items-center gap-1 p-2 w-full text-[10px] font-semibold transition-colors rounded-xl",
+                isActive
+                  ? "text-primary bg-primary/5"
+                  : "text-muted-foreground hover:text-foreground hover:bg-slate-50 dark:hover:bg-slate-800/50"
+              )}
+            >
+              <Icon className={cn("w-5 h-5", isActive ? "fill-primary/20" : "")} />
+              <span className="tracking-tight">{link.name}</span>
+            </Link>
+          );
+        })}
+      </nav>
     </div>
   );
 }

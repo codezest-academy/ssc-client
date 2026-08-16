@@ -6,6 +6,9 @@ import { Callout } from "./callout";
 import { QuestionRenderer } from "@/components/ui/question-renderer";
 import { ZoomableImage } from "./zoomable-image";
 import { Mindmap } from "./mindmap";
+import { Timeline, TimelineItem } from "./timeline";
+import { DefinitionBlock } from "./definition-block";
+import { FeatureList, FeatureItem } from "./feature-list";
 
 interface MdxRendererProps {
   source: string;
@@ -42,16 +45,21 @@ const customComponents = {
   Callout: { component: Callout },
   ZoomableImage: { component: ZoomableImage },
   Mindmap: { component: Mindmap },
+  Timeline: { component: Timeline },
+  TimelineItem: { component: TimelineItem },
+  DefinitionBlock: { component: DefinitionBlock },
+  FeatureList: { component: FeatureList },
+  FeatureItem: { component: FeatureItem },
   img: { component: (props: any) => <ZoomableImage src={props.src} alt={props.alt} className={props.className} /> },
   h1: { component: HeadingWithId, props: { level: 1 } },
   h2: { component: HeadingWithId, props: { level: 2 } },
   h3: { component: HeadingWithId, props: { level: 3 } },
-  p: { component: (props: any) => <div className="my-5 leading-relaxed text-slate-600" {...props} /> },
+  p: { component: (props: any) => <div className="my-4 leading-relaxed text-muted-foreground" {...props} /> },
 };
 
 export function MdxRenderer({ source }: MdxRendererProps) {
   return (
-    <div className="prose prose-base md:prose-lg xl:prose-xl prose-slate max-w-none prose-headings:font-display prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-slate-900 prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-p:leading-relaxed prose-p:text-slate-600 prose-li:marker:text-primary prose-li:text-slate-600 prose-strong:text-slate-900 prose-hr:border-border">
+    <div className="prose prose-base max-w-none prose-headings:font-display prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-foreground prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-p:leading-relaxed prose-p:text-muted-foreground prose-li:marker:text-primary/70 prose-li:text-muted-foreground prose-strong:text-foreground prose-hr:border-border/50">
       <Markdown
         options={{
           overrides: customComponents,
