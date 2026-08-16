@@ -19,13 +19,14 @@ interface ActionDef {
   title: string;
   placeholder: string;
   colorClass: string;
+  tooltipClass: string;
 }
 
 const ACTIONS: ActionDef[] = [
-  { type: "ISSUE", icon: Bug, label: "Report Issue", title: "Report an Issue", placeholder: "Please describe the bug or issue...", colorClass: "text-destructive bg-destructive/10 border-destructive/20 hover:border-destructive/50 hover:bg-destructive/20" },
-  { type: "TESTIMONIAL", icon: MessageSquare, label: "Share Feedback", title: "Share Feedback", placeholder: "What's on your mind?", colorClass: "text-primary bg-primary/10 border-primary/20 hover:border-primary/50 hover:bg-primary/20" },
-  { type: "TESTIMONIAL", icon: Star, label: "Testimonial", title: "Share a Testimonial", placeholder: "What do you love about Code Zest?", colorClass: "text-warning bg-warning/10 border-warning/20 hover:border-warning/50 hover:bg-warning/20" },
-  { type: "FEATURE_REQUEST", icon: Lightbulb, label: "Feature Addition", title: "Suggest a Feature", placeholder: "What feature would you like to see?", colorClass: "text-success bg-success/10 border-success/20 hover:border-success/50 hover:bg-success/20" },
+  { type: "ISSUE", icon: Bug, label: "Report Issue", title: "Report an Issue", placeholder: "Please describe the bug or issue...", colorClass: "text-destructive bg-destructive/10 border-destructive/20 hover:border-destructive/50 hover:bg-destructive/20", tooltipClass: "bg-destructive text-destructive-foreground border-destructive" },
+  { type: "TESTIMONIAL", icon: MessageSquare, label: "Share Feedback", title: "Share Feedback", placeholder: "What's on your mind?", colorClass: "text-primary bg-primary/10 border-primary/20 hover:border-primary/50 hover:bg-primary/20", tooltipClass: "bg-primary text-primary-foreground border-primary" },
+  { type: "TESTIMONIAL", icon: Star, label: "Testimonial", title: "Share a Testimonial", placeholder: "What do you love about Code Zest?", colorClass: "text-warning bg-warning/10 border-warning/20 hover:border-warning/50 hover:bg-warning/20", tooltipClass: "bg-warning text-warning-foreground border-warning" },
+  { type: "FEATURE_REQUEST", icon: Lightbulb, label: "Feature Addition", title: "Suggest a Feature", placeholder: "What feature would you like to see?", colorClass: "text-success bg-success/10 border-success/20 hover:border-success/50 hover:bg-success/20", tooltipClass: "bg-success text-success-foreground border-success" },
 ];
 
 export function FeedbackWidget() {
@@ -96,7 +97,7 @@ export function FeedbackWidget() {
                       <Icon className="h-5 w-5" />
                     </button>
                   </TooltipTrigger>
-                  <TooltipContent side="left" sideOffset={10}>
+                  <TooltipContent side="left" sideOffset={10} className={cn("border-none", action.tooltipClass)}>
                     <p className="font-medium">{action.label}</p>
                   </TooltipContent>
                 </Tooltip>
