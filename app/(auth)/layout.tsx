@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { GraduationCap, ArrowLeft } from "lucide-react";
 import { DotPattern } from "@/components/ui/pattern";
+import { Button } from "@/components/ui/button";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -32,18 +33,16 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         {children}
         
         {/* Bottom Navigation */}
-        <div className="mt-8 flex justify-center gap-6">
-          <Link href="/pricing" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">
-            Pricing
-          </Link>
-          <span className="text-slate-700">•</span>
-          <Link href="/features" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">
-            Features
-          </Link>
-          <span className="text-slate-700">•</span>
-          <Link href="/contact" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">
-            Contact Support
-          </Link>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <Button variant="ghost" className="text-slate-400 hover:text-white hover:bg-white/10 rounded-full" asChild>
+            <Link href="/pricing">Pricing</Link>
+          </Button>
+          <Button variant="ghost" className="text-slate-400 hover:text-white hover:bg-white/10 rounded-full" asChild>
+            <Link href="/features">Features</Link>
+          </Button>
+          <Button variant="ghost" className="text-slate-400 hover:text-white hover:bg-white/10 rounded-full" asChild>
+            <Link href="/contact">Contact Support</Link>
+          </Button>
         </div>
         
       </div>
