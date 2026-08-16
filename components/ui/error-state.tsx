@@ -36,7 +36,7 @@ export function ErrorState({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!onSubmitTicket || !message.trim()) return;
+    if (!onSubmitTicket) return;
 
     setIsSubmitting(true);
     try {
@@ -71,29 +71,28 @@ export function ErrorState({
           {isSuccess ? (
             <div className="flex flex-col items-center py-4 text-center animate-in zoom-in-95">
               <CheckCircle2 className="mb-2 h-8 w-8 text-success" />
-              <p className="font-semibold text-foreground">Ticket Submitted</p>
-              <p className="text-sm text-muted-foreground">We'll look into this right away.</p>
+              <p className="font-semibold text-foreground">Issue Reported</p>
+              <p className="text-sm text-muted-foreground">Our engineering team has been notified.</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-              <label className="text-sm font-medium text-foreground">
-                Help us fix this. What were you doing right before the crash?
-              </label>
+              <p className="text-sm font-medium text-foreground text-center mb-1">
+                Help us fix this by sending an error report.
+              </p>
               <Textarea
-                placeholder="I clicked on..."
-                className="min-h-[80px] text-sm resize-none"
+                placeholder="Optional: What were you doing right before the crash?"
+                className="min-h-[80px] text-sm resize-none bg-background/50 focus-visible:ring-destructive/30"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                required
               />
               <Button
                 type="submit"
                 variant="default"
-                disabled={isSubmitting || !message.trim()}
-                className="w-full"
+                disabled={isSubmitting}
+                className="w-full mt-2"
               >
                 {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                Submit Ticket
+                Send Report
               </Button>
             </form>
           )}
