@@ -15,7 +15,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
 
   return (
     <Sonner
-      position="bottom-right"
+      position="top-center"
       theme={theme as ToasterProps["theme"]}
       className="toaster group"
       icons={{
@@ -30,21 +30,21 @@ const Toaster = ({ ...props }: ToasterProps) => {
           "--normal-bg": "transparent",
           "--normal-text": "var(--foreground)",
           "--normal-border": "rgba(255, 255, 255, 0.1)",
-          "--border-radius": "1rem", // rounded-2xl
+          "--border-radius": "9999px", // rounded-full
         } as React.CSSProperties
       }
       toastOptions={{
         classNames: {
-          toast: "group toast transition-all bg-background/60 backdrop-blur-xl text-foreground border border-white/10 shadow-2xl shadow-black/40 rounded-2xl p-4",
-          title: "text-foreground font-semibold",
-          description: "text-muted-foreground text-sm font-medium",
-          actionButton: "bg-primary text-primary-foreground font-semibold rounded-md px-3 py-1.5 shadow-sm",
-          cancelButton: "bg-muted text-muted-foreground font-semibold rounded-md px-3 py-1.5",
-          success: "!bg-success/20 !border-success/30 [&_[data-title]]:!text-success-foreground",
-          error: "!bg-destructive/20 !border-destructive/30 [&_[data-title]]:!text-destructive-foreground",
-          warning: "!bg-warning/20 !border-warning/30 [&_[data-title]]:!text-warning-foreground",
-          info: "!bg-info/20 !border-info/30 [&_[data-title]]:!text-info-foreground",
-          loading: "!bg-muted/50 !text-foreground !border-white/10",
+          toast: "group toast transition-all flex items-center gap-3 bg-black/40 backdrop-blur-2xl text-foreground border border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.5)] rounded-full py-3 px-5 font-sans",
+          title: "text-foreground font-semibold text-sm",
+          description: "text-slate-300 text-xs font-medium ml-1",
+          actionButton: "bg-primary text-primary-foreground font-semibold rounded-full px-4 py-1.5 shadow-sm text-xs ml-auto",
+          cancelButton: "bg-white/10 text-white hover:bg-white/20 font-semibold rounded-full px-4 py-1.5 text-xs ml-2 transition-colors",
+          success: "!border-success/30 !bg-success/5 shadow-[0_0_20px_rgba(34,197,94,0.15)]",
+          error: "!border-destructive/30 !bg-destructive/5 shadow-[0_0_20px_rgba(239,68,68,0.15)]",
+          warning: "!border-warning/30 !bg-warning/5 shadow-[0_0_20px_rgba(245,158,11,0.15)]",
+          info: "!border-info/30 !bg-info/5 shadow-[0_0_20px_rgba(59,130,246,0.15)]",
+          loading: "!border-white/10",
         },
       }}
       {...props}
