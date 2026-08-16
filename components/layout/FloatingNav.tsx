@@ -84,15 +84,16 @@ export function FloatingNav() {
           {/* Right Side Tools & Profile */}
           <div className="flex items-center gap-4">
             {(!user.subscriptionTier || user.subscriptionTier === 'FREE') && (
-              <Button asChild variant="default" size="sm" className="hidden md:flex bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-sm border-0 font-semibold h-8 rounded-full px-4">
-                <Link href="/dashboard/upgrade">
-                  <Sparkles className="w-3.5 h-3.5 mr-1.5" />
-                  Upgrade to Pro
-                </Link>
-              </Button>
+              <>
+                <Button asChild variant="default" size="sm" className="hidden md:flex bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-sm border-0 font-semibold h-8 rounded-full px-4">
+                  <Link href="/dashboard/upgrade">
+                    <Sparkles className="w-3.5 h-3.5 mr-1.5" />
+                    Upgrade to Pro
+                  </Link>
+                </Button>
+                <div className="h-4 w-px bg-border hidden md:block" />
+              </>
             )}
-            
-            <div className="h-4 w-px bg-border hidden sm:block" />
             
             <ModeToggle />
             
