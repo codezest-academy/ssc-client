@@ -216,7 +216,7 @@ export default function TestAttemptPage() {
     }
 
     return (
-      <div className="min-h-screen bg-muted/30 dark:bg-slate-950 flex flex-col items-center justify-center p-6 relative overflow-hidden">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 relative overflow-hidden">
         {/* Soft Ambient Background */}
         <div className="absolute top-0 left-0 w-full h-[400px] bg-gradient-to-b from-primary/10 to-transparent pointer-events-none" />
         
@@ -228,8 +228,8 @@ export default function TestAttemptPage() {
             <div className="absolute top-0 left-0 w-full h-1.5 bg-primary" />
             
             {/* Icon */}
-            <div className="w-20 h-20 mb-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center ring-8 ring-emerald-50 dark:ring-emerald-900/10">
-              <CheckCircle className="w-10 h-10 text-emerald-600 dark:text-emerald-400" strokeWidth={2.5} />
+            <div className="w-20 h-20 mb-8 rounded-full bg-success/20 flex items-center justify-center ring-8 ring-success/10">
+              <CheckCircle className="w-10 h-10 text-success" strokeWidth={2.5} />
             </div>
             
             <div className="text-center space-y-3 mb-10 w-full">
@@ -320,10 +320,8 @@ function StatCard({
   color: "emerald" | "amber" | "indigo" | "muted";
 }) {
   const colorMap = {
-    emerald:
-      "bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-900/20 dark:border-emerald-800 dark:text-emerald-400",
-    amber:
-      "bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-900/20 dark:border-amber-800 dark:text-amber-400",
+    emerald: "bg-success/10 border-success/20 text-success",
+    amber: "bg-warning/10 border-warning/20 text-warning",
     indigo: "bg-primary/5 border-primary/20 text-primary",
     muted: "bg-muted border-border text-muted-foreground",
   };

@@ -4,6 +4,7 @@ import { useAuthStore } from "@/store/auth";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ModeToggle } from "@/components/mode-toggle";
 import { LogOut, Flame, Sparkles, User, ChevronDown, BookOpen, Target, PenTool, BarChart3, Trophy, Map } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { api } from "@/lib/axios";
@@ -92,6 +93,8 @@ export function FloatingNav() {
             )}
             
             <div className="h-4 w-px bg-border hidden sm:block" />
+            
+            <ModeToggle />
             
             <div className="flex items-center gap-1 px-3 py-1.5 bg-orange-50 text-orange-600 border border-orange-100 rounded-full font-bold shadow-sm">
               <Flame className="w-4 h-4 fill-orange-500" />
