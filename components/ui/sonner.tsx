@@ -15,7 +15,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
 
   return (
     <Sonner
-      position="top-center"
+      position="bottom-right"
       theme={theme as ToasterProps["theme"]}
       className="toaster group"
       icons={{
@@ -35,7 +35,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }
       toastOptions={{
         classNames: {
-          toast: "group toast transition-all flex items-center gap-3 bg-black/40 backdrop-blur-2xl text-foreground border border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.5)] rounded-full py-3 px-5 font-sans",
+          toast: "group toast transition-all flex items-center gap-3 bg-[#050508]/90 backdrop-blur-3xl text-foreground border border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.8)] rounded-full py-3 px-5 font-sans",
           title: "text-foreground font-semibold text-sm",
           description: "text-slate-300 text-xs font-medium ml-1",
           actionButton: "bg-primary text-primary-foreground font-semibold rounded-full px-4 py-1.5 shadow-sm text-xs ml-auto",
