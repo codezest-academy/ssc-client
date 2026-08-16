@@ -91,10 +91,10 @@ export default function PracticeSetsPage() {
       {/* Page Header */}
       <div>
         <h1 className="text-3xl font-bold text-foreground font-display tracking-tight">
-          Dynamic Practice Sets
+          Practice Sets
         </h1>
         <p className="text-muted-foreground mt-1.5">
-          Generate 20-question practice tests tailored to your weak areas. Questions are freshly shuffled so you never see the same set twice!
+          Practice on any subject or topic, with fresh questions every time.
         </p>
       </div>
 
