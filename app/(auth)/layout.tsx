@@ -32,10 +32,17 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         {children}
         
         {/* Bottom Navigation */}
-        <div className="mt-8 flex justify-center">
-          <Link href="/" className="flex items-center text-sm font-medium text-slate-400 hover:text-white transition-colors group">
-            <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-            Back to Website
+        <div className="mt-8 flex justify-center gap-6">
+          <Link href="/pricing" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">
+            Pricing
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/features" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">
+            Features
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/contact" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">
+            Contact Support
           </Link>
         </div>
         
