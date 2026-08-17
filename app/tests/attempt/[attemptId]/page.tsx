@@ -143,30 +143,43 @@ export default function TestAttemptPage() {
           questionsData = mt.sections.flatMap((s: MockTestSection) => s.questions.map((q: MockTestSectionQuestion) => q.question));
           durationSeconds = mt.durationMinutes * 60;
         } else {
-          // Dynamic attempt — derive title from the subject/chapter in the responses
+          // No practiceSetId / mockTestId — dynamic or PYQ attempt
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          questionsData = attempt.responses.map((r: any) => r.question);
+          questionsData = attempt.responses.map((r: any) => r.question).filter(Boolean);
 
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const firstQ = attempt.responses[0]?.question as any;
           const subjectName: string = firstQ?.subject?.name ?? "";
           const chapterName: string = firstQ?.chapter?.name ?? "";
 
-          // If all questions share the same single chapter, name it after that chapter
           const uniqueChapters = new Set(
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             attempt.responses.map((r: any) => r.question?.chapter?.name).filter(Boolean)
           );
-          if (uniqueChapters.size === 1 && chapterName) {
-            setTestTitle(`${chapterName} Practice`);
-          } else if (subjectName) {
-            setTestTitle(`${subjectName} Practice Test`);
+
+          if (attempt.attemptType === "PRACTICE") {
+            // PYQ attempt — always chapter-scoped
+            if (uniqueChapters.size === 1 && chapterName) {
+              setTestTitle(`${chapterName} — PYQ`);
+            } else if (subjectName) {
+              setTestTitle(`${subjectName} — PYQ`);
+            } else {
+              setTestTitle("PYQ Practice");
+            }
           } else {
-            setTestTitle("Practice Test");
+            // DYNAMIC_PRACTICE — subject-based mixed practice
+            if (uniqueChapters.size === 1 && chapterName) {
+              setTestTitle(`${chapterName} Practice`);
+            } else if (subjectName) {
+              setTestTitle(`${subjectName} Practice Test`);
+            } else {
+              setTestTitle("Practice Test");
+            }
           }
 
           durationSeconds = questionsData.length * 90;
         }
+
 
 
         // 3. Map questions to EngineQuestion format
