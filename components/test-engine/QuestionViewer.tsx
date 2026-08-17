@@ -53,8 +53,8 @@ export function QuestionViewer() {
       </div>
 
       {/* Question Content */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 custom-scrollbar">
-        <div className="max-w-4xl mx-auto space-y-7">
+      <div className="flex-1 overflow-y-auto px-6 py-6 custom-scrollbar flex flex-col justify-center">
+        <div className="max-w-2xl mx-auto w-full space-y-7">
 
           {/* Question Text — prominent & large */}
           <div className="text-xl md:text-2xl font-bold leading-snug text-foreground">

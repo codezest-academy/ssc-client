@@ -143,12 +143,31 @@ export default function TestAttemptPage() {
           questionsData = mt.sections.flatMap((s: MockTestSection) => s.questions.map((q: MockTestSectionQuestion) => q.question));
           durationSeconds = mt.durationMinutes * 60;
         } else {
-          // Dynamic Topic-wise PYQ Test
-          setTestTitle("Topic-wise PYQ Test");
+          // Dynamic attempt — derive title from the subject/chapter in the responses
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           questionsData = attempt.responses.map((r: any) => r.question);
+
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const firstQ = attempt.responses[0]?.question as any;
+          const subjectName: string = firstQ?.subject?.name ?? "";
+          const chapterName: string = firstQ?.chapter?.name ?? "";
+
+          // If all questions share the same single chapter, name it after that chapter
+          const uniqueChapters = new Set(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            attempt.responses.map((r: any) => r.question?.chapter?.name).filter(Boolean)
+          );
+          if (uniqueChapters.size === 1 && chapterName) {
+            setTestTitle(`${chapterName} Practice`);
+          } else if (subjectName) {
+            setTestTitle(`${subjectName} Practice Test`);
+          } else {
+            setTestTitle("Practice Test");
+          }
+
           durationSeconds = questionsData.length * 90;
         }
+
 
         // 3. Map questions to EngineQuestion format
         const engineQuestions: EngineQuestion[] = questionsData.map((q: any) => {
