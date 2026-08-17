@@ -3,15 +3,15 @@
 import { useTestEngineStore } from '@/store/useTestEngineStore';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Bookmark, Save, Trash2 } from 'lucide-react';
+import { Bookmark, Save, Trash2, CheckCircle2 } from 'lucide-react';
 import { QuestionRenderer } from '@/components/ui/question-renderer';
 
 /** Strip HTML tags and common LaTeX delimiters to get plain-text length */
 function plainTextLength(text: string): number {
   if (!text) return 0;
   return text
-    .replace(/<[^>]*>/g, '')       // remove HTML
-    .replace(/\$\$?[^$]*\$\$?/g, 'X') // collapse LaTeX blocks to single char
+    .replace(/<[^>]*>/g, '')
+    .replace(/\$\$?[^$]*\$\$?/g, 'X')
     .replace(/\\\([^)]*\\\)/g, 'X')
     .replace(/\\\[[^\]]*\\\]/g, 'X')
     .trim()
@@ -34,8 +34,9 @@ export function QuestionViewer() {
   if (!currentQuestion) return null;
 
   const currentAnswer = answers[currentQuestion.id];
+  const progress = ((currentIndex + 1) / questions.length) * 100;
 
-  // Decide layout: use a 2-column grid only when all options are short text with no images
+  // Layout: 2-col grid for short options, 1-col for long / image options
   const hasImageOption = currentQuestion.options.some((o) => !!o.imageUrl);
   const maxOptionLen = Math.max(
     ...currentQuestion.options.map((o) => plainTextLength(String(o.text ?? '')))
@@ -43,40 +44,51 @@ export function QuestionViewer() {
   const useTwoCol = !hasImageOption && maxOptionLen <= 35;
 
   return (
-    <div className="flex flex-col h-full w-full bg-transparent">
-      {/* Question Header */}
-      <div className="px-6 py-4 border-b border-border/50 flex justify-between items-center bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <h2 className="text-base font-bold tracking-tight text-muted-foreground">Question {currentIndex + 1}</h2>
-        <div className="text-xs text-muted-foreground font-semibold bg-muted/50 px-3 py-1 rounded-full">
-          {currentIndex + 1} of {questions.length}
-        </div>
+    <div className="flex flex-col h-full w-full">
+      {/* Thin progress bar at very top */}
+      <div className="h-1 w-full bg-muted shrink-0">
+        <div
+          className="h-full bg-primary transition-all duration-500 ease-out"
+          style={{ width: `${progress}%` }}
+        />
       </div>
 
-      {/* Question Content */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 custom-scrollbar flex flex-col justify-center">
-        <div className="max-w-2xl mx-auto w-full space-y-7">
+      {/* Scrollable question area */}
+      <div className="flex-1 overflow-y-auto custom-scrollbar">
+        <div className="max-w-2xl mx-auto px-6 py-10 space-y-8">
 
-          {/* Question Text — prominent & large */}
-          <div className="text-xl md:text-2xl font-bold leading-snug text-foreground">
+          {/* Question number row */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-black shrink-0 shadow-md shadow-primary/20">
+              {currentIndex + 1}
+            </div>
+            <div className="flex-1 h-px bg-border/50" />
+            <span className="text-xs font-semibold text-muted-foreground bg-muted px-3 py-1 rounded-full">
+              {currentIndex + 1} / {questions.length}
+            </span>
+          </div>
+
+          {/* Question text */}
+          <div className="text-xl md:text-2xl font-bold leading-relaxed text-foreground tracking-tight">
             <QuestionRenderer content={currentQuestion.questionText} />
             {currentQuestion.questionImageUrl && (
-              <div className="mt-5 rounded-xl overflow-hidden border border-border/50 shadow-sm">
-                <img src={currentQuestion.questionImageUrl} alt="Question Reference" className="max-w-full" />
+              <div className="mt-6 rounded-xl overflow-hidden border border-border/50 shadow-sm">
+                <img
+                  src={currentQuestion.questionImageUrl}
+                  alt="Question"
+                  className="max-w-full"
+                />
               </div>
             )}
           </div>
 
           {/* Options */}
-          <div
-            className={cn(
-              useTwoCol
-                ? 'grid grid-cols-2 gap-3'
-                : 'flex flex-col gap-3'
-            )}
-          >
+          <div className={cn(
+            useTwoCol ? 'grid grid-cols-2 gap-3' : 'flex flex-col gap-3'
+          )}>
             {currentQuestion.options.map((option, index) => {
               const isSelected = currentAnswer === option.key;
-              const dynamicLabel = String.fromCharCode(65 + index); // A, B, C, D
+              const dynamicLabel = String.fromCharCode(65 + index);
 
               return (
                 <button
@@ -84,31 +96,51 @@ export function QuestionViewer() {
                   onClick={() => selectOption(currentQuestion.id, option.key)}
                   disabled={status === 'SUBMITTED'}
                   className={cn(
-                    'flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-all text-left group',
-                    useTwoCol ? 'min-h-[52px]' : 'w-full',
+                    'group relative flex items-center gap-3 rounded-xl border-2 transition-all duration-150 text-left overflow-hidden',
+                    useTwoCol ? 'px-4 py-3 min-h-[56px]' : 'w-full px-4 py-3.5',
                     isSelected
-                      ? 'bg-primary/5 border-primary text-foreground shadow-[0_0_0_2px_rgba(var(--primary),0.08)]'
-                      : 'bg-card border-border/60 text-card-foreground hover:border-primary/40 hover:bg-muted/30 hover:shadow-sm'
+                      ? 'border-primary bg-primary/5 shadow-sm'
+                      : 'border-border/60 bg-card hover:border-primary/50 hover:bg-muted/40 active:scale-[0.99]'
                   )}
                 >
+                  {/* Left accent stripe on selection */}
+                  {isSelected && (
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-l-[10px]" />
+                  )}
+
+                  {/* Option key badge */}
                   <span
                     className={cn(
-                      'font-mono font-bold w-8 h-8 flex items-center justify-center shrink-0 rounded-full border-2 text-sm transition-colors',
+                      'font-mono font-black w-8 h-8 flex items-center justify-center shrink-0 rounded-full text-sm transition-colors',
                       isSelected
-                        ? 'bg-primary text-primary-foreground border-primary'
-                        : 'bg-muted border-border/80 text-muted-foreground group-hover:border-primary/40 group-hover:text-primary'
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary'
                     )}
                   >
                     {dynamicLabel}
                   </span>
-                  <span className="text-sm font-medium flex-1 leading-snug">
+
+                  {/* Option text */}
+                  <span className={cn(
+                    'flex-1 text-sm font-medium leading-snug transition-colors',
+                    isSelected ? 'text-foreground' : 'text-card-foreground'
+                  )}>
                     <QuestionRenderer content={option.text} />
                     {option.imageUrl && (
                       <div className="mt-3 rounded-lg overflow-hidden border border-border/50 shadow-sm">
-                        <img src={option.imageUrl} alt={`Option ${dynamicLabel}`} className="max-w-full max-h-40 object-contain" />
+                        <img
+                          src={option.imageUrl}
+                          alt={`Option ${dynamicLabel}`}
+                          className="max-w-full max-h-40 object-contain"
+                        />
                       </div>
                     )}
                   </span>
+
+                  {/* Checkmark on selection */}
+                  {isSelected && (
+                    <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
+                  )}
                 </button>
               );
             })}
@@ -117,37 +149,35 @@ export function QuestionViewer() {
       </div>
 
       {/* Action Footer */}
-      <div className="p-4 border-t border-border/50 bg-card/80 backdrop-blur-md">
-        <div className="flex flex-wrap items-center justify-between gap-3 max-w-5xl mx-auto w-full">
-          <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              onClick={clearResponse}
-              disabled={status === 'SUBMITTED' || !currentAnswer}
-              className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors rounded-full px-5"
-            >
-              <Trash2 className="w-4 h-4 mr-2" />
-              Clear Response
-            </Button>
-          </div>
-          
+      <div className="shrink-0 px-6 py-4 border-t border-border/50 bg-card/80 backdrop-blur-md">
+        <div className="max-w-2xl mx-auto flex items-center justify-between gap-3">
+          <Button
+            variant="ghost"
+            onClick={clearResponse}
+            disabled={status === 'SUBMITTED' || !currentAnswer}
+            className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive rounded-full px-5 text-sm"
+          >
+            <Trash2 className="w-4 h-4 mr-2" />
+            Clear
+          </Button>
+
           <div className="flex items-center gap-3">
             <Button
               variant="outline"
               onClick={() => markForReviewAndNext()}
               disabled={status === 'SUBMITTED'}
-              className="rounded-full px-6 bg-indigo-50/50 hover:bg-indigo-100/50 text-indigo-700 dark:bg-indigo-900/20 dark:hover:bg-indigo-900/40 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800 transition-colors"
+              className="rounded-full px-5 text-sm bg-warning/5 hover:bg-warning/10 text-warning border-warning/30 hover:border-warning/50 transition-colors"
             >
               <Bookmark className="w-4 h-4 mr-2" />
-              Mark for Review &amp; Next
+              Review Later
             </Button>
             <Button
               onClick={() => saveAndNext()}
               disabled={status === 'SUBMITTED'}
-              className="rounded-full px-8 bg-emerald-600 hover:bg-emerald-700 text-white shadow-md hover:shadow-lg transition-all active:scale-95"
+              className="rounded-full px-7 text-sm shadow-md hover:shadow-lg transition-all active:scale-95"
             >
               <Save className="w-4 h-4 mr-2" />
-              Save &amp; Next
+              Save & Next
             </Button>
           </div>
         </div>
@@ -155,4 +185,3 @@ export function QuestionViewer() {
     </div>
   );
 }
-
