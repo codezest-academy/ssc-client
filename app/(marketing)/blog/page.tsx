@@ -21,6 +21,7 @@ interface Article {
   publishedAt: string;
   createdAt: string;
   category: Category;
+  isPublished?: boolean;
   author: {
     name: string;
   };
@@ -40,10 +41,23 @@ export default function BlogPage() {
           api.get("/categories"),
         ]);
         
+        // API returns { data: { data: [...] } } — unwrap the envelope
+        const articlesData: Article[] = Array.isArray(articlesRes.data?.data)
+          ? articlesRes.data.data
+          : Array.isArray(articlesRes.data)
+          ? articlesRes.data
+          : [];
+
+        const categoriesData: Category[] = Array.isArray(categoriesRes.data?.data)
+          ? categoriesRes.data.data
+          : Array.isArray(categoriesRes.data)
+          ? categoriesRes.data
+          : [];
+
         // Filter only published articles for the blog
-        const publishedArticles = articlesRes.data.filter((a: any) => a.isPublished);
+        const publishedArticles = articlesData.filter((a) => a.isPublished ?? true);
         setArticles(publishedArticles);
-        setCategories(categoriesRes.data);
+        setCategories(categoriesData);
       } catch (error) {
         console.error("Failed to fetch blog data:", error);
       } finally {
