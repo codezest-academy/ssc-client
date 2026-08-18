@@ -20,8 +20,6 @@ export default function PYQExplorerPage() {
 
   const fetchSubjects = async () => {
     try {
-      setLoading(true);
-      setError(null);
       const res = await api.get("/subjects");
       const subjectsData = res.data.data;
       
@@ -44,7 +42,17 @@ export default function PYQExplorerPage() {
   };
 
   useEffect(() => {
-    fetchSubjects();
+
+
+    (async () => {
+
+
+      await fetchSubjects();
+
+
+    })();
+
+
   }, []);
 
   const generatePYQTest = async (chapterId: string) => {
@@ -80,7 +88,11 @@ export default function PYQExplorerPage() {
       <ErrorState 
         title="Failed to load PYQ subjects" 
         description={error.message} 
-        retry={fetchSubjects} 
+        retry={() => {
+          setLoading(true);
+          setError(null);
+          fetchSubjects();
+        }} 
       />
     );
   }

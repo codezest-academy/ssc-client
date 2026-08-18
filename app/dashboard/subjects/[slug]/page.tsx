@@ -43,8 +43,6 @@ export default function SubjectPage() {
   const fetchSubject = async () => {
     if (!slug) return;
     try {
-      setLoading(true);
-      setError(null);
       const response = await api.get(`/subjects/${slug}`);
       setSubject(response.data.data);
     } catch (err: any) {
@@ -56,7 +54,17 @@ export default function SubjectPage() {
   };
 
   useEffect(() => {
-    fetchSubject();
+
+
+    (async () => {
+
+
+      await fetchSubject();
+
+
+    })();
+
+
   }, [slug]);
 
   if (loading) {
@@ -77,7 +85,11 @@ export default function SubjectPage() {
       <ErrorState 
         title="Failed to load subject" 
         description={error.message} 
-        retry={fetchSubject} 
+        retry={() => {
+          setLoading(true);
+          setError(null);
+          fetchSubject();
+        }} 
       />
     );
   }

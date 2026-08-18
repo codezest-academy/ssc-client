@@ -19,8 +19,6 @@ export default function PracticeSetsPage() {
 
   const fetchSubjects = async () => {
     try {
-      setLoading(true);
-      setError(null);
       const res = await api.get("/subjects");
       setSubjects(res.data.data);
     } catch (e: unknown) {
@@ -33,7 +31,17 @@ export default function PracticeSetsPage() {
   };
 
   useEffect(() => {
-    fetchSubjects();
+
+
+    (async () => {
+
+
+      await fetchSubjects();
+
+
+    })();
+
+
   }, []);
 
   const generateTest = async (subjectId: string) => {
@@ -69,7 +77,11 @@ export default function PracticeSetsPage() {
       <ErrorState
         title="Failed to load subjects"
         description={error.message}
-        retry={fetchSubjects}
+        retry={() => {
+          setLoading(true);
+          setError(null);
+          fetchSubjects();
+        }}
       />
     );
   }

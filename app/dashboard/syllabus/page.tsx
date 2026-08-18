@@ -78,8 +78,6 @@ function SyllabusDocument({ examId }: { examId: string }) {
     let cancelled = false;
     async function fetch() {
       try {
-        setLoading(true);
-        setError(null);
         const res = await api.get(`/exams/${examId}/syllabus`);
         if (!cancelled) setData(res.data.data);
       } catch (err: unknown) {
@@ -186,8 +184,6 @@ export default function SyllabusPage() {
 
   const fetchExams = async () => {
     try {
-      setLoading(true);
-      setError(null);
       const res = await api.get("/exams");
       setExams(res.data.data);
     } catch (err: unknown) {
@@ -198,7 +194,17 @@ export default function SyllabusPage() {
   };
 
   useEffect(() => {
-    fetchExams();
+
+
+    (async () => {
+
+
+      await fetchExams();
+
+
+    })();
+
+
   }, []);
 
   // Group exams by base name for the sidebar
@@ -223,8 +229,10 @@ export default function SyllabusPage() {
     if (examGroups.length > 0 && !selectedBaseExam) {
       const firstGroupName = examGroups[0][0];
       const firstGroupExams = examGroups[0][1];
-      setSelectedBaseExam(firstGroupName);
-      setSelectedYear(firstGroupExams[0].id); // Use exam ID as year selector value
+      Promise.resolve().then(() => {
+        setSelectedBaseExam(firstGroupName);
+        setSelectedYear(firstGroupExams[0].id); // Use exam ID as year selector value
+      });
     }
   }, [examGroups, selectedBaseExam]);
 
@@ -243,7 +251,11 @@ export default function SyllabusPage() {
         <ErrorState
           title="Failed to load syllabus data"
           description={error.message}
-          retry={fetchExams}
+          retry={() => {
+          setLoading(true);
+          setError(null);
+          fetchExams();
+        }}
         />
       </div>
     );

@@ -5,7 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/mode-toggle";
-import { LogOut, Flame, Sparkles, User, ChevronDown, BookOpen, Target, PenTool, BarChart3, Trophy, Map } from "lucide-react";
+import { LogOut, Flame, Sparkles, User, ChevronDown, BookOpen, Target, PenTool, BarChart3, Trophy, Map, Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { api } from "@/lib/axios";
 import {
@@ -41,6 +41,7 @@ export function FloatingNav() {
     { name: "Tests", href: "/dashboard/mock-tests", icon: PenTool },
     { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
     { name: "Leaderboard", href: "/dashboard/leaderboard", icon: Trophy },
+    { name: "Alerts", href: "/alerts", icon: Bell },
   ];
 
   if (!user) return null;

@@ -78,8 +78,6 @@ export default function AnalyticsPage() {
 
   const fetchAnalytics = async () => {
     try {
-      setLoading(true);
-      setError(null);
       const response = await api.get("/analytics/dashboard");
       setData(response.data.data);
     } catch (err: any) {
@@ -91,7 +89,9 @@ export default function AnalyticsPage() {
   };
 
   useEffect(() => {
-    fetchAnalytics();
+    (async () => {
+      await fetchAnalytics();
+    })();
   }, []);
 
   const formatTime = (seconds: number) => {
@@ -130,7 +130,11 @@ export default function AnalyticsPage() {
       <ErrorState 
         title="Failed to load analytics" 
         description={error.message} 
-        retry={fetchAnalytics} 
+        retry={() => {
+          setLoading(true);
+          setError(null);
+          fetchAnalytics();
+        }}
       />
     );
   }

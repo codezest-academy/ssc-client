@@ -37,8 +37,6 @@ export default function PracticeSetOverviewPage() {
   const fetchPracticeSet = async () => {
     if (!id) return;
     try {
-      setLoading(true);
-      setError(null);
       const response = await api.get(`/practice-sets/${id}`);
       setPracticeSet(response.data.data);
     } catch (err: any) {
@@ -50,7 +48,17 @@ export default function PracticeSetOverviewPage() {
   };
 
   useEffect(() => {
-    fetchPracticeSet();
+
+
+    (async () => {
+
+
+      await fetchPracticeSet();
+
+
+    })();
+
+
   }, [id]);
 
   const handleStartPractice = async () => {
@@ -78,7 +86,11 @@ export default function PracticeSetOverviewPage() {
       <ErrorState 
         title="Failed to load practice set" 
         description={error.message} 
-        retry={fetchPracticeSet} 
+        retry={() => {
+          setLoading(true);
+          setError(null);
+          fetchPracticeSet();
+        }} 
       />
     );
   }

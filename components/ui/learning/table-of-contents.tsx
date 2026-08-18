@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 
 interface Heading {
@@ -24,10 +24,9 @@ const slugify = (str: string) => {
 };
 
 export function TableOfContents({ source }: TableOfContentsProps) {
-  const [headings, setHeadings] = useState<Heading[]>([]);
   const [activeId, setActiveId] = useState<string>("");
 
-  useEffect(() => {
+  const headings = useMemo(() => {
     // Parse markdown (## or ###) AND html (<h2>...</h2> or <h3>...</h3>)
     const parsedHeadings: Heading[] = [];
     
@@ -61,7 +60,7 @@ export function TableOfContents({ source }: TableOfContentsProps) {
       return source.indexOf(a.text) - source.indexOf(b.text);
     });
 
-    setHeadings(parsedHeadings);
+    return parsedHeadings;
   }, [source]);
 
   useEffect(() => {

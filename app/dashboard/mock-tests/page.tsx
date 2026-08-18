@@ -34,8 +34,6 @@ export default function MockTestsPage() {
 
   const fetchMockTests = async () => {
     try {
-      setLoading(true);
-      setError(null);
       const response = await api.get("/mock-tests");
       setMockTests(response.data.data);
     } catch (err: any) {
@@ -47,7 +45,17 @@ export default function MockTestsPage() {
   };
 
   useEffect(() => {
-    fetchMockTests();
+
+
+    (async () => {
+
+
+      await fetchMockTests();
+
+
+    })();
+
+
   }, []);
 
   return (
@@ -62,7 +70,11 @@ export default function MockTestsPage() {
         <ErrorState 
           title="Failed to load mock tests" 
           description={error.message} 
-          retry={fetchMockTests} 
+          retry={() => {
+          setLoading(true);
+          setError(null);
+          fetchMockTests();
+        }} 
         />
       ) : loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

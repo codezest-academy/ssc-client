@@ -39,8 +39,6 @@ export default function MockTestOverviewPage() {
   const fetchMockTest = async () => {
     if (!id) return;
     try {
-      setLoading(true);
-      setError(null);
       const response = await api.get(`/mock-tests/${id}`);
       setMockTest(response.data.data);
     } catch (err: any) {
@@ -52,7 +50,17 @@ export default function MockTestOverviewPage() {
   };
 
   useEffect(() => {
-    fetchMockTest();
+
+
+    (async () => {
+
+
+      await fetchMockTest();
+
+
+    })();
+
+
   }, [id]);
 
   const handleStartMockTest = async () => {
@@ -87,7 +95,11 @@ export default function MockTestOverviewPage() {
       <ErrorState 
         title="Failed to load mock test" 
         description={error.message} 
-        retry={fetchMockTest} 
+        retry={() => {
+          setLoading(true);
+          setError(null);
+          fetchMockTest();
+        }} 
       />
     );
   }

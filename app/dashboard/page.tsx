@@ -19,6 +19,7 @@ import {
   ArrowRight,
   Target,
   Library,
+  Bell
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -446,7 +447,7 @@ function WeakTopicsWidget({ weakTopics }: { weakTopics: WeakTopic[] }) {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-xl font-bold text-foreground tracking-tight">Target 160+ Weak Areas</h3>
@@ -455,7 +456,7 @@ function WeakTopicsWidget({ weakTopics }: { weakTopics: WeakTopic[] }) {
           </p>
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 md:gap-6">
         {weakTopics.map((topic) => (
           <div key={topic.id} className="bg-card border border-primary/10 rounded-3xl p-4 flex flex-col justify-between shadow-sm hover:shadow-md hover:-translate-y-1 hover:scale-[1.02] transition-all duration-300">
             <div>
@@ -547,7 +548,43 @@ function GamificationWidget({ profile }: { profile: GamificationProfile | null }
   );
 }
 
+
+function AlertsWidget({ alerts }: { alerts: any[] }) {
+  if (!alerts || alerts.length === 0) return null;
+  return (
+    <div className="bg-primary/5 border border-primary/20 rounded-3xl p-5 shadow-sm">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <div className="bg-primary/10 p-1.5 rounded-xl text-primary">
+            <Bell className="w-5 h-5" />
+          </div>
+          <h3 className="text-lg font-bold text-foreground">Latest Exam Alerts</h3>
+        </div>
+        <Button variant="secondary" size="sm" className="rounded-full h-8 text-xs font-bold px-4 hover:bg-primary hover:text-primary-foreground transition-colors" asChild>
+          <Link href="/alerts">View All</Link>
+        </Button>
+      </div>
+      <div className="flex overflow-x-auto gap-4 pb-2 snap-x">
+        {alerts.slice(0, 5).map((a: any) => (
+          <div key={a.id} className="min-w-[280px] max-w-[280px] bg-card border rounded-2xl p-4 snap-start hover:shadow-md transition-all shrink-0">
+            <div className="flex justify-between items-start mb-2">
+              <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded-full uppercase">{a.vacancies.toLocaleString()} Posts</span>
+              <span className="text-[10px] text-muted-foreground font-semibold">Ends {new Date(a.applicationEndDate).toLocaleDateString()}</span>
+            </div>
+            <h4 className="font-bold text-sm line-clamp-1 mb-1" title={a.title}>{a.title}</h4>
+            <p className="text-xs text-muted-foreground line-clamp-1">{a.organization}</p>
+            <Button variant="outline" size="sm" className="w-full mt-3 rounded-full text-xs" asChild>
+              <a href={a.notificationLink} target="_blank" rel="noopener noreferrer">Official PDF</a>
+            </Button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Dashboard Page ──────────────────────────────────────────────────────
+
 
 export default function DashboardPage() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
@@ -555,20 +592,20 @@ export default function DashboardPage() {
   const [weakTopics, setWeakTopics] = useState<WeakTopic[]>([]);
   const [agenda, setAgenda] = useState<DailyAgenda | null>(null);
   const [gamification, setGamification] = useState<GamificationProfile | null>(null);
+  const [alerts, setAlerts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const user = useAuthStore((state) => state.user);
 
   const loadDashboardData = async () => {
     try {
-      setLoading(true);
-      setError(null);
-      const [subjectsRes, analyticsRes, weakTopicsRes, agendaRes, gamificationRes] = await Promise.allSettled([
+      const [subjectsRes, analyticsRes, weakTopicsRes, agendaRes, gamificationRes, alertsRes] = await Promise.allSettled([
         api.get("/subjects"),
         api.get("/analytics/dashboard"),
         api.get("/analytics/weak-topics"),
         api.get("/dashboard/agenda"),
         api.get("/gamification/profile"),
+        api.get("/notifications"),
       ]);
 
       if (subjectsRes.status === "rejected") {
@@ -589,6 +626,9 @@ export default function DashboardPage() {
       if (gamificationRes.status === "fulfilled") {
         setGamification(gamificationRes.value.data.data);
       }
+      if (alertsRes.status === "fulfilled") {
+        setAlerts(alertsRes.value.data.data);
+      }
     } catch (err: any) {
       console.error("Failed to load dashboard:", err);
       setError(err instanceof Error ? err : new Error(err.message || "Failed to load dashboard data"));
@@ -598,7 +638,17 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
-    loadDashboardData();
+
+
+    (async () => {
+
+
+      await loadDashboardData();
+
+
+    })();
+
+
   }, []);
 
   if (error) {
@@ -606,7 +656,11 @@ export default function DashboardPage() {
       <ErrorState 
         title="Failed to load dashboard" 
         description={error.message} 
-        retry={loadDashboardData} 
+        retry={() => {
+          setLoading(true);
+          setError(null);
+          loadDashboardData();
+        }} 
       />
     );
   }
@@ -622,7 +676,7 @@ export default function DashboardPage() {
     : [];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-12 md:space-y-16">
       {/* ── Persona-Aware Hero ──────────────────────────────── */}
       <PersonaHero
         persona={user?.studyPersona ?? null}
@@ -631,8 +685,11 @@ export default function DashboardPage() {
         agenda={agenda}
       />
 
+      {/* ── Alerts ──────────────────────────────────────────── */}
+      <AlertsWidget alerts={alerts} />
+
       {/* ── Gamification and Target Widgets ─────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
         <GamificationWidget profile={gamification} />
         <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20 rounded-3xl p-5 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-5 shadow-sm group relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 opacity-50 group-hover:opacity-100 transition-opacity duration-700" />
@@ -657,7 +714,7 @@ export default function DashboardPage() {
       <WeakTopicsWidget weakTopics={weakTopics} />
 
       {/* ── Subjects Section ────────────────────────────────── */}
-      <div className="space-y-10">
+      <div className="space-y-12 md:space-y-16">
         {subjects.length === 0 ? (
           <EmptyState 
             icon={Library}
@@ -680,7 +737,7 @@ export default function DashboardPage() {
 
             return (
               <div key={exam}>
-                <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center justify-between mb-6 md:mb-8">
                   <div>
                     <h3 className="text-xl font-bold text-foreground tracking-tight">
                       {examLabel} Curriculum
@@ -698,7 +755,7 @@ export default function DashboardPage() {
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                   {examSubjects.map((subject) => (
                     <Link key={subject.id} href={`/dashboard/subjects/${subject.slug}?exam=${exam}`} className="block group">
                       <div className="h-full bg-card border border-primary/10 hover:border-primary/30 hover:shadow-lg hover:-translate-y-1 hover:scale-[1.02] active:scale-95 transition-all duration-300 rounded-3xl p-5 flex flex-col relative overflow-hidden">

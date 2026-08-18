@@ -46,3 +46,15 @@ Whenever you need to render strings containing LaTeX math (`$$...$$`, `\[...\]`,
 * If a type is truly unknown, use the `unknown` type and perform proper type narrowing.
 * Use `Record<string, unknown>` for generic objects.
 * Never silence TypeScript errors by casting to `any`. Use proper types or `unknown`.
+
+## 8. React Hooks: No `setState` in `useEffect`
+**CRITICAL RULE:** Do not call state setters synchronously inside `useEffect`. This triggers cascading renders and causes the `react-hooks/set-state-in-effect` lint error.
+* **Bad:** Setting state based on a prop change inside an effect.
+* **Good:** Derive the state during the render phase directly, or use a `key` on the component to force a reset.
+* State updates inside `useEffect` are only allowed if they happen asynchronously (e.g., inside `.then()` or after an `await` of an API call) or as a reaction to an event listener.
+
+## 9. TypeScript: Type-Only Imports
+When `verbatimModuleSyntax` or `isolatedModules` is enabled, you **MUST** import types using the `import type` syntax (e.g., `import type { MyInterface } from './types'`). This ensures types are safely stripped during compilation.
+
+## 10. Imports: Path Aliases
+Always use the project's path aliases (e.g., `@/lib/axios`, `@/components/ui/...`) instead of guessing relative paths (e.g., `../../lib/axios`). This prevents broken imports when files are moved.

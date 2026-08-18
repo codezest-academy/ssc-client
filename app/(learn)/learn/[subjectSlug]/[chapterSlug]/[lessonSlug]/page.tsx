@@ -69,13 +69,13 @@ export default function LessonViewerPage() {
     enabled: !!subjectSlug && !!chapterSlug && !!lessonSlug,
   });
 
-  const articlePages = useMemo(() => {
+  const articlePages = (() => {
     if (lesson?.type !== "ARTICLE" || !lesson?.articleHtml) return [];
     return lesson.articleHtml.split(/<hr\s*\/?>|\n---\n/i).map(page => page.trim()).filter(Boolean);
-  }, [lesson?.articleHtml, lesson?.type]);
+  })();
 
   useEffect(() => {
-    setCurrentPage(0);
+    Promise.resolve().then(() => setCurrentPage(0));
   }, [lesson?.id]);
 
   const { data: chapterLessons } = useQuery<Lesson[]>({

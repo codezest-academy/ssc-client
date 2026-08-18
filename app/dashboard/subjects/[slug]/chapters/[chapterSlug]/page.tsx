@@ -66,8 +66,6 @@ export default function ChapterPage() {
   const fetchData = async () => {
     if (!slug || !chapterSlug) return;
     try {
-      setLoading(true);
-      setError(null);
       // Fetch subject to get chapter info (since chapters are public through subjects)
       const subjectRes = await api.get(`/subjects/${slug}`);
       const subjectData = subjectRes.data.data;
@@ -93,7 +91,17 @@ export default function ChapterPage() {
   };
 
   useEffect(() => {
-    fetchData();
+
+
+    (async () => {
+
+
+      await fetchData();
+
+
+    })();
+
+
   }, [slug, chapterSlug]);
 
   if (loading) {
@@ -114,7 +122,11 @@ export default function ChapterPage() {
       <ErrorState 
         title="Failed to load chapter data" 
         description={error.message} 
-        retry={fetchData} 
+        retry={() => {
+          setLoading(true);
+          setError(null);
+          fetchData();
+        }} 
       />
     );
   }

@@ -28,8 +28,6 @@ export default function LeaderboardPage() {
 
   const fetchLeaderboard = async () => {
     try {
-      setLoading(true);
-      setError(null);
       const response = await api.get("/analytics/leaderboard/global");
       setLeaderboard(response.data.data);
     } catch (err: any) {
@@ -41,7 +39,17 @@ export default function LeaderboardPage() {
   };
 
   useEffect(() => {
-    fetchLeaderboard();
+
+
+    (async () => {
+
+
+      await fetchLeaderboard();
+
+
+    })();
+
+
   }, []);
 
   const PageHeader = (
@@ -90,7 +98,11 @@ export default function LeaderboardPage() {
         <ErrorState 
           title="Failed to load leaderboard" 
           description={error.message} 
-          retry={fetchLeaderboard} 
+          retry={() => {
+          setLoading(true);
+          setError(null);
+          fetchLeaderboard();
+        }} 
         />
       </div>
     );
