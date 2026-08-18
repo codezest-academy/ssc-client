@@ -1,44 +1,55 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { api } from "@/lib/axios";
-import {
-  Card, CardContent, CardHeader, CardTitle, CardDescription
-} from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Calculator, Brain, MessageSquare, Globe, FlaskConical, BookOpen,
-  ChevronDown, ChevronUp, BookText, Hash, Calendar
+import { EmptyState } from "@/components/ui/empty-state";
+import { 
+  BookText, 
+  Brain, 
+  Calculator, 
+  Globe, 
+  BookOpen, 
+  MessageSquare, 
+  FlaskConical, 
+  ChevronRight,
+  GraduationCap
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-// ─── Types ──────────────────────────────────────────────────────────────────
+// ─── Interfaces ───────────────────────────────────────────────────────────────
 
 interface TargetExam {
   id: string;
   name: string;
   examYear: number | null;
   description: string | null;
-  _count: { syllabusNodes: number };
+  baseExamName: string | null;
 }
 
-interface SyllabusSubject {
-  subject: { id: string; name: string; slug: string; description: string | null };
-  chapters: { id: string; name: string; slug: string }[];
+interface SyllabusNode {
+  id: string;
+  examId: string;
+  subjectId: string;
+  chapterId?: string;
   weightage: number;
+  order: number;
+  subject: { id: string; name: string; slug: string; description: string | null };
+  chapter?: { id: string; name: string; slug: string };
 }
 
-// ─── Subject Icon/Color Map ──────────────────────────────────────────────────
+// ─── Utils ────────────────────────────────────────────────────────────────────
 
-interface SubjectMeta { icon: LucideIcon; colorClass: string }
-
-function getSubjectMeta(name: string): SubjectMeta {
-  const lower = name.toLowerCase();
-  if (lower.includes("quant") || lower.includes("math") || lower.includes("numerical")) {
+function getSubjectMeta(subjectName: string) {
+  const lower = subjectName.toLowerCase();
+  if (lower.includes("quant") || lower.includes("math")) {
     return { icon: Calculator, colorClass: "text-subject-quant bg-subject-quant/10" };
   }
   if (lower.includes("reason") || lower.includes("intelligence") || lower.includes("logic")) {
@@ -56,10 +67,10 @@ function getSubjectMeta(name: string): SubjectMeta {
   return { icon: BookOpen, colorClass: "text-primary bg-primary/10" };
 }
 
-// ─── Syllabus Accordion ──────────────────────────────────────────────────────
+// ─── Syllabus Document (Right Column) ─────────────────────────────────────────
 
-function SyllabusAccordion({ examId }: { examId: string }) {
-  const [data, setData] = useState<SyllabusSubject[] | null>(null);
+function SyllabusDocument({ examId }: { examId: string }) {
+  const [data, setData] = useState<SyllabusNode[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -83,9 +94,12 @@ function SyllabusAccordion({ examId }: { examId: string }) {
 
   if (loading) {
     return (
-      <div className="grid md:grid-cols-2 gap-4 pt-4">
-        {[1, 2, 3, 4].map((i) => (
-          <Skeleton key={i} className="h-[180px] w-full rounded-xl" />
+      <div className="space-y-8 pt-2">
+        {[1, 2].map((i) => (
+          <div key={i} className="space-y-4">
+            <Skeleton className="h-10 w-1/3" />
+            <Skeleton className="h-[120px] w-full" />
+          </div>
         ))}
       </div>
     );
@@ -101,6 +115,16 @@ function SyllabusAccordion({ examId }: { examId: string }) {
     );
   }
 
+  const groupedData = data ? Array.from(data.reduce((acc: any, node: any) => {
+    if (!acc.has(node.subject?.id)) {
+      acc.set(node.subject?.id, { subject: node.subject, chapters: [], weightage: node.weightage });
+    }
+    if (node.chapter) {
+      acc.get(node.subject?.id).chapters.push(node.chapter);
+    }
+    return acc;
+  }, new Map()).values()) : [];
+
   if (!data || data.length === 0) {
     return (
       <EmptyState
@@ -112,118 +136,40 @@ function SyllabusAccordion({ examId }: { examId: string }) {
   }
 
   return (
-    <div className="grid md:grid-cols-2 gap-4 pt-5">
-      {data.map(({ subject, chapters, weightage }) => {
+    <div className="space-y-12">
+      {groupedData.map(({ subject, chapters, weightage }: any) => {
         const { icon: Icon, colorClass } = getSubjectMeta(subject.name);
         return (
-          <Card key={subject.id} className="border-border shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden">
-            <CardHeader className="pb-3 bg-muted/30 border-b border-border rounded-t-xl">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-lg ${colorClass}`}>
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-base font-semibold text-foreground">
-                      {subject.name}
-                    </CardTitle>
-                    {subject.description && (
-                      <CardDescription className="text-xs mt-0.5 text-muted-foreground line-clamp-1">
-                        {subject.description}
-                      </CardDescription>
-                    )}
-                  </div>
-                </div>
-                {weightage > 0 && (
-                  <Badge variant="secondary" className="bg-muted text-muted-foreground whitespace-nowrap shrink-0 text-xs">
-                    {weightage} Marks
-                  </Badge>
-                )}
+          <div key={subject.id} className="space-y-5">
+            <div className="flex items-center gap-3 pb-3 border-b border-border/60">
+              
+              <div>
+                <h3 className="text-xl font-bold text-foreground tracking-tight">{subject.name}</h3>
+                <p className="text-sm text-muted-foreground mt-0.5">
+                  {chapters.length} Topics • {weightage} Marks
+                </p>
               </div>
-            </CardHeader>
-            <CardContent className="pt-4 pb-4">
-              {chapters.length > 0 ? (
-                <>
-                  <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-3 flex items-center gap-1.5">
-                    <Hash className="w-3 h-3" />
-                    Topics to cover
-                  </p>
-                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {chapters.map((chapter) => (
-                      <li
-                        key={chapter.id}
-                        className="flex items-start gap-2 px-3 py-2 rounded-lg border border-border bg-card hover:border-primary/30 transition-colors"
-                      >
-                        <Hash className="w-3.5 h-3.5 text-primary/40 mt-0.5 shrink-0" />
-                        <span className="text-sm font-medium text-foreground leading-snug">
-                          {chapter.name}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              ) : (
-                <p className="text-sm text-muted-foreground italic">No specific topics listed.</p>
-              )}
-            </CardContent>
-          </Card>
+            </div>
+            
+            {chapters.length > 0 ? (
+              <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4 pt-2">
+                {chapters.map((chapter: any) => (
+                  <li 
+                    key={chapter.id} 
+                    className="flex items-start gap-3 text-foreground/80 hover:text-foreground transition-colors"
+                  >
+                    <span className="text-muted-foreground/60 shrink-0 mt-1">•</span>
+                    <span className="text-[15px] leading-snug">{chapter.name}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-muted-foreground italic pt-2">No topics detailed for this subject.</p>
+            )}
+          </div>
         );
       })}
     </div>
-  );
-}
-
-// ─── Exam Group Row ──────────────────────────────────────────────────────────
-
-function ExamGroupRow({ name, exams }: { name: string; exams: TargetExam[] }) {
-  const [openExamId, setOpenExamId] = useState<string | null>(null);
-
-  const toggleYear = (id: string) => {
-    setOpenExamId((prev) => (prev === id ? null : id));
-  };
-
-  return (
-    <Card className="border-border shadow-sm rounded-xl overflow-hidden">
-      <CardHeader className="pb-4 bg-muted/30 border-b border-border rounded-t-xl">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
-          <div>
-            <CardTitle className="text-xl font-bold text-foreground">{name}</CardTitle>
-            {exams[0]?.description && (
-              <CardDescription className="mt-1 text-sm text-muted-foreground">
-                {exams[0].description}
-              </CardDescription>
-            )}
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {exams.map((exam) => (
-              <button
-                key={exam.id}
-                onClick={() => toggleYear(exam.id)}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold border transition-all duration-150 ${
-                  openExamId === exam.id
-                    ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                    : "bg-card text-muted-foreground border-border hover:border-primary/50 hover:text-foreground"
-                }`}
-              >
-                <Calendar className="w-3.5 h-3.5" />
-                {exam.examYear ?? "General"}
-                {openExamId === exam.id ? (
-                  <ChevronUp className="w-3.5 h-3.5" />
-                ) : (
-                  <ChevronDown className="w-3.5 h-3.5" />
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
-      </CardHeader>
-
-      {openExamId && (
-        <CardContent className="px-6 pb-6">
-          <SyllabusAccordion examId={openExamId} />
-        </CardContent>
-      )}
-    </Card>
   );
 }
 
@@ -233,6 +179,10 @@ export default function SyllabusPage() {
   const [exams, setExams] = useState<TargetExam[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+
+  // Selection State
+  const [selectedBaseExam, setSelectedBaseExam] = useState<string | null>(null);
+  const [selectedYear, setSelectedYear] = useState<string | null>(null);
 
   const fetchExams = async () => {
     try {
@@ -251,54 +201,148 @@ export default function SyllabusPage() {
     fetchExams();
   }, []);
 
-  // Group exams by name (e.g., all years of "SSC CGL Tier 1" together)
-  const grouped = exams.reduce<Record<string, TargetExam[]>>((acc, exam) => {
-    if (!acc[exam.name]) acc[exam.name] = [];
-    acc[exam.name].push(exam);
-    return acc;
-  }, {});
+  // Group exams by base name for the sidebar
+  const examGroups = useMemo(() => {
+    const groups = new Map<string, TargetExam[]>();
+    for (const exam of exams) {
+      const baseName = exam.baseExamName || exam.name;
+      if (!groups.has(baseName)) {
+        groups.set(baseName, []);
+      }
+      groups.get(baseName)!.push(exam);
+    }
+    // Sort years descending
+    for (const group of groups.values()) {
+      group.sort((a, b) => (b.examYear || 0) - (a.examYear || 0));
+    }
+    return Array.from(groups.entries());
+  }, [exams]);
 
-  return (
-    <div className="space-y-8 pb-12">
-      {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground font-display tracking-tight flex items-center gap-2">
-            <BookText className="w-8 h-8 text-primary" />
-            Official Syllabus Reference
-          </h1>
-          <p className="text-muted-foreground mt-1.5">
-            Select an exam and a year to view the complete syllabus breakdown.
-          </p>
-        </div>
+  // Auto-select first exam on load
+  useEffect(() => {
+    if (examGroups.length > 0 && !selectedBaseExam) {
+      const firstGroupName = examGroups[0][0];
+      const firstGroupExams = examGroups[0][1];
+      setSelectedBaseExam(firstGroupName);
+      setSelectedYear(firstGroupExams[0].id); // Use exam ID as year selector value
+    }
+  }, [examGroups, selectedBaseExam]);
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-10 w-[250px]" />
+        <Skeleton className="h-[400px] w-full rounded-xl" />
       </div>
+    );
+  }
 
-      {/* Content */}
-      {error ? (
+  if (error) {
+    return (
+      <div className="pt-12">
         <ErrorState
-          title="Failed to load exams"
+          title="Failed to load syllabus data"
           description={error.message}
           retry={fetchExams}
         />
-      ) : loading ? (
-        <div className="space-y-6">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-[100px] w-full rounded-xl" />
-          ))}
+      </div>
+    );
+  }
+
+  const currentGroupExams = examGroups.find((g) => g[0] === selectedBaseExam)?.[1] || [];
+  const currentExam = currentGroupExams.find((e) => e.id === selectedYear);
+
+  return (
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
+          Syllabus Reference
+        </h1>
+        <p className="text-muted-foreground mt-2">
+          Select an exam from the sidebar to view the complete, official syllabus breakdown.
+        </p>
+      </div>
+
+      <div className="grid lg:grid-cols-12 gap-8 items-start">
+        
+        {/* Left Sidebar (Exam Selector) */}
+        <div className="lg:col-span-3 lg:sticky lg:top-8 bg-card border border-border rounded-xl shadow-sm overflow-hidden flex flex-col">
+          <div className="px-4 py-3 border-b border-border bg-muted/20">
+            <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Target Exams</h2>
+          </div>
+          <nav className="flex flex-col p-2 gap-1 overflow-y-auto max-h-[60vh]">
+            {examGroups.map(([baseName, groupExams]) => {
+              const isActive = selectedBaseExam === baseName;
+              return (
+                <button
+                  key={baseName}
+                  onClick={() => {
+                    setSelectedBaseExam(baseName);
+                    setSelectedYear(groupExams[0].id); // Auto-select most recent year of the new group
+                  }}
+                  className={`flex items-center justify-between px-3 py-2.5 rounded-md text-sm font-medium transition-all ${
+                    isActive 
+                      ? "bg-primary text-primary-foreground shadow-sm" 
+                      : "text-foreground hover:bg-muted/50 hover:text-foreground"
+                  }`}
+                >
+                  <span className="truncate pr-2">{baseName}</span>
+                  {isActive && <ChevronRight className="w-4 h-4 shrink-0 opacity-80" />}
+                </button>
+              );
+            })}
+          </nav>
         </div>
-      ) : Object.keys(grouped).length === 0 ? (
-        <EmptyState
-          icon={BookText}
-          title="No exams available"
-          description="No target exams have been configured yet. Check back later."
-        />
-      ) : (
-        <div className="space-y-6">
-          {Object.entries(grouped).map(([name, examList]) => (
-            <ExamGroupRow key={name} name={name} exams={examList} />
-          ))}
+
+        {/* Main Content Area (Right Column) */}
+        <div className="lg:col-span-9 bg-card border border-border rounded-xl shadow-sm p-6 sm:p-8 min-h-[500px]">
+          {selectedBaseExam && selectedYear && currentExam ? (
+            <div className="space-y-10">
+              {/* Header & Year Selector */}
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-border pb-6">
+                <div>
+                  <h2 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
+                    
+                    {currentExam.name}
+                  </h2>
+                  {currentExam.description && (
+                    <p className="text-muted-foreground mt-1.5 leading-relaxed">
+                      {currentExam.description}
+                    </p>
+                  )}
+                </div>
+                
+                {/* Year Dropdown */}
+                {currentGroupExams.length > 0 && (
+                  <div className="shrink-0">
+                    <Select value={selectedYear} onValueChange={setSelectedYear}>
+                      <SelectTrigger className="w-[140px] font-semibold bg-background">
+                        <SelectValue placeholder="Select Year" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {currentGroupExams.map((exam) => (
+                          <SelectItem key={exam.id} value={exam.id}>
+                            {exam.examYear ? `Year ${exam.examYear}` : "General Year"}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              </div>
+
+              {/* Document Body */}
+              <SyllabusDocument examId={selectedYear} />
+            </div>
+          ) : (
+            <div className="h-full flex flex-col items-center justify-center text-center p-12 opacity-50">
+              <BookText className="w-16 h-16 mb-4 text-muted-foreground" />
+              <p className="text-lg font-medium">Select an exam to view syllabus</p>
+            </div>
+          )}
         </div>
-      )}
+
+      </div>
     </div>
   );
 }

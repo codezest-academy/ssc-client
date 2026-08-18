@@ -55,7 +55,7 @@ export function SubjectRadarChart({ data }: SubjectRadarChartProps) {
                   fontWeight: "bold",
                   color: "hsl(var(--foreground))"
                 }}
-                formatter={(value: number) => [`${value}%`, "Accuracy"]}
+                formatter={(value: any) => [`${value}%`, "Accuracy"]}
               />
             </RadarChart>
           </ResponsiveContainer>

@@ -33,6 +33,7 @@
 | **Phase 10** | Premium / Subscription gate UI + Razorpay checkout | ✅ Complete | API Phase 10 |
 | **Phase 11** | Persona Onboarding Wizard (4-step) + Persona-Aware Dashboard | ✅ Complete | API Phase 13 |
 | **Phase 12** | Continuous Feedback Loop (widget + admin inbox) | ✅ Complete | API Phase 14 |
+| **Phase 13** | Public Exam Notifications & Job Alerts — SEO pages & Dashboard Widget | 🟡 In Progress | API Phase 14 |
 
 ---
 
