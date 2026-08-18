@@ -52,7 +52,11 @@ export default function StudyPreferencesForm({ user, onSuccess }: StudyPreferenc
     setIsLoading(true);
     try {
       const response = await api.patch("/users/me", data);
-      setUser(response.data.data.user);
+      // API may return { data: { user: {...} } } or { data: {...user fields...} }
+      const updatedUser: User = response.data.data?.user ?? response.data.data;
+      if (updatedUser?.id) {
+        setUser(updatedUser);
+      }
       toast.success("Study preferences updated successfully!");
       onSuccess?.();
     } catch (err: unknown) {

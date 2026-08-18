@@ -11,8 +11,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { useState } from "react";
-import { Loader2, User, Mail, Phone, MapPin, Calendar, Briefcase, UserRound } from "lucide-react";
-import type { User as UserType } from "@/store/auth";
+import { Loader2, User as UserIcon2, Mail, Phone, MapPin, Calendar, Briefcase, UserRound } from "lucide-react";
+import type { User } from "@/store/auth";
 
 const profileSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(100).optional(),
@@ -26,7 +26,7 @@ const profileSchema = z.object({
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
 interface ProfileFormProps {
-  user: UserType;
+  user: User;
   onSuccess?: () => void;
 }
 
@@ -50,7 +50,11 @@ export default function ProfileForm({ user, onSuccess }: ProfileFormProps) {
     setIsLoading(true);
     try {
       const response = await api.patch("/users/me", data);
-      setUser(response.data.data.user);
+      // API may return { data: { user: {...} } } or { data: {...user fields...} }
+      const updatedUser: User = response.data.data?.user ?? response.data.data;
+      if (updatedUser?.id) {
+        setUser(updatedUser);
+      }
       toast.success("Profile updated successfully!");
       onSuccess?.();
     } catch (err: unknown) {
@@ -69,7 +73,7 @@ export default function ProfileForm({ user, onSuccess }: ProfileFormProps) {
         <div className="space-y-2.5">
           <Label htmlFor="name" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Full Name</Label>
           <div className="relative">
-            <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <UserIcon2 className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               id="name"
               {...form.register("name")}
