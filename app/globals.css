@@ -101,9 +101,9 @@
     --primary:             oklch(0.55 0.22 275);
     --primary-foreground:  oklch(0.98 0.01 275);
 
-    /* ── Secondary: Deep Navy ────────────────────────────────── */
-    --secondary:           oklch(0.20 0.04 250);
-    --secondary-foreground: oklch(0.98 0.01 250);
+    /* ── Secondary ────────────────────────────────── */
+    --secondary:           oklch(0.96 0.01 250); /* Light slate */
+    --secondary-foreground: oklch(0.20 0.04 250); /* Deep navy */
 
     /* ── Muted ───────────────────────────────────────────────── */
     --muted:               oklch(0.95 0.01 250); /* Darker gray for outer shell differentiation */
