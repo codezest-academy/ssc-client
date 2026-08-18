@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { useState } from "react";
 import { Loader2, User, Mail, Phone, MapPin, Calendar, Briefcase, UserRound } from "lucide-react";
+import type { User as UserType } from "@/store/auth";
 
 const profileSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(100).optional(),
@@ -24,7 +25,12 @@ const profileSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
-export default function ProfileForm({ user }: { user: any }) {
+interface ProfileFormProps {
+  user: UserType;
+  onSuccess?: () => void;
+}
+
+export default function ProfileForm({ user, onSuccess }: ProfileFormProps) {
   const setUser = useAuthStore((state) => state.setUser);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -46,137 +52,135 @@ export default function ProfileForm({ user }: { user: any }) {
       const response = await api.patch("/users/me", data);
       setUser(response.data.data.user);
       toast.success("Profile updated successfully!");
-    } catch (error: any) {
+      onSuccess?.();
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
       toast.error(error.response?.data?.message || "Failed to update profile");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const getInitials = (name: string) => {
-    return name
-      ? name.split(" ").map((n) => n[0]).join("").substring(0, 2).toUpperCase()
-      : "U";
-  };
-
   return (
-    <div className="space-y-10">
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8">
-          
-          {/* Full Name */}
-          <div className="space-y-2.5">
-            <Label htmlFor="name" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Full Name</Label>
-            <div className="relative">
-              <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input 
-                id="name" 
-                {...form.register("name")} 
-                className="rounded-2xl pl-10 bg-muted/30 border-transparent hover:bg-muted/50 focus:bg-background focus:border-primary transition-all h-12" 
-              />
-            </div>
-            {form.formState.errors.name && (
-              <p className="text-[10px] text-destructive font-bold">{form.formState.errors.name.message}</p>
-            )}
-          </div>
-          
-          {/* Email (Disabled) */}
-          <div className="space-y-2.5">
-            <Label htmlFor="email" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Email Address</Label>
-            <div className="relative">
-              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground opacity-50" />
-              <Input 
-                id="email" 
-                value={user.email} 
-                disabled 
-                className="rounded-2xl pl-10 bg-muted/20 border-transparent text-muted-foreground h-12" 
-              />
-            </div>
-          </div>
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
 
-          {/* Phone */}
-          <div className="space-y-2.5">
-            <Label htmlFor="phone" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Phone Number</Label>
-            <div className="relative">
-              <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input 
-                id="phone" 
-                {...form.register("phone")} 
-                className="rounded-2xl pl-10 bg-muted/30 border-transparent hover:bg-muted/50 focus:bg-background focus:border-primary transition-all h-12" 
-              />
-            </div>
+        {/* Full Name */}
+        <div className="space-y-2.5">
+          <Label htmlFor="name" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Full Name</Label>
+          <div className="relative">
+            <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              id="name"
+              {...form.register("name")}
+              className="rounded-2xl pl-10 bg-muted/30 border-transparent hover:bg-muted/50 focus:bg-background focus:border-primary transition-all h-12"
+            />
           </div>
+          {form.formState.errors.name && (
+            <p className="text-[10px] text-destructive font-bold">{form.formState.errors.name.message}</p>
+          )}
+        </div>
 
-          {/* City */}
-          <div className="space-y-2.5">
-            <Label htmlFor="city" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">City</Label>
-            <div className="relative">
-              <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input 
-                id="city" 
-                {...form.register("city")} 
-                className="rounded-2xl pl-10 bg-muted/30 border-transparent hover:bg-muted/50 focus:bg-background focus:border-primary transition-all h-12" 
-              />
-            </div>
-          </div>
-
-          {/* Age */}
-          <div className="space-y-2.5">
-            <Label htmlFor="age" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Age</Label>
-            <div className="relative">
-              <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input 
-                id="age" 
-                type="number" 
-                {...form.register("age")} 
-                className="rounded-2xl pl-10 bg-muted/30 border-transparent hover:bg-muted/50 focus:bg-background focus:border-primary transition-all h-12" 
-              />
-            </div>
-          </div>
-
-          {/* Gender */}
-          <div className="space-y-2.5">
-            <Label htmlFor="gender" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Gender</Label>
-            <div className="relative">
-              <UserRound className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10 pointer-events-none" />
-              <Select 
-                value={form.watch("gender")} 
-                onValueChange={(val) => form.setValue("gender", val as any)}
-              >
-                <SelectTrigger className="rounded-2xl pl-10 bg-muted/30 border-transparent hover:bg-muted/50 focus:bg-background focus:border-primary transition-all h-12">
-                  <SelectValue placeholder="Select gender" />
-                </SelectTrigger>
-                <SelectContent className="rounded-2xl">
-                  <SelectItem value="MALE">Male</SelectItem>
-                  <SelectItem value="FEMALE">Female</SelectItem>
-                  <SelectItem value="OTHER">Other</SelectItem>
-                  <SelectItem value="PREFER_NOT_TO_SAY">Prefer not to say</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* Occupation */}
-          <div className="space-y-2.5 md:col-span-2">
-            <Label htmlFor="occupation" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Occupation</Label>
-            <div className="relative">
-              <Briefcase className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input 
-                id="occupation" 
-                {...form.register("occupation")} 
-                className="rounded-2xl pl-10 bg-muted/30 border-transparent hover:bg-muted/50 focus:bg-background focus:border-primary transition-all h-12" 
-              />
-            </div>
+        {/* Email (Disabled) */}
+        <div className="space-y-2.5">
+          <Label htmlFor="email" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Email Address</Label>
+          <div className="relative">
+            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground opacity-50" />
+            <Input
+              id="email"
+              value={user.email}
+              disabled
+              className="rounded-2xl pl-10 bg-muted/20 border-transparent text-muted-foreground h-12"
+            />
           </div>
         </div>
 
-        <div className="pt-4 flex justify-end">
-          <Button type="submit" disabled={isLoading} className="rounded-2xl h-12 font-bold px-8 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all w-full md:w-auto">
-            {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-            Save Changes
-          </Button>
+        {/* Phone */}
+        <div className="space-y-2.5">
+          <Label htmlFor="phone" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Phone Number</Label>
+          <div className="relative">
+            <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              id="phone"
+              {...form.register("phone")}
+              className="rounded-2xl pl-10 bg-muted/30 border-transparent hover:bg-muted/50 focus:bg-background focus:border-primary transition-all h-12"
+            />
+          </div>
         </div>
-      </form>
-    </div>
+
+        {/* City */}
+        <div className="space-y-2.5">
+          <Label htmlFor="city" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">City</Label>
+          <div className="relative">
+            <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              id="city"
+              {...form.register("city")}
+              className="rounded-2xl pl-10 bg-muted/30 border-transparent hover:bg-muted/50 focus:bg-background focus:border-primary transition-all h-12"
+            />
+          </div>
+        </div>
+
+        {/* Age */}
+        <div className="space-y-2.5">
+          <Label htmlFor="age" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Age</Label>
+          <div className="relative">
+            <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              id="age"
+              type="number"
+              {...form.register("age")}
+              className="rounded-2xl pl-10 bg-muted/30 border-transparent hover:bg-muted/50 focus:bg-background focus:border-primary transition-all h-12"
+            />
+          </div>
+        </div>
+
+        {/* Gender */}
+        <div className="space-y-2.5">
+          <Label htmlFor="gender" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Gender</Label>
+          <div className="relative">
+            <UserRound className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10 pointer-events-none" />
+            <Select
+              value={form.watch("gender")}
+              onValueChange={(val) => form.setValue("gender", val as "MALE" | "FEMALE" | "OTHER" | "PREFER_NOT_TO_SAY")}
+            >
+              <SelectTrigger className="rounded-2xl pl-10 bg-muted/30 border-transparent hover:bg-muted/50 focus:bg-background focus:border-primary transition-all h-12">
+                <SelectValue placeholder="Select gender" />
+              </SelectTrigger>
+              <SelectContent className="rounded-2xl">
+                <SelectItem value="MALE">Male</SelectItem>
+                <SelectItem value="FEMALE">Female</SelectItem>
+                <SelectItem value="OTHER">Other</SelectItem>
+                <SelectItem value="PREFER_NOT_TO_SAY">Prefer not to say</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {/* Occupation */}
+        <div className="space-y-2.5 md:col-span-2">
+          <Label htmlFor="occupation" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Occupation</Label>
+          <div className="relative">
+            <Briefcase className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              id="occupation"
+              {...form.register("occupation")}
+              className="rounded-2xl pl-10 bg-muted/30 border-transparent hover:bg-muted/50 focus:bg-background focus:border-primary transition-all h-12"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="pt-2 flex justify-end gap-3">
+        <Button
+          type="submit"
+          disabled={isLoading}
+          className="rounded-2xl h-11 font-bold px-8 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all"
+        >
+          {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+          Save Changes
+        </Button>
+      </div>
+    </form>
   );
 }

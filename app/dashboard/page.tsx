@@ -209,7 +209,7 @@ function PartTimeHero({ userName, agenda }: { userName: string, agenda: DailyAge
             <span className="text-[10px] font-extrabold text-primary uppercase tracking-widest">Quick Session</span>
           </div>
           <h2 className="text-2xl font-black tracking-tight text-foreground mb-1.5">
-            Hey {userName.split(" ")[0]}, got 15 mins? ⚡
+            Hey {userName.split(" ")[0]}, got 15 mins?
           </h2>
           <p className="text-muted-foreground text-sm max-w-sm leading-relaxed">
             You&apos;re on the <span className="text-foreground font-bold">balanced track</span>. Short daily sessions are the key to consistency.

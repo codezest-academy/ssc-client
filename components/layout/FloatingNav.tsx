@@ -71,8 +71,8 @@ export function FloatingNav() {
                     className={cn(
                       "px-3 py-1.5 text-sm font-medium rounded-full transition-colors",
                       isActive 
-                        ? "bg-slate-100 text-primary font-semibold" 
-                        : "text-muted-foreground hover:text-foreground hover:bg-slate-50"
+                        ? "bg-primary/10 text-primary font-semibold" 
+                        : "text-muted-foreground hover:text-foreground hover:bg-accent"
                     )}
                   >
                     {link.name}
@@ -162,7 +162,7 @@ export function FloatingNav() {
                 "flex flex-col items-center gap-1 p-2 w-full text-[10px] font-semibold transition-colors rounded-xl",
                 isActive
                   ? "text-primary bg-primary/5"
-                  : "text-muted-foreground hover:text-foreground hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                  : "text-muted-foreground hover:text-foreground hover:bg-accent"
               )}
             >
               <Icon className={cn("w-5 h-5", isActive ? "fill-primary/20" : "")} />

@@ -34,6 +34,7 @@ export interface User {
   dailyStudyTime: DailyStudyTime | null;
   hasAttemptedBefore: boolean;
   // Demographics (all optional)
+  phone?: string | null;
   age?: number | null;
   gender?: Gender | null;
   educationLevel?: EducationLevel | null;
