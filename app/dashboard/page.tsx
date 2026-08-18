@@ -2,11 +2,29 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   BookOpen,
   Book,
@@ -19,7 +37,7 @@ import {
   ArrowRight,
   Target,
   Library,
-  Bell
+  Bell,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -80,70 +98,82 @@ interface GamificationProfile {
       name: string;
       iconUrl: string;
       description: string;
-    }
+    };
   }>;
 }
 
 const getExamColorClasses = (examId: string) => {
   switch (examId) {
-    case "SSC_CGL": return { 
-      cardBorder: "border-exam-cgl/10 hover:border-exam-cgl/30",
-      shapeBg: "bg-exam-cgl/5 group-hover:bg-exam-cgl/10",
-      titleHover: "group-hover:text-exam-cgl",
-      text: "text-exam-cgl",
-      progressBg: "bg-exam-cgl/10",
-      progressFill: "bg-exam-cgl",
-      token: "--color-exam-cgl"
-    };
-    case "SSC_CHSL": return { 
-      cardBorder: "border-exam-chsl/10 hover:border-exam-chsl/30",
-      shapeBg: "bg-exam-chsl/5 group-hover:bg-exam-chsl/10",
-      titleHover: "group-hover:text-exam-chsl",
-      text: "text-exam-chsl",
-      progressBg: "bg-exam-chsl/10",
-      progressFill: "bg-exam-chsl",
-      token: "--color-exam-chsl"
-    };
-    case "SSC_MTS": return { 
-      cardBorder: "border-exam-mts/10 hover:border-exam-mts/30",
-      shapeBg: "bg-exam-mts/5 group-hover:bg-exam-mts/10",
-      titleHover: "group-hover:text-exam-mts",
-      text: "text-exam-mts",
-      progressBg: "bg-exam-mts/10",
-      progressFill: "bg-exam-mts",
-      token: "--color-exam-mts"
-    };
-    case "SSC_CPO": return { 
-      cardBorder: "border-exam-cpo/10 hover:border-exam-cpo/30",
-      shapeBg: "bg-exam-cpo/5 group-hover:bg-exam-cpo/10",
-      titleHover: "group-hover:text-exam-cpo",
-      text: "text-exam-cpo",
-      progressBg: "bg-exam-cpo/10",
-      progressFill: "bg-exam-cpo",
-      token: "--color-exam-cpo"
-    };
-    case "SSC_GD": return { 
-      cardBorder: "border-exam-gd/10 hover:border-exam-gd/30",
-      shapeBg: "bg-exam-gd/5 group-hover:bg-exam-gd/10",
-      titleHover: "group-hover:text-exam-gd",
-      text: "text-exam-gd",
-      progressBg: "bg-exam-gd/10",
-      progressFill: "bg-exam-gd",
-      token: "--color-exam-gd"
-    };
-    default: return { 
-      cardBorder: "border-primary/10 hover:border-primary/30",
-      shapeBg: "bg-primary/5 group-hover:bg-primary/10",
-      titleHover: "group-hover:text-primary",
-      text: "text-primary",
-      progressBg: "bg-primary/10",
-      progressFill: "bg-primary",
-      token: "--color-primary"
-    };
+    case "SSC_CGL":
+      return {
+        cardBorder: "border-exam-cgl/10 hover:border-exam-cgl/30",
+        shapeBg: "bg-exam-cgl/5 group-hover:bg-exam-cgl/10",
+        titleHover: "group-hover:text-exam-cgl",
+        text: "text-exam-cgl",
+        progressBg: "bg-exam-cgl/10",
+        progressFill: "bg-exam-cgl",
+        token: "--color-exam-cgl",
+      };
+    case "SSC_CHSL":
+      return {
+        cardBorder: "border-exam-chsl/10 hover:border-exam-chsl/30",
+        shapeBg: "bg-exam-chsl/5 group-hover:bg-exam-chsl/10",
+        titleHover: "group-hover:text-exam-chsl",
+        text: "text-exam-chsl",
+        progressBg: "bg-exam-chsl/10",
+        progressFill: "bg-exam-chsl",
+        token: "--color-exam-chsl",
+      };
+    case "SSC_MTS":
+      return {
+        cardBorder: "border-exam-mts/10 hover:border-exam-mts/30",
+        shapeBg: "bg-exam-mts/5 group-hover:bg-exam-mts/10",
+        titleHover: "group-hover:text-exam-mts",
+        text: "text-exam-mts",
+        progressBg: "bg-exam-mts/10",
+        progressFill: "bg-exam-mts",
+        token: "--color-exam-mts",
+      };
+    case "SSC_CPO":
+      return {
+        cardBorder: "border-exam-cpo/10 hover:border-exam-cpo/30",
+        shapeBg: "bg-exam-cpo/5 group-hover:bg-exam-cpo/10",
+        titleHover: "group-hover:text-exam-cpo",
+        text: "text-exam-cpo",
+        progressBg: "bg-exam-cpo/10",
+        progressFill: "bg-exam-cpo",
+        token: "--color-exam-cpo",
+      };
+    case "SSC_GD":
+      return {
+        cardBorder: "border-exam-gd/10 hover:border-exam-gd/30",
+        shapeBg: "bg-exam-gd/5 group-hover:bg-exam-gd/10",
+        titleHover: "group-hover:text-exam-gd",
+        text: "text-exam-gd",
+        progressBg: "bg-exam-gd/10",
+        progressFill: "bg-exam-gd",
+        token: "--color-exam-gd",
+      };
+    default:
+      return {
+        cardBorder: "border-primary/10 hover:border-primary/30",
+        shapeBg: "bg-primary/5 group-hover:bg-primary/10",
+        titleHover: "group-hover:text-primary",
+        text: "text-primary",
+        progressBg: "bg-primary/10",
+        progressFill: "bg-primary",
+        token: "--color-primary",
+      };
   }
 };
 
-function FullTimeHero({ userName, agenda }: { userName: string, agenda: DailyAgenda | null }) {
+function FullTimeHero({
+  userName,
+  agenda,
+}: {
+  userName: string;
+  agenda: DailyAgenda | null;
+}) {
   return (
     <div className="relative rounded-3xl overflow-hidden bg-card border border-primary/10 p-5 md:p-6 shadow-sm group">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-primary/5 to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
@@ -153,22 +183,41 @@ function FullTimeHero({ userName, agenda }: { userName: string, agenda: DailyAge
             <div className="bg-primary/10 p-1.5 rounded-xl">
               <Flame className="w-4 h-4 text-primary" />
             </div>
-            <span className="text-[10px] font-extrabold text-primary uppercase tracking-widest">Today&apos;s Plan</span>
+            <span className="text-[10px] font-extrabold text-primary uppercase tracking-widest">
+              Today&apos;s Plan
+            </span>
           </div>
           <h2 className="text-2xl font-black tracking-tight text-foreground mb-1.5">
             Good morning, {userName.split(" ")[0]}! ☀️
           </h2>
           <p className="text-muted-foreground text-sm max-w-sm leading-relaxed">
-            You&apos;re on the <span className="text-foreground font-bold">full track</span>. Today: {agenda?.targets.lessons || 2} lessons, {agenda?.targets.practice || 1} practice set.
+            You&apos;re on the{" "}
+            <span className="text-foreground font-bold">full track</span>.
+            Today: {agenda?.targets.lessons || 2} lessons,{" "}
+            {agenda?.targets.practice || 1} practice set.
           </p>
           <div className="flex flex-wrap items-center gap-2 mt-4">
-            <Link href={agenda?.nextLesson ? `/dashboard/subjects/${agenda.nextLesson.subjectSlug}/chapters/${agenda.nextLesson.chapterSlug}/lessons/${agenda.nextLesson.slug}` : "/dashboard/subjects"}>
-              <Button size="sm" variant="default" className="rounded-2xl font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all">
+            <Link
+              href={
+                agenda?.nextLesson
+                  ? `/dashboard/subjects/${agenda.nextLesson.subjectSlug}/chapters/${agenda.nextLesson.chapterSlug}/lessons/${agenda.nextLesson.slug}`
+                  : "/dashboard/subjects"
+              }
+            >
+              <Button
+                size="sm"
+                variant="default"
+                className="rounded-2xl font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all"
+              >
                 Let&apos;s go! <ArrowRight className="ml-1.5 w-4 h-4" />
               </Button>
             </Link>
             <Link href="/dashboard/practice-sets">
-              <Button size="sm" variant="secondary" className="rounded-2xl font-bold hover:bg-secondary/80 transition-all">
+              <Button
+                size="sm"
+                variant="secondary"
+                className="rounded-2xl font-bold hover:bg-secondary/80 transition-all"
+              >
                 Practice
               </Button>
             </Link>
@@ -177,16 +226,33 @@ function FullTimeHero({ userName, agenda }: { userName: string, agenda: DailyAge
         {/* Daily target chips */}
         <div className="flex flex-row md:flex-col gap-2 shrink-0">
           {[
-            { label: "Lessons", target: agenda?.targets.lessons || 2, current: agenda?.progress.lessonsCompletedToday || 0, icon: Book },
-            { label: "Practice", target: agenda?.targets.practice || 1, current: agenda?.progress.practiceCompletedToday || 0, icon: Target },
+            {
+              label: "Lessons",
+              target: agenda?.targets.lessons || 2,
+              current: agenda?.progress.lessonsCompletedToday || 0,
+              icon: Book,
+            },
+            {
+              label: "Practice",
+              target: agenda?.targets.practice || 1,
+              current: agenda?.progress.practiceCompletedToday || 0,
+              icon: Target,
+            },
           ].map((item) => (
-            <div key={item.label} className="flex items-center gap-3 bg-background/50 backdrop-blur-md border border-border/50 dark:border-white/10 rounded-2xl px-3 py-2 min-w-[120px] shadow-sm">
+            <div
+              key={item.label}
+              className="flex items-center gap-3 bg-background/50 backdrop-blur-md border border-border/50 dark:border-white/10 rounded-2xl px-3 py-2 min-w-[120px] shadow-sm"
+            >
               <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
                 <item.icon className="w-4 h-4" />
               </div>
               <div>
-                <p className="text-[10px] font-bold text-muted-foreground uppercase">{item.label}</p>
-                <p className="text-sm font-black text-foreground">{item.current}/{item.target}</p>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase">
+                  {item.label}
+                </p>
+                <p className="text-sm font-black text-foreground">
+                  {item.current}/{item.target}
+                </p>
               </div>
             </div>
           ))}
@@ -196,7 +262,13 @@ function FullTimeHero({ userName, agenda }: { userName: string, agenda: DailyAge
   );
 }
 
-function PartTimeHero({ userName, agenda }: { userName: string, agenda: DailyAgenda | null }) {
+function PartTimeHero({
+  userName,
+  agenda,
+}: {
+  userName: string;
+  agenda: DailyAgenda | null;
+}) {
   return (
     <div className="relative rounded-3xl overflow-hidden bg-card border border-primary/10 p-5 md:p-6 shadow-sm group">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-primary/5 to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
@@ -206,22 +278,34 @@ function PartTimeHero({ userName, agenda }: { userName: string, agenda: DailyAge
             <div className="bg-primary/10 p-1.5 rounded-xl">
               <Zap className="w-4 h-4 text-primary" />
             </div>
-            <span className="text-[10px] font-extrabold text-primary uppercase tracking-widest">Quick Session</span>
+            <span className="text-[10px] font-extrabold text-primary uppercase tracking-widest">
+              Quick Session
+            </span>
           </div>
           <h2 className="text-2xl font-black tracking-tight text-foreground mb-1.5">
             Hey {userName.split(" ")[0]}, got 15 mins?
           </h2>
           <p className="text-muted-foreground text-sm max-w-sm leading-relaxed">
-            You&apos;re on the <span className="text-foreground font-bold">balanced track</span>. Short daily sessions are the key to consistency.
+            You&apos;re on the{" "}
+            <span className="text-foreground font-bold">balanced track</span>.
+            Short daily sessions are the key to consistency.
           </p>
           <div className="flex flex-wrap items-center gap-2 mt-4">
             <Link href="/dashboard/practice-sets">
-              <Button size="sm" variant="default" className="rounded-2xl font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all">
+              <Button
+                size="sm"
+                variant="default"
+                className="rounded-2xl font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all"
+              >
                 Start Quiz
               </Button>
             </Link>
             <Link href="/dashboard/mock-tests">
-              <Button size="sm" variant="secondary" className="rounded-2xl font-bold hover:bg-secondary/80 transition-all">
+              <Button
+                size="sm"
+                variant="secondary"
+                className="rounded-2xl font-bold hover:bg-secondary/80 transition-all"
+              >
                 Mock Tests
               </Button>
             </Link>
@@ -233,9 +317,13 @@ function PartTimeHero({ userName, agenda }: { userName: string, agenda: DailyAge
               <Clock className="w-4 h-4" />
             </div>
             <div>
-              <p className="text-[10px] font-bold text-muted-foreground uppercase">Today&apos;s target</p>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase">
+                Today&apos;s target
+              </p>
               <p className="text-sm font-black text-foreground">
-                {agenda?.progress.practiceCompletedToday ? "Done! 🎉" : "15 min quiz"}
+                {agenda?.progress.practiceCompletedToday
+                  ? "Done! 🎉"
+                  : "15 min quiz"}
               </p>
             </div>
           </div>
@@ -245,18 +333,32 @@ function PartTimeHero({ userName, agenda }: { userName: string, agenda: DailyAge
   );
 }
 
-function RepeatHero({ userName, accuracy, agenda }: { userName: string; accuracy: number | null; agenda: DailyAgenda | null }) {
+function RepeatHero({
+  userName,
+  accuracy,
+  agenda,
+}: {
+  userName: string;
+  accuracy: number | null;
+  agenda: DailyAgenda | null;
+}) {
   const accuracyColor =
-    accuracy === null ? "text-muted-foreground" :
-    accuracy >= 70 ? "text-success" :
-    accuracy >= 40 ? "text-warning" :
-    "text-destructive";
+    accuracy === null
+      ? "text-muted-foreground"
+      : accuracy >= 70
+        ? "text-success"
+        : accuracy >= 40
+          ? "text-warning"
+          : "text-destructive";
 
-  const accuracyBg = 
-    accuracy === null ? "bg-muted" :
-    accuracy >= 70 ? "bg-success/10" :
-    accuracy >= 40 ? "bg-warning/10" :
-    "bg-destructive/10";
+  const accuracyBg =
+    accuracy === null
+      ? "bg-muted"
+      : accuracy >= 70
+        ? "bg-success/10"
+        : accuracy >= 40
+          ? "bg-warning/10"
+          : "bg-destructive/10";
 
   return (
     <div className="relative rounded-3xl overflow-hidden bg-card border border-primary/10 p-5 md:p-6 shadow-sm group">
@@ -267,7 +369,9 @@ function RepeatHero({ userName, accuracy, agenda }: { userName: string; accuracy
             <div className="bg-primary/10 p-1.5 rounded-xl">
               <BarChart2 className="w-4 h-4 text-primary" />
             </div>
-            <span className="text-[10px] font-extrabold text-primary uppercase tracking-widest">Advanced Track</span>
+            <span className="text-[10px] font-extrabold text-primary uppercase tracking-widest">
+              Advanced Track
+            </span>
           </div>
           <h2 className="text-2xl font-black tracking-tight text-foreground mb-1.5">
             Welcome back, {userName.split(" ")[0]}! 🔁
@@ -275,20 +379,32 @@ function RepeatHero({ userName, accuracy, agenda }: { userName: string; accuracy
           <p className="text-muted-foreground text-sm max-w-sm leading-relaxed">
             Focus on plugging the gaps — your overall accuracy is{" "}
             {accuracy !== null ? (
-              <span className={cn("font-bold", accuracyColor)}>{Math.round(accuracy)}%</span>
+              <span className={cn("font-bold", accuracyColor)}>
+                {Math.round(accuracy)}%
+              </span>
             ) : (
-              <span className="text-foreground font-bold">not measured yet</span>
+              <span className="text-foreground font-bold">
+                not measured yet
+              </span>
             )}
             .
           </p>
           <div className="flex flex-wrap items-center gap-2 mt-4">
             <Link href="/dashboard/mock-tests">
-              <Button size="sm" variant="default" className="rounded-2xl font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all">
+              <Button
+                size="sm"
+                variant="default"
+                className="rounded-2xl font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all"
+              >
                 Mock Tests <ArrowRight className="ml-1.5 w-4 h-4" />
               </Button>
             </Link>
             <Link href="/dashboard/analytics">
-              <Button size="sm" variant="secondary" className="rounded-2xl font-bold hover:bg-secondary/80 transition-all">
+              <Button
+                size="sm"
+                variant="secondary"
+                className="rounded-2xl font-bold hover:bg-secondary/80 transition-all"
+              >
                 Analytics
               </Button>
             </Link>
@@ -297,12 +413,22 @@ function RepeatHero({ userName, accuracy, agenda }: { userName: string; accuracy
         {accuracy !== null && (
           <div className="flex md:flex-col gap-2 shrink-0">
             <div className="flex items-center gap-3 bg-background/50 backdrop-blur-md border border-white/10 rounded-2xl px-3 py-2 min-w-[120px]">
-              <div className={cn("w-8 h-8 rounded-xl flex items-center justify-center", accuracyBg, accuracyColor)}>
+              <div
+                className={cn(
+                  "w-8 h-8 rounded-xl flex items-center justify-center",
+                  accuracyBg,
+                  accuracyColor,
+                )}
+              >
                 <Target className="w-4 h-4" />
               </div>
               <div>
-                <p className="text-[10px] font-bold text-muted-foreground uppercase">Accuracy</p>
-                <p className={cn("text-sm font-black", accuracyColor)}>{Math.round(accuracy)}%</p>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase">
+                  Accuracy
+                </p>
+                <p className={cn("text-sm font-black", accuracyColor)}>
+                  {Math.round(accuracy)}%
+                </p>
               </div>
             </div>
           </div>
@@ -324,7 +450,9 @@ function PersonaHero({
   agenda: DailyAgenda | null;
 }) {
   if (persona === "REPEAT_ASPIRANT") {
-    return <RepeatHero userName={userName} accuracy={accuracy} agenda={agenda} />;
+    return (
+      <RepeatHero userName={userName} accuracy={accuracy} agenda={agenda} />
+    );
   }
   if (persona === "PART_TIME_ASPIRANT") {
     return <PartTimeHero userName={userName} agenda={agenda} />;
@@ -358,12 +486,15 @@ function DailyTargetButton({ subjects }: { subjects: Subject[] }) {
     if (isCompletedToday()) return; // Already done
     try {
       setGenerating(true);
-      const payload = selectedSubject === "mixed" ? {} : { subjectId: selectedSubject };
+      const payload =
+        selectedSubject === "mixed" ? {} : { subjectId: selectedSubject };
       const res = await api.post("/attempts/dynamic", payload);
       router.push(`/tests/attempt/${res.data.data.id}`);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      alert(error.response?.data?.message || "Failed to generate dynamic attempt");
+      alert(
+        error.response?.data?.message || "Failed to generate dynamic attempt",
+      );
       setGenerating(false);
     }
   };
@@ -379,7 +510,7 @@ function DailyTargetButton({ subjects }: { subjects: Subject[] }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button 
+        <Button
           disabled={generating}
           className="rounded-2xl px-6 py-5 text-base font-extrabold shadow-md hover:shadow-lg hover:-translate-y-0.5 hover:scale-[1.02] active:scale-95 transition-all bg-primary hover:bg-primary/90 text-primary-foreground"
         >
@@ -388,7 +519,9 @@ function DailyTargetButton({ subjects }: { subjects: Subject[] }) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md rounded-3xl p-6">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-black">Daily 10-Min Target</DialogTitle>
+          <DialogTitle className="text-2xl font-black">
+            Daily 10-Min Target
+          </DialogTitle>
           <CardDescription className="text-base mt-2">
             What do you want to focus on today?
           </CardDescription>
@@ -411,10 +544,18 @@ function DailyTargetButton({ subjects }: { subjects: Subject[] }) {
           </Select>
         </div>
         <div className="flex justify-end gap-3">
-          <Button variant="secondary" onClick={() => setOpen(false)} className="rounded-xl px-6 font-bold">
+          <Button
+            variant="secondary"
+            onClick={() => setOpen(false)}
+            className="rounded-xl px-6 font-bold"
+          >
             Cancel
           </Button>
-          <Button onClick={handleGenerate} disabled={generating} className="rounded-xl px-6 font-bold shadow-md hover:-translate-y-0.5 transition-all">
+          <Button
+            onClick={handleGenerate}
+            disabled={generating}
+            className="rounded-xl px-6 font-bold shadow-md hover:-translate-y-0.5 transition-all"
+          >
             {generating ? "Starting..." : "Start Now"}
           </Button>
         </div>
@@ -439,9 +580,11 @@ function WeakTopicsWidget({ weakTopics }: { weakTopics: WeakTopic[] }) {
         limit: 10,
       });
       router.push(`/tests/attempt/${res.data.data.id}`);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      alert(error.response?.data?.message || "Failed to generate practice test");
+      alert(
+        error.response?.data?.message || "Failed to generate practice test",
+      );
       setGeneratingFor(null);
     }
   };
@@ -450,23 +593,36 @@ function WeakTopicsWidget({ weakTopics }: { weakTopics: WeakTopic[] }) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-xl font-bold text-foreground tracking-tight">Target 160+ Weak Areas</h3>
+          <h3 className="text-xl font-bold text-foreground tracking-tight">
+            Target 160+ Weak Areas
+          </h3>
           <p className="text-muted-foreground text-sm mt-1">
-            We analyzed your recent mock tests. Practice these topics to boost your score.
+            We analyzed your recent mock tests. Practice these topics to boost
+            your score.
           </p>
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 md:gap-6">
         {weakTopics.map((topic) => (
-          <div key={topic.id} className="bg-card border border-primary/10 rounded-3xl p-4 flex flex-col justify-between shadow-sm hover:shadow-md hover:-translate-y-1 hover:scale-[1.02] transition-all duration-300">
+          <div
+            key={topic.id}
+            className="bg-card border border-primary/10 rounded-3xl p-4 flex flex-col justify-between shadow-sm hover:shadow-md hover:-translate-y-1 hover:scale-[1.02] transition-all duration-300"
+          >
             <div>
               <div className="flex items-center justify-between mb-3">
                 <span className="text-[10px] font-extrabold text-destructive px-2.5 py-1 bg-destructive/10 rounded-full">
                   {topic.accuracy}% Acc
                 </span>
-                <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider line-clamp-1">{topic.subjectName}</span>
+                <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider line-clamp-1">
+                  {topic.subjectName}
+                </span>
               </div>
-              <h4 className="font-black text-foreground line-clamp-2 leading-tight" title={topic.name}>{topic.name}</h4>
+              <h4
+                className="font-black text-foreground line-clamp-2 leading-tight"
+                title={topic.name}
+              >
+                {topic.name}
+              </h4>
               <p className="text-xs text-muted-foreground mt-2 font-medium">
                 {topic.correct} of {topic.total} correct
               </p>
@@ -489,7 +645,11 @@ function WeakTopicsWidget({ weakTopics }: { weakTopics: WeakTopic[] }) {
 
 // ─── Gamification Widget ──────────────────────────────────────────────────────
 
-function GamificationWidget({ profile }: { profile: GamificationProfile | null }) {
+function GamificationWidget({
+  profile,
+}: {
+  profile: GamificationProfile | null;
+}) {
   if (!profile) return null;
 
   const nextTierThresholds: Record<string, number> = {
@@ -497,12 +657,15 @@ function GamificationWidget({ profile }: { profile: GamificationProfile | null }
     CONSTABLE: 2000,
     SUB_INSPECTOR: 5000,
     INSPECTOR: 10000,
-    COMMISSIONER: 1000000 // Max tier
+    COMMISSIONER: 1000000, // Max tier
   };
 
-  const currentTier = profile.rankTier || 'ASPIRANT';
+  const currentTier = profile.rankTier || "ASPIRANT";
   const threshold = nextTierThresholds[currentTier] || 500;
-  const progressPercent = currentTier === 'COMMISSIONER' ? 100 : Math.min(100, Math.round((profile.xpPoints / threshold) * 100));
+  const progressPercent =
+    currentTier === "COMMISSIONER"
+      ? 100
+      : Math.min(100, Math.round((profile.xpPoints / threshold) * 100));
 
   return (
     <div className="bg-card border border-primary/10 rounded-3xl p-5 shadow-sm group hover:shadow-md transition-all">
@@ -513,41 +676,53 @@ function GamificationWidget({ profile }: { profile: GamificationProfile | null }
           </div>
           <h3 className="text-lg font-bold text-foreground">Your Rank</h3>
         </div>
-        <Button variant="secondary" size="sm" className="rounded-full h-8 text-xs font-bold px-4 hover:bg-primary hover:text-primary-foreground transition-colors shadow-sm" asChild>
-          <Link href="/dashboard/leaderboard">
-            Leaderboard
-          </Link>
+        <Button
+          variant="secondary"
+          size="sm"
+          className="rounded-full h-8 text-xs font-bold px-4 hover:bg-primary hover:text-primary-foreground transition-colors shadow-sm"
+          asChild
+        >
+          <Link href="/dashboard/leaderboard">Leaderboard</Link>
         </Button>
       </div>
-      
+
       <div className="flex items-end justify-between mb-2">
         <div>
-          <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider">{currentTier}</p>
-          <p className="text-2xl font-black text-foreground">{profile.xpPoints.toLocaleString()} <span className="text-sm font-bold text-muted-foreground">XP</span></p>
+          <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider">
+            {currentTier}
+          </p>
+          <p className="text-2xl font-black text-foreground">
+            {profile.xpPoints.toLocaleString()}{" "}
+            <span className="text-sm font-bold text-muted-foreground">XP</span>
+          </p>
         </div>
         <div className="text-right">
           <div className="flex items-center justify-end gap-1 text-orange-500 mb-1">
             <Flame className="w-4 h-4 fill-orange-500 text-orange-500" />
-            <span className="font-bold">{profile.streakDays || 0} Day Streak</span>
+            <span className="font-bold">
+              {profile.streakDays || 0} Day Streak
+            </span>
           </div>
         </div>
       </div>
 
       <div className="h-2.5 w-full bg-muted rounded-full overflow-hidden mb-2">
-        <div 
+        <div
           className="h-full bg-primary rounded-full transition-all duration-1000"
           style={{ width: `${progressPercent}%` }}
         />
       </div>
-      {currentTier !== 'COMMISSIONER' && (
+      {currentTier !== "COMMISSIONER" && (
         <p className="text-xs text-center text-muted-foreground font-medium mt-2">
-          <strong className="text-foreground">{(threshold - profile.xpPoints).toLocaleString()} XP</strong> to next rank
+          <strong className="text-foreground">
+            {(threshold - profile.xpPoints).toLocaleString()} XP
+          </strong>{" "}
+          to next rank
         </p>
       )}
     </div>
   );
 }
-
 
 function AlertsWidget({ alerts }: { alerts: any[] }) {
   if (!alerts || alerts.length === 0) return null;
@@ -558,23 +733,52 @@ function AlertsWidget({ alerts }: { alerts: any[] }) {
           <div className="bg-primary/10 p-1.5 rounded-xl text-primary">
             <Bell className="w-5 h-5" />
           </div>
-          <h3 className="text-lg font-bold text-foreground">Latest Exam Alerts</h3>
+          <h3 className="text-lg font-bold text-foreground">
+            Latest Exam Alerts
+          </h3>
         </div>
-        <Button variant="secondary" size="sm" className="rounded-full h-8 text-xs font-bold px-4 hover:bg-primary hover:text-primary-foreground transition-colors" asChild>
+        <Button
+          variant="secondary"
+          size="sm"
+          className="rounded-full h-8 text-xs font-bold px-4 hover:bg-primary hover:text-primary-foreground transition-colors"
+          asChild
+        >
           <Link href="/alerts">View All</Link>
         </Button>
       </div>
       <div className="flex overflow-x-auto gap-4 pb-2 snap-x">
         {alerts.slice(0, 5).map((a: any) => (
-          <div key={a.id} className="min-w-[280px] max-w-[280px] bg-card border rounded-2xl p-4 snap-start hover:shadow-md transition-all shrink-0">
+          <div
+            key={a.id}
+            className="min-w-[280px] max-w-[280px] bg-card border rounded-2xl p-4 snap-start hover:shadow-md transition-all shrink-0"
+          >
             <div className="flex justify-between items-start mb-2">
-              <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded-full uppercase">{a.vacancies.toLocaleString()} Posts</span>
-              <span className="text-[10px] text-muted-foreground font-semibold">Ends {new Date(a.applicationEndDate).toLocaleDateString()}</span>
+              <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded-full uppercase">
+                {a.vacancies.toLocaleString()} Posts
+              </span>
+              <span className="text-[10px] text-muted-foreground font-semibold">
+                Ends {new Date(a.applicationEndDate).toLocaleDateString()}
+              </span>
             </div>
-            <h4 className="font-bold text-sm line-clamp-1 mb-1" title={a.title}>{a.title}</h4>
-            <p className="text-xs text-muted-foreground line-clamp-1">{a.organization}</p>
-            <Button variant="outline" size="sm" className="w-full mt-3 rounded-full text-xs" asChild>
-              <a href={a.notificationLink} target="_blank" rel="noopener noreferrer">Official PDF</a>
+            <h4 className="font-bold text-sm line-clamp-1 mb-1" title={a.title}>
+              {a.title}
+            </h4>
+            <p className="text-xs text-muted-foreground line-clamp-1">
+              {a.organization}
+            </p>
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full mt-3 rounded-full text-xs"
+              asChild
+            >
+              <a
+                href={a.notificationLink}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Official PDF
+              </a>
             </Button>
           </div>
         ))}
@@ -585,13 +789,14 @@ function AlertsWidget({ alerts }: { alerts: any[] }) {
 
 // ─── Main Dashboard Page ──────────────────────────────────────────────────────
 
-
 export default function DashboardPage() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [analytics, setAnalytics] = useState<AnalyticsSummary | null>(null);
   const [weakTopics, setWeakTopics] = useState<WeakTopic[]>([]);
   const [agenda, setAgenda] = useState<DailyAgenda | null>(null);
-  const [gamification, setGamification] = useState<GamificationProfile | null>(null);
+  const [gamification, setGamification] = useState<GamificationProfile | null>(
+    null,
+  );
   const [alerts, setAlerts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -599,7 +804,14 @@ export default function DashboardPage() {
 
   const loadDashboardData = async () => {
     try {
-      const [subjectsRes, analyticsRes, weakTopicsRes, agendaRes, gamificationRes, alertsRes] = await Promise.allSettled([
+      const [
+        subjectsRes,
+        analyticsRes,
+        weakTopicsRes,
+        agendaRes,
+        gamificationRes,
+        alertsRes,
+      ] = await Promise.allSettled([
         api.get("/subjects"),
         api.get("/analytics/dashboard"),
         api.get("/analytics/weak-topics"),
@@ -609,7 +821,10 @@ export default function DashboardPage() {
       ]);
 
       if (subjectsRes.status === "rejected") {
-        throw new Error(subjectsRes.reason?.response?.data?.message || "Failed to load curriculum subjects.");
+        throw new Error(
+          subjectsRes.reason?.response?.data?.message ||
+            "Failed to load curriculum subjects.",
+        );
       }
 
       setSubjects(subjectsRes.value.data.data);
@@ -631,36 +846,32 @@ export default function DashboardPage() {
       }
     } catch (err: any) {
       console.error("Failed to load dashboard:", err);
-      setError(err instanceof Error ? err : new Error(err.message || "Failed to load dashboard data"));
+      setError(
+        err instanceof Error
+          ? err
+          : new Error(err.message || "Failed to load dashboard data"),
+      );
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-
-
     (async () => {
-
-
       await loadDashboardData();
-
-
     })();
-
-
   }, []);
 
   if (error) {
     return (
-      <ErrorState 
-        title="Failed to load dashboard" 
-        description={error.message} 
+      <ErrorState
+        title="Failed to load dashboard"
+        description={error.message}
         retry={() => {
           setLoading(true);
           setError(null);
           loadDashboardData();
-        }} 
+        }}
       />
     );
   }
@@ -672,8 +883,8 @@ export default function DashboardPage() {
   const targetExams: string[] = Array.isArray(user?.targetExam)
     ? user.targetExam
     : typeof user?.targetExam === "string"
-    ? [user.targetExam]
-    : [];
+      ? [user.targetExam]
+      : [];
 
   return (
     <div className="space-y-12 md:space-y-16">
@@ -698,10 +909,13 @@ export default function DashboardPage() {
               <div className="bg-primary/10 p-1.5 rounded-xl">
                 <Flame className="w-5 h-5 text-primary" />
               </div>
-              <h3 className="text-xl font-black text-foreground tracking-tight">Daily 10-Min Target</h3>
+              <h3 className="text-xl font-black text-foreground tracking-tight">
+                Daily 10-Min Target
+              </h3>
             </div>
             <p className="text-muted-foreground text-sm max-w-xl leading-relaxed">
-              Keep your streak alive! Complete today&apos;s dynamic 10-question practice set covering mixed topics.
+              Keep your streak alive! Complete today&apos;s dynamic 10-question
+              practice set covering mixed topics.
             </p>
           </div>
           <div className="shrink-0 relative">
@@ -716,13 +930,13 @@ export default function DashboardPage() {
       {/* ── Subjects Section ────────────────────────────────── */}
       <div className="space-y-12 md:space-y-16">
         {subjects.length === 0 ? (
-          <EmptyState 
+          <EmptyState
             icon={Library}
             title="No subjects available"
             description="Subjects for your selected target exams will appear here."
           />
         ) : targetExams.length === 0 ? (
-          <EmptyState 
+          <EmptyState
             icon={Target}
             title="No target exam selected"
             description="Please update your profile and select a target exam to see your curriculum."
@@ -730,7 +944,9 @@ export default function DashboardPage() {
         ) : (
           targetExams.map((exam) => {
             const examLabel = exam.replace(/_/g, " ");
-            const examSubjects = subjects.filter((subject) => subject.examTypes?.includes(exam));
+            const examSubjects = subjects.filter((subject) =>
+              subject.examTypes?.includes(exam),
+            );
             const colors = getExamColorClasses(exam);
 
             if (examSubjects.length === 0) return null;
@@ -747,23 +963,34 @@ export default function DashboardPage() {
                     </p>
                   </div>
                   {analytics && analytics.totalTests > 0 && (
-                    <Button variant="secondary" size="sm" className="rounded-full h-8 text-xs font-bold px-4 hover:bg-primary hover:text-primary-foreground transition-colors shadow-sm" asChild>
-                      <Link href="/dashboard/analytics">
-                        View Analytics
-                      </Link>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      className="rounded-full h-8 text-xs font-bold px-4 hover:bg-primary hover:text-primary-foreground transition-colors shadow-sm"
+                      asChild
+                    >
+                      <Link href="/dashboard/analytics">View Analytics</Link>
                     </Button>
                   )}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                   {examSubjects.map((subject) => (
-                    <Link key={subject.id} href={`/dashboard/subjects/${subject.slug}?exam=${exam}`} className="block group">
+                    <Link
+                      key={subject.id}
+                      href={`/dashboard/subjects/${subject.slug}?exam=${exam}`}
+                      className="block group"
+                    >
                       <div className="h-full bg-card border border-primary/10 hover:border-primary/30 hover:shadow-lg hover:-translate-y-1 hover:scale-[1.02] active:scale-95 transition-all duration-300 rounded-3xl p-5 flex flex-col relative overflow-hidden">
-                        <div className={`absolute top-0 right-0 w-24 h-24 ${colors.shapeBg} rounded-bl-full -z-0 transition-colors`} />
+                        <div
+                          className={`absolute top-0 right-0 w-24 h-24 ${colors.shapeBg} rounded-bl-full -z-0 transition-colors`}
+                        />
                         <div className="relative z-10 flex justify-end mb-4">
                           <div className="bg-card shadow-sm border border-border/60 px-2.5 py-1 rounded-xl flex items-center gap-1.5">
-                             <BookOpen className="w-3.5 h-3.5 text-muted-foreground" />
-                             <span className="text-[10px] font-bold text-muted-foreground uppercase">{subject._count.chapters} Ch</span>
+                            <BookOpen className="w-3.5 h-3.5 text-muted-foreground" />
+                            <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                              {subject._count.chapters} Ch
+                            </span>
                           </div>
                         </div>
                         <div className="relative z-10 space-y-1.5 flex-1 mb-5 pr-8">
@@ -771,18 +998,26 @@ export default function DashboardPage() {
                             {subject.name}
                           </h3>
                           <p className="line-clamp-2 text-xs text-muted-foreground font-medium leading-relaxed">
-                            {subject.description || "Master the concepts of this subject."}
+                            {subject.description ||
+                              "Master the concepts of this subject."}
                           </p>
                         </div>
                         <div className="relative z-10 flex flex-col gap-2 mt-auto">
                           <div className="flex justify-between items-end">
-                            <span className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-widest">Progress</span>
-                            <span className="text-xs font-black text-primary">0%</span>
+                            <span className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-widest">
+                              Progress
+                            </span>
+                            <span className="text-xs font-black text-primary">
+                              0%
+                            </span>
                           </div>
                           <div className="h-2 w-full bg-primary/10 rounded-full overflow-hidden">
-                            <div 
+                            <div
                               className="h-full bg-primary rounded-full w-0"
-                              style={{ boxShadow: "0 0 10px color-mix(in oklab, var(--primary) 50%, transparent)" }}
+                              style={{
+                                boxShadow:
+                                  "0 0 10px color-mix(in oklab, var(--primary) 50%, transparent)",
+                              }}
                             />
                           </div>
                         </div>
