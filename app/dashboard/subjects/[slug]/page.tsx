@@ -12,12 +12,18 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/ui/error-state";
 
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { Lock } from "lucide-react";
+import { useAuthStore } from "@/store/auth";
+
 interface Chapter {
   id: string;
   name: string;
   slug: string;
   description: string;
   order: number;
+  accessTier: string;
   _count: {
     lessons: number;
   };
@@ -35,6 +41,8 @@ export default function SubjectPage() {
   const params = useParams();
   const router = useRouter();
   const slug = params?.slug as string;
+  
+  const user = useAuthStore((state) => state.user);
   
   const [subject, setSubject] = useState<SubjectDetails | null>(null);
   const [loading, setLoading] = useState(true);
@@ -134,15 +142,20 @@ export default function SubjectPage() {
           />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {subject.chapters.map((chapter, index) => (
-              <Link key={chapter.id} href={`/dashboard/subjects/${subject.slug}/chapters/${chapter.slug}`} className="group block h-full">
-                <Card className="h-full border-border hover:border-primary/50 transition-colors shadow-sm rounded-xl overflow-hidden bg-card flex flex-col">
+            {subject.chapters.map((chapter, index) => {
+              const isLocked = chapter.accessTier === "PRO" && user?.subscriptionTier === "FREE";
+
+              const cardContent = (
+                <Card className={`h-full border-border transition-colors shadow-sm rounded-xl overflow-hidden bg-card flex flex-col ${isLocked ? 'hover:border-amber-200' : 'hover:border-primary/50'}`}>
                   <CardContent className="p-5 flex flex-col h-full gap-4">
                     <div className="flex items-start justify-between">
                       <div className="flex-1 pr-4">
-                        <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 mb-1.5">
-                          {chapter.name}
-                        </h3>
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <h3 className={`text-lg font-semibold transition-colors line-clamp-2 ${isLocked ? 'text-muted-foreground group-hover:text-amber-700' : 'text-foreground group-hover:text-primary'}`}>
+                            {chapter.name}
+                          </h3>
+                          {isLocked && <Badge variant="outline" className="text-xs bg-amber-50 text-amber-600 border-amber-200 ml-1">PRO 🔒</Badge>}
+                        </div>
                       </div>
                       <span className="text-4xl font-black text-muted-foreground/10 group-hover:text-muted-foreground/20 transition-colors shrink-0 leading-none">
                         {(index + 1).toString().padStart(2, '0')}
@@ -160,14 +173,49 @@ export default function SubjectPage() {
                         <FileText className="w-3.5 h-3.5 mr-1" />
                         {chapter._count.lessons} Lessons
                       </div>
-                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-accent text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-all">
-                        <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                      <div className={`flex items-center justify-center w-8 h-8 rounded-full transition-all ${isLocked ? 'bg-amber-50 text-amber-600 group-hover:bg-amber-100' : 'bg-accent text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary'}`}>
+                        {isLocked ? (
+                          <Lock className="w-4 h-4" />
+                        ) : (
+                          <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                        )}
                       </div>
                     </div>
                   </CardContent>
                 </Card>
-              </Link>
-            ))}
+              );
+
+              if (isLocked) {
+                return (
+                  <Dialog key={chapter.id}>
+                    <DialogTrigger asChild>
+                      <button className="text-left group block h-full focus:outline-none">
+                        {cardContent}
+                      </button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Unlock Premium Content</DialogTitle>
+                        <DialogDescription>
+                          "{chapter.name}" is a PRO chapter. Upgrade your plan to access the complete syllabus, premium mock tests, and advanced practice sets.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="flex justify-end gap-2 pt-4">
+                        <Button asChild className="bg-amber-500 hover:bg-amber-600">
+                          <Link href="/dashboard/upgrade">View Plans</Link>
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                );
+              }
+
+              return (
+                <Link key={chapter.id} href={`/dashboard/subjects/${subject.slug}/chapters/${chapter.slug}`} className="group block h-full">
+                  {cardContent}
+                </Link>
+              );
+            })}
           </div>
         )}
       </div>
