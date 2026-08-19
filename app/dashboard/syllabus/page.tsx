@@ -14,7 +14,9 @@ import {
   MessageSquare, 
   FlaskConical, 
   ChevronRight,
-  GraduationCap
+  GraduationCap,
+  List,
+  LayoutTemplate
 } from "lucide-react";
 import {
   Select,
@@ -23,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 
 // ─── Interfaces ───────────────────────────────────────────────────────────────
 
@@ -69,14 +72,39 @@ function getSubjectMeta(subjectName: string) {
 
 // ─── Syllabus Document (Right Column) ─────────────────────────────────────────
 
-function SyllabusDocument({ examId }: { examId: string }) {
-  const [data, setData] = useState<SyllabusNode[] | null>(null);
+export function SyllabusDocument({ examId, examName }: { examId: string; examName?: string }) {
+  const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+
+  // Hardcoded patterns based on exam name
+  const getExamPattern = (name: string) => {
+    const lowerName = name?.toLowerCase() || "";
+    if (lowerName.includes("cgl tier 1") || lowerName.includes("chsl tier 1") || lowerName.includes("mts") || lowerName.includes("gd")) {
+      return { q: "100", m: "200", d: "60 Mins", n: "-0.50" };
+    }
+    if (lowerName.includes("cgl tier 2")) {
+      return { q: "130", m: "390", d: "135 Mins", n: "-1.00" };
+    }
+    if (lowerName.includes("chsl tier 2")) {
+      return { q: "135", m: "405", d: "135 Mins", n: "-1.00" };
+    }
+    if (lowerName.includes("cpo tier 1")) {
+      return { q: "200", m: "200", d: "120 Mins", n: "-0.25" };
+    }
+    if (lowerName.includes("cpo tier 2")) {
+      return { q: "200", m: "200", d: "120 Mins", n: "-0.25" };
+    }
+    // Default fallback
+    return { q: "100", m: "200", d: "60 Mins", n: "-0.50" };
+  };
+
+  const pattern = getExamPattern(examName || "");
 
   useEffect(() => {
     let cancelled = false;
     async function fetch() {
+      setLoading(true);
       try {
         const res = await api.get(`/exams/${examId}/syllabus`);
         if (!cancelled) setData(res.data.data);
@@ -134,39 +162,93 @@ function SyllabusDocument({ examId }: { examId: string }) {
   }
 
   return (
-    <div className="space-y-12">
-      {groupedData.map(({ subject, chapters, weightage }: any) => {
-        const { icon: Icon, colorClass } = getSubjectMeta(subject.name);
-        return (
-          <div key={subject.id} className="space-y-5">
-            <div className="flex items-center gap-3 pb-3 border-b border-border/60">
+    <div className="w-full">
+        <TabsContent value="structure" className="mt-0">
+          <div className="bg-card border border-border/60 rounded-xl p-6 shadow-sm mb-8">
+            <h2 className="text-lg font-bold text-foreground mb-4">Exam Structure & Instructions</h2>
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="bg-muted/50 rounded-lg p-4">
+                  <div className="text-sm text-muted-foreground mb-1">Total Questions</div>
+                  <div className="text-xl font-bold text-foreground">{pattern.q}</div>
+                </div>
+                <div className="bg-muted/50 rounded-lg p-4">
+                  <div className="text-sm text-muted-foreground mb-1">Total Marks</div>
+                  <div className="text-xl font-bold text-foreground">{pattern.m}</div>
+                </div>
+                <div className="bg-muted/50 rounded-lg p-4">
+                  <div className="text-sm text-muted-foreground mb-1">Duration</div>
+                  <div className="text-xl font-bold text-foreground">{pattern.d}</div>
+                </div>
+                <div className="bg-muted/50 rounded-lg p-4">
+                  <div className="text-sm text-muted-foreground mb-1">Negative Marking</div>
+                  <div className="text-xl font-bold text-destructive">{pattern.n}</div>
+                </div>
+              </div>
               
-              <div>
-                <h3 className="text-xl font-bold text-foreground tracking-tight">{subject.name}</h3>
-                <p className="text-sm text-muted-foreground mt-0.5">
-                  {chapters.length} Topics • {weightage} Marks
+              <div className="mt-6 p-4 rounded-lg bg-info/10 border border-info/20 text-sm text-foreground">
+                <p className="flex items-center gap-2 mb-2">
+                  <BookOpen className="w-4 h-4 text-info" />
+                  <span className="font-semibold text-info">Note on Exam Pattern:</span>
+                </p>
+                <p className="text-muted-foreground leading-relaxed">
+                  The exact structure varies heavily between exams and tiers (e.g., CGL Tier 1 vs Tier 2). 
+                  Please refer to the official notification for detailed module-wise breakdown. 
+                  Our practice tests automatically adapt to the specific format of the exam you select.
                 </p>
               </div>
             </div>
-            
-            {chapters.length > 0 ? (
-              <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4 pt-2">
-                {chapters.map((chapter: any) => (
-                  <li 
-                    key={chapter.id} 
-                    className="flex items-start gap-3 text-foreground/80 hover:text-foreground transition-colors"
-                  >
-                    <span className="text-muted-foreground/60 shrink-0 mt-1">•</span>
-                    <span className="text-[15px] leading-snug">{chapter.name}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-sm text-muted-foreground italic pt-2">No topics detailed for this subject.</p>
-            )}
           </div>
-        );
-      })}
+        </TabsContent>
+
+        <TabsContent value="syllabus" className="mt-0">
+          <div className="space-y-12">
+            {groupedData.map(({ subject, chapters, weightage }: any) => {
+              const { icon: Icon, colorClass } = getSubjectMeta(subject.name);
+              return (
+                <div key={subject.id} className="space-y-5">
+                  <div className="flex items-center gap-3 pb-3 border-b border-border/60">
+                    <div>
+                      <h3 className="text-xl font-bold text-foreground tracking-tight flex items-center gap-2">
+                        {subject.name}
+                      </h3>
+                      <p className="text-sm text-muted-foreground mt-0.5">
+                        {chapters.length} Topics
+                      </p>
+                      {subject.examTypes && subject.examTypes.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          {subject.examTypes.map((exam: string) => (
+                            <span key={exam} className="text-[10px] font-semibold bg-primary/10 text-primary px-1.5 py-0.5 rounded-sm">
+                              {exam.replace('SSC_', '')}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {chapters.length > 0 ? (
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-2">
+                      {chapters.map((chapter: any, idx: number) => (
+                        <li 
+                          key={chapter.id} 
+                          className="flex items-center gap-3 p-3 rounded-lg bg-muted/40 border border-border/40"
+                        >
+                          <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-semibold shrink-0">
+                            {idx + 1}
+                          </div>
+                          <span className="text-[14px] font-medium leading-snug text-foreground/90">{chapter.name}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-sm text-muted-foreground italic pt-2">No topics detailed for this subject.</p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </TabsContent>
     </div>
   );
 }
@@ -175,6 +257,7 @@ function SyllabusDocument({ examId }: { examId: string }) {
 
 export default function SyllabusPage() {
   const [exams, setExams] = useState<TargetExam[]>([]);
+  const [viewMode, setViewMode] = useState<'syllabus' | 'structure'>('syllabus');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -275,14 +358,17 @@ export default function SyllabusPage() {
         </p>
       </div>
 
-      <div className="grid lg:grid-cols-12 gap-8 items-start">
+      <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'syllabus' | 'structure')} className="w-full">
+        <div className="grid lg:grid-cols-12 gap-8 items-start mt-8">
         
-        {/* Left Sidebar (Exam Selector) */}
-        <div className="lg:col-span-3 lg:sticky lg:top-8 bg-card border border-border rounded-xl shadow-sm overflow-hidden flex flex-col">
-          <div className="px-4 py-3 border-b border-border bg-muted/20">
-            <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Target Exams</h2>
+        {/* Left Sidebar (Navigation) */}
+        <div className="lg:col-span-3 lg:sticky lg:top-8 bg-card border border-border/60 rounded-xl shadow-sm flex flex-col py-2">
+          
+          {/* Target Exams Section */}
+          <div className="px-5 pt-3 pb-2">
+            <h2 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">SSC Exam Types</h2>
           </div>
-          <nav className="flex flex-col p-2 gap-1 overflow-y-auto max-h-[60vh]">
+          <nav className="flex flex-col px-3 gap-0.5 overflow-y-auto max-h-[50vh]">
             {examGroups.map(([baseName, groupExams]) => {
               const isActive = selectedBaseExam === baseName;
               return (
@@ -292,17 +378,48 @@ export default function SyllabusPage() {
                     setSelectedBaseExam(baseName);
                     setSelectedYear(groupExams[0].id); // Auto-select most recent year of the new group
                   }}
-                  className={`flex items-center justify-between px-3 py-2.5 rounded-md text-sm font-medium transition-all ${
+                  className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-all duration-200 ${
                     isActive 
-                      ? "bg-primary text-primary-foreground shadow-sm" 
-                      : "text-foreground hover:bg-muted/50 hover:text-foreground"
+                      ? "bg-primary text-primary-foreground font-medium shadow-sm" 
+                      : "text-muted-foreground hover:bg-muted/60 hover:text-foreground font-medium"
                   }`}
                 >
-                  <span className="truncate pr-2">{baseName}</span>
-                  {isActive && <ChevronRight className="w-4 h-4 shrink-0 opacity-80" />}
+                  <span className="truncate pr-2">{baseName.replace(/^SSC\s+/i, '')}</span>
+                  {isActive && <ChevronRight className="w-4 h-4 shrink-0 opacity-90" />}
                 </button>
               );
             })}
+          </nav>
+          
+          <div className="my-3 mx-4 border-t border-border/40"></div>
+          
+          {/* View Mode Section */}
+          <div className="px-5 pt-2 pb-2">
+            <h2 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">View Mode</h2>
+          </div>
+          <nav className="flex flex-col px-3 pb-3 gap-0.5">
+            <button
+              onClick={() => setViewMode('syllabus')}
+              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-all duration-200 ${
+                viewMode === 'syllabus'
+                  ? 'bg-primary/10 text-primary font-semibold'
+                  : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground font-medium'
+              }`}
+            >
+              <span>Detailed Syllabus</span>
+              {viewMode === 'syllabus' && <ChevronRight className="w-3.5 h-3.5 shrink-0" />}
+            </button>
+            <button
+              onClick={() => setViewMode('structure')}
+              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-all duration-200 ${
+                viewMode === 'structure'
+                  ? 'bg-primary/10 text-primary font-semibold'
+                  : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground font-medium'
+              }`}
+            >
+              <span>Exam Pattern</span>
+              {viewMode === 'structure' && <ChevronRight className="w-3.5 h-3.5 shrink-0" />}
+            </button>
           </nav>
         </div>
 
@@ -344,17 +461,20 @@ export default function SyllabusPage() {
               </div>
 
               {/* Document Body */}
-              <SyllabusDocument examId={selectedYear} />
+              <SyllabusDocument examId={selectedYear} examName={currentExam.name} />
             </div>
           ) : (
-            <div className="h-full flex flex-col items-center justify-center text-center p-12 opacity-50">
-              <BookText className="w-16 h-16 mb-4 text-muted-foreground" />
-              <p className="text-lg font-medium">Select an exam to view syllabus</p>
+            <div className="h-full flex flex-col items-center justify-center text-center p-12">
+              <div className="w-32 h-32 mb-6 rounded-3xl overflow-hidden bg-background shadow-md border border-border flex items-center justify-center p-2">
+                <img src="/SSC Logo.jpeg" alt="SSC Logo" className="w-full h-full object-contain opacity-90" />
+              </div>
+              <p className="text-lg font-medium text-muted-foreground">Select an exam from the sidebar to view its syllabus</p>
             </div>
           )}
         </div>
 
       </div>
+      </Tabs>
     </div>
   );
 }
