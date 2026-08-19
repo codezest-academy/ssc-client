@@ -11,12 +11,15 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, PlayCircle, BookOpen } from "lucide-react";
+import { Loader2, PlayCircle, BookOpen, Lock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { useAuthStore } from "@/store/auth";
 
 export default function SyllabusPage() {
   const [selectedExamId, setSelectedExamId] = useState<string>("");
+  const user = useAuthStore((state) => state.user);
 
   const { data: exams, isLoading: isLoadingExams } = useQuery({
     queryKey: ["exams"],
@@ -117,17 +120,46 @@ export default function SyllabusPage() {
                       </AccordionTrigger>
                       <AccordionContent className="pt-2 pb-4">
                         <div className="space-y-2">
-                          {nodes.map((node: any) => (
-                            <div key={node.id} className="flex items-center justify-between p-3 rounded-md border border-border/50 bg-background/50 hover:bg-accent/5 transition-colors">
-                              <span className="font-medium text-foreground">
-                                {node.chapter ? node.chapter.name : "General"}
-                              </span>
-                              <Button size="sm" className="gap-2" onClick={() => window.location.href = `/pyq/${subject.slug}/${node.chapter?.slug}`}>
-                                <PlayCircle className="h-4 w-4" />
-                                Practice
-                              </Button>
-                            </div>
-                          ))}
+                          {nodes.map((node: any) => {
+                            const isLocked = node.chapter?.accessTier === "PRO" && user?.subscriptionTier === "FREE";
+                            
+                            return (
+                              <div key={node.id} className="flex items-center justify-between p-3 rounded-md border border-border/50 bg-background/50 hover:bg-accent/5 transition-colors">
+                                <span className="font-medium text-foreground flex items-center gap-2">
+                                  {node.chapter ? node.chapter.name : "General"}
+                                  {isLocked && <Badge variant="outline" className="text-xs bg-amber-50 text-amber-600 border-amber-200">PRO 🔒</Badge>}
+                                </span>
+                                {isLocked ? (
+                                  <Dialog>
+                                    <DialogTrigger asChild>
+                                      <Button size="sm" variant="outline" className="gap-2 text-amber-600 border-amber-200 hover:bg-amber-50">
+                                        <Lock className="h-4 w-4" />
+                                        Locked
+                                      </Button>
+                                    </DialogTrigger>
+                                    <DialogContent>
+                                      <DialogHeader>
+                                        <DialogTitle>Unlock Premium Content</DialogTitle>
+                                        <DialogDescription>
+                                          "{node.chapter?.name}" is a PRO chapter. Upgrade your plan to access the complete syllabus, premium mock tests, and advanced practice sets.
+                                        </DialogDescription>
+                                      </DialogHeader>
+                                      <div className="flex justify-end gap-2 pt-4">
+                                        <Button asChild className="bg-amber-500 hover:bg-amber-600">
+                                          <a href="/pricing">View Plans</a>
+                                        </Button>
+                                      </div>
+                                    </DialogContent>
+                                  </Dialog>
+                                ) : (
+                                  <Button size="sm" className="gap-2" onClick={() => window.location.href = `/pyq/${subject.slug}/${node.chapter?.slug}`}>
+                                    <PlayCircle className="h-4 w-4" />
+                                    Practice
+                                  </Button>
+                                )}
+                              </div>
+                            );
+                          })}
                         </div>
                       </AccordionContent>
                     </AccordionItem>
