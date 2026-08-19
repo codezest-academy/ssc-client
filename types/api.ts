@@ -1,7 +1,7 @@
 export interface ProductItem {
   id: string;
   productId: string;
-  itemType: "MOCK_TEST" | "PRACTICE_SET" | "COURSE";
+  itemType: "MOCK_TEST" | "PRACTICE_SET" | "COURSE" | "CHAPTER";
   itemId: string;
 }
 
@@ -10,6 +10,7 @@ export interface Product {
   name: string;
   description?: string;
   price: number;
+  originalPrice?: number;
   items?: ProductItem[];
 }
 

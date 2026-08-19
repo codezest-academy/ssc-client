@@ -5,12 +5,14 @@ import { useParams, useRouter } from "next/navigation";
 import { api } from "@/lib/axios";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
-import { PlayCircle, FileText, File, ArrowLeft, ChevronRight, Clock, CheckCircle2, VideoOff, FileQuestion } from "lucide-react";
+import { PlayCircle, FileText, File, ArrowLeft, ChevronRight, Clock, CheckCircle2, VideoOff, FileQuestion, Lock, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/ui/error-state";
+import { PremiumLockScreen } from "@/components/ui/premium-lock-screen";
+import { useAuthStore } from "@/store/auth";
 
 interface LessonProgress {
   watchedSeconds: number;
@@ -42,7 +44,13 @@ interface Chapter {
   name: string;
   slug: string;
   description: string;
+  order: number;
+  accessTier: string;
   practiceSets?: PracticeSet[];
+  _count?: {
+    lessons: number;
+    practiceSets: number;
+  };
 }
 
 interface SubjectDetails {
@@ -62,29 +70,59 @@ export default function ChapterPage() {
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [isForbidden, setIsForbidden] = useState(false);
 
   const fetchData = async () => {
     if (!slug || !chapterSlug) return;
     try {
-      // Fetch subject to get chapter info (since chapters are public through subjects)
+      // Step 1: Subject is public — get chapter list + basic chapter data
       const subjectRes = await api.get(`/subjects/${slug}`);
       const subjectData = subjectRes.data.data;
       setSubject(subjectData);
-      
-      const currentChapter = subjectData.chapters.find((c: Chapter) => c.slug === chapterSlug);
 
-      if (currentChapter) {
-        // Fetch full chapter to get practice sets
+      const currentChapter = subjectData.chapters.find((c: Chapter) => c.slug === chapterSlug);
+      if (!currentChapter) return;
+
+      // Set chapter from subject data immediately (works even if locked)
+      setChapter(currentChapter);
+
+      // Step 2: Try to fetch full chapter detail (practice sets etc.)
+      // This will 403 for PRO chapters — catch separately, don't crash
+      try {
         const chapterRes = await api.get(`/chapters/${currentChapter.id}`);
         setChapter(chapterRes.data.data);
+      } catch (chapterErr: unknown) {
+        const status = (chapterErr as { response?: { status?: number } })?.response?.status;
+        if (status === 403) {
+          setIsForbidden(true);
+          return; // No point fetching lessons either
+        }
+        throw chapterErr; // Re-throw unexpected errors
+      }
 
-        // Fetch lessons for this chapter
+      // Step 3: Fetch lessons (also gated, will 403 for locked chapters)
+      try {
         const lessonsRes = await api.get(`/lessons/chapter/${currentChapter.id}`);
         setLessons(lessonsRes.data.data);
+      } catch (lessonsErr: unknown) {
+        const status = (lessonsErr as { response?: { status?: number } })?.response?.status;
+        if (status === 403) {
+          setIsForbidden(true);
+        } else {
+          throw lessonsErr;
+        }
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Failed to load chapter data:", err);
-      setError(err instanceof Error ? err : new Error(err.response?.data?.message || err.message || "Failed to load chapter data"));
+      const status = (err as { response?: { status?: number } })?.response?.status;
+      if (status === 403) {
+        setIsForbidden(true);
+      } else {
+        const message =
+          (err as { response?: { data?: { message?: string } } })?.response?.data?.message
+          ?? (err instanceof Error ? err.message : "Failed to load chapter data");
+        setError(new Error(message));
+      }
     } finally {
       setLoading(false);
     }
@@ -191,15 +229,52 @@ export default function ChapterPage() {
         </div>
       </div>
 
-      <div className="space-y-4">
-        {lessons.length === 0 ? (
-          <EmptyState 
-            icon={FileText}
-            title="No lessons available"
-            description="Check back later for new content in this chapter."
-          />
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="relative mt-8">
+        {isForbidden && (
+          <div className="mb-6">
+            <PremiumLockScreen 
+              backUrl={`/dashboard/subjects/${slug}`} 
+              chapterId={chapter?.id}
+              videoCount={chapter?._count?.lessons}
+            />
+          </div>
+        )}
+
+        <div className={cn(isForbidden && "opacity-50 pointer-events-none select-none filter blur-[1px]")}>
+          {isForbidden ? (
+            <div className="divide-y divide-border rounded-xl border border-border overflow-hidden bg-card">
+              {[
+                { title: "Core Concepts & Fundamentals", min: "15 min", type: "Video Lesson" },
+                { title: "Advanced Problem Solving Techniques", min: "25 min", type: "Video Lesson" },
+                { title: "Practice Exercises & Walkthroughs", min: "30 min", type: "PDF + Quiz" },
+              ].map((lesson, i) => (
+                <div key={i} className="flex items-center gap-4 p-4 bg-muted/30">
+                  <span className="text-sm font-bold tabular-nums w-7 text-center text-muted-foreground/40 shrink-0">
+                    {(i + 1).toString().padStart(2, "0")}
+                  </span>
+                  <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-muted text-muted-foreground shrink-0">
+                    <Lock className="w-4 h-4" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-muted-foreground line-clamp-1">{lesson.title}</p>
+                    <p className="text-xs text-muted-foreground/60 mt-0.5">{lesson.type}</p>
+                  </div>
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground shrink-0">
+                    <Clock className="w-3.5 h-3.5" />
+                    <span>{lesson.min}</span>
+                  </div>
+                  <Lock className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0" />
+                </div>
+              ))}
+            </div>
+          ) : lessons.length === 0 ? (
+            <EmptyState 
+              icon={FileText}
+              title="No lessons available"
+              description="Check back later for new content in this chapter."
+            />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {lessons.map((lesson, index) => {
               const isCompleted = lesson.progress?.[0]?.completedAt != null;
               return (
@@ -268,6 +343,7 @@ export default function ChapterPage() {
           </div>
         )}
       </div>
+    </div>
 
       {chapter.practiceSets && chapter.practiceSets.length > 0 && (
         <div className="mt-12">

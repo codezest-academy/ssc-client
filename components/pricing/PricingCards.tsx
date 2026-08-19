@@ -188,9 +188,18 @@ export function PricingCards() {
           <CardDescription className="text-slate-400">
             {proProduct ? proProduct.description : "Unlock your true potential."}
           </CardDescription>
-          <div className="mt-4">
-            <span className="text-4xl font-extrabold text-white">₹{proProduct ? proProduct.price : "499"}</span>
-            <span className="text-slate-400 font-medium">{isYearly ? '/ year' : '/ month'}</span>
+          <div className="mt-4 flex items-end gap-2">
+            <div className="flex flex-col">
+              {proProduct?.originalPrice && (
+                <span className="text-lg line-through text-slate-400 font-medium">
+                  ₹{proProduct.originalPrice}
+                </span>
+              )}
+              <div className="flex items-baseline">
+                <span className="text-4xl font-extrabold text-white">₹{proProduct ? proProduct.price : "499"}</span>
+                <span className="text-slate-400 font-medium ml-1">{isYearly ? '/ year' : '/ month'}</span>
+              </div>
+            </div>
           </div>
         </CardHeader>
         <CardContent className="flex-1 space-y-4 mt-4">
@@ -246,9 +255,18 @@ export function PricingCards() {
           <CardDescription className="text-amber-700/80">
             {eliteProduct ? eliteProduct.description : "For guaranteed selection."}
           </CardDescription>
-          <div className="mt-4">
-            <span className="text-4xl font-extrabold text-amber-900">₹{eliteProduct ? eliteProduct.price : "999"}</span>
-            <span className="text-amber-700 font-medium">{isYearly ? '/ year' : '/ month'}</span>
+          <div className="mt-4 flex items-end gap-2">
+            <div className="flex flex-col">
+              {eliteProduct?.originalPrice && (
+                <span className="text-lg line-through text-amber-700/60 font-medium">
+                  ₹{eliteProduct.originalPrice}
+                </span>
+              )}
+              <div className="flex items-baseline">
+                <span className="text-4xl font-extrabold text-amber-900">₹{eliteProduct ? eliteProduct.price : "999"}</span>
+                <span className="text-amber-700 font-medium ml-1">{isYearly ? '/ year' : '/ month'}</span>
+              </div>
+            </div>
           </div>
         </CardHeader>
         <CardContent className="flex-1 space-y-4 mt-4">

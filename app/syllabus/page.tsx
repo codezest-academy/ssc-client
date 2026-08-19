@@ -33,7 +33,7 @@ export default function SyllabusPage() {
     queryKey: ["syllabus", selectedExamId],
     queryFn: async () => {
       if (!selectedExamId) return [];
-      const res = await api.get(`/exams/${selectedExamId}/syllabus`);
+      const res = await api.get(`/exams/${selectedExamId}/syllabus?t=${Date.now()}`);
       return res.data.data;
     },
     enabled: !!selectedExamId
@@ -121,7 +121,7 @@ export default function SyllabusPage() {
                       <AccordionContent className="pt-2 pb-4">
                         <div className="space-y-2">
                           {nodes.map((node: any) => {
-                            const isLocked = node.chapter?.accessTier === "PRO" && user?.subscriptionTier === "FREE";
+                            const isLocked = node.chapter?.accessTier === "PRO" && (!user?.subscriptionTier || user.subscriptionTier === "FREE");
                             
                             return (
                               <div key={node.id} className="flex items-center justify-between p-3 rounded-md border border-border/50 bg-background/50 hover:bg-accent/5 transition-colors">
