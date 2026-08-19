@@ -124,7 +124,7 @@ export default function ProfilePage() {
                     FREE PLAN
                   </span>
                   <Link href="/pricing" className="w-full sm:w-auto">
-                    <Button className="w-full rounded-xl font-bold bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-foreground shadow-md hover:shadow-lg transition-all h-11 px-6">
+                    <Button className="w-full rounded-xl font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-md hover:shadow-lg transition-all h-11 px-6">
                       <Crown className="w-4 h-4 mr-2" /> Upgrade to Pro
                     </Button>
                   </Link>
