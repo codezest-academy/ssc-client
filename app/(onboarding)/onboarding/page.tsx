@@ -103,6 +103,7 @@ interface FormData {
   age: string;
   gender: string;
   city: string;
+  phone: string;
   educationLevel: string;
   incomeRange: string;
 }
@@ -174,6 +175,7 @@ export default function OnboardingPage() {
     age: "",
     gender: "",
     city: "",
+    phone: "",
     educationLevel: "",
     incomeRange: "",
   });
@@ -221,6 +223,7 @@ export default function OnboardingPage() {
         if (form.age) payload.age = parseInt(form.age);
         if (form.gender) payload.gender = form.gender;
         if (form.city) payload.city = form.city;
+        if (form.phone) payload.phone = form.phone;
         if (form.educationLevel) payload.educationLevel = form.educationLevel;
         if (form.incomeRange) payload.incomeRange = form.incomeRange;
       }
@@ -493,6 +496,16 @@ export default function OnboardingPage() {
                 value={form.city}
                 onChange={(e) => setForm((p) => ({ ...p, city: e.target.value }))}
                 placeholder="e.g. Delhi"
+                className="w-full h-12 px-4 rounded-xl bg-white/8 border-white/10 text-white placeholder:text-slate-500 focus-visible:border-primary/60 focus-visible:ring-0 text-sm"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Phone Number</label>
+              <Input
+                type="tel"
+                value={form.phone}
+                onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))}
+                placeholder="e.g. 9876543210"
                 className="w-full h-12 px-4 rounded-xl bg-white/8 border-white/10 text-white placeholder:text-slate-500 focus-visible:border-primary/60 focus-visible:ring-0 text-sm"
               />
             </div>
