@@ -1,7 +1,7 @@
 # SSC Client — Master Progress Tracker
 
-**Last Updated:** 2026-08-16  
-**Overall Status:** ✅ Phases 1–13 Complete. 🟡 Phase 4 Polish Sprint In Progress.
+**Last Updated:** 2026-08-21  
+**Overall Status:** ✅ Phases 1–13 Complete. ✅ Phase 4 Polish Sprint Complete.
 
 ---
 
@@ -57,8 +57,8 @@
 | **Axios interceptor upgrade (auto-toast on mutations, 401 redirect)** | ✅ Complete |
 | **Syllabus Browser** (`/dashboard/syllabus` + `/dashboard/syllabus/[subjectSlug]`) | ✅ Complete |
 | **Freemium Paywall** (`<PaywallModal />`, `FloatingNav` upgrade CTA, Mock Test & Analytics locks) | ✅ Complete |
-| **`<MarketingNav />` + `(marketing)` route group layout** | 🔴 Not Started |
-| **Mobile bottom navigation bar (dashboard)** | 🔴 Not Started |
+| **`<MarketingNav />` + `(marketing)` route group layout** | ✅ Complete |
+| **Mobile bottom navigation bar (dashboard)** | ✅ Complete |
 
 ---
 

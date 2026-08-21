@@ -34,6 +34,7 @@ export function FloatingNav() {
     }
   };
 
+  // All 7 links — shown in the desktop horizontal pill nav
   const navLinks = [
     { name: "Curriculum", href: "/dashboard", icon: BookOpen },
     { name: "Syllabus", href: "/dashboard/syllabus", icon: Map },
@@ -42,6 +43,16 @@ export function FloatingNav() {
     { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
     { name: "Leaderboard", href: "/dashboard/leaderboard", icon: Trophy },
     { name: "Alerts", href: "/alerts", icon: Bell },
+  ];
+
+  // 5 core tabs — shown in the mobile fixed bottom bar
+  // Syllabus and Alerts are secondary features (low daily usage) — desktop only
+  const mobileNavLinks = [
+    { name: "Home", href: "/dashboard", icon: BookOpen },
+    { name: "Practice", href: "/dashboard/practice-sets", icon: Target },
+    { name: "Tests", href: "/dashboard/mock-tests", icon: PenTool },
+    { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
+    { name: "Leaderboard", href: "/dashboard/leaderboard", icon: Trophy },
   ];
 
   if (!user) return null;
@@ -70,8 +81,8 @@ export function FloatingNav() {
                     href={link.href}
                     className={cn(
                       "px-3 py-1.5 text-sm font-medium rounded-full transition-colors",
-                      isActive 
-                        ? "bg-primary/10 text-primary font-semibold" 
+                      isActive
+                        ? "bg-primary/10 text-primary font-semibold"
                         : "text-muted-foreground hover:text-foreground hover:bg-accent"
                     )}
                   >
@@ -95,11 +106,12 @@ export function FloatingNav() {
                 <div className="h-4 w-px bg-border hidden md:block" />
               </>
             )}
-            
+
             <ModeToggle />
-            
-            <div className="flex items-center gap-1 px-3 py-1.5 bg-orange-50 text-orange-600 border border-orange-100 rounded-full font-bold shadow-sm">
-              <Flame className="w-4 h-4 fill-orange-500" />
+
+            {/* Streak counter — uses semantic warning tokens, never raw orange */}
+            <div className="flex items-center gap-1 px-3 py-1.5 bg-warning/10 text-warning border border-warning/20 rounded-full font-bold shadow-sm">
+              <Flame className="w-4 h-4 fill-warning/50" />
               <span className="text-sm">{user.streakDays || 0}</span>
             </div>
 
@@ -149,9 +161,9 @@ export function FloatingNav() {
         </header>
       </div>
 
-      {/* Mobile Bottom Navigation */}
+      {/* Mobile Bottom Navigation — 5 core tabs only (Syllabus & Alerts are desktop-only) */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-md border-t border-border flex items-center justify-around pb-4 pt-2 px-2 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
-        {navLinks.map((link) => {
+        {mobileNavLinks.map((link) => {
           const isActive = pathname === link.href;
           const Icon = link.icon;
           return (

@@ -1,8 +1,13 @@
+"use client";
+
 import Link from "next/link";
-import { GraduationCap, LogIn } from "lucide-react";
+import { GraduationCap, LogIn, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/store/auth";
 
 export function MarketingNav() {
+  const { user, isHydrated } = useAuthStore();
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 transition-all duration-300">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between">
@@ -15,42 +20,45 @@ export function MarketingNav() {
           </span>
         </Link>
 
-          <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-muted-foreground">
-            <Link
-              href="/#features"
-              className="hover:text-foreground transition-colors"
-            >
-              Features
-            </Link>
-            <Link
-              href="/pricing"
-              className="hover:text-foreground transition-colors"
-            >
-              Pricing
-            </Link>
-            <Link
-              href="/blog"
-              className="hover:text-foreground transition-colors"
-            >
-              Blog
-            </Link>
-          </nav>
+        <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-muted-foreground">
+          <Link href="/#features" className="hover:text-foreground transition-colors">
+            Features
+          </Link>
+          <Link href="/pricing" className="hover:text-foreground transition-colors">
+            Pricing
+          </Link>
+          <Link href="/blog" className="hover:text-foreground transition-colors">
+            Blog
+          </Link>
+        </nav>
 
-          <div className="flex items-center gap-3">
-            <Link href="/login">
-              <Button
-                variant="ghost"
-                className="font-semibold text-sm hidden sm:flex h-9 px-4"
-              >
-                <LogIn className="w-4 h-4 mr-2" /> Log In
+        {/* Auth-aware CTA — guarded by isHydrated to prevent SSR mismatch */}
+        <div className="flex items-center gap-3">
+          {isHydrated && user ? (
+            <Link href="/dashboard">
+              <Button className="font-bold text-sm h-9 px-5 rounded-full shadow-sm hover:shadow-md transition-shadow flex items-center gap-1.5">
+                Go to Dashboard
+                <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
-            <Link href="/register">
-              <Button className="font-bold text-sm h-9 px-5 rounded-full shadow-sm hover:shadow-md transition-shadow">
-                Get Started
-              </Button>
-            </Link>
-          </div>
+          ) : isHydrated ? (
+            <>
+              <Link href="/login">
+                <Button variant="ghost" className="font-semibold text-sm hidden sm:flex h-9 px-4">
+                  <LogIn className="w-4 h-4 mr-2" /> Log In
+                </Button>
+              </Link>
+              <Link href="/register">
+                <Button className="font-bold text-sm h-9 px-5 rounded-full shadow-sm hover:shadow-md transition-shadow">
+                  Get Started
+                </Button>
+              </Link>
+            </>
+          ) : (
+            /* Pre-hydration placeholder prevents layout shift */
+            <div className="h-9 w-28" aria-hidden="true" />
+          )}
+        </div>
       </div>
     </header>
   );

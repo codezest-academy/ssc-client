@@ -38,15 +38,13 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col font-sans selection:bg-primary/20 bg-background text-foreground">
+    <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* 1. Header */}
-
-      <main className="flex-1 relative flex flex-col">
+      <>
         {/* 2. Hero Section */}
       <section className="relative overflow-hidden pt-24 pb-32 lg:pt-36 lg:pb-40 border-b">
         {/* Animated Background from globals.css logic */}
@@ -290,9 +288,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-      </main>
-
-      {/* 5. Footer */}
-    </div>
+      </>
+    </>
   );
 }

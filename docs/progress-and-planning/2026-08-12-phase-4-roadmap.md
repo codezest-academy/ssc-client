@@ -1,8 +1,8 @@
 # Phase 4 Roadmap: Polish & Production Readiness (Client)
 
 **Date:** 2026-08-12  
-**Status:** 🟡 In Progress  
-**Last Updated:** 2026-08-16
+**Status:** ✅ Complete  
+**Last Updated:** 2026-08-21
 
 With the MVP features (Phases 1–12) completed, `ssc-client` is now in a production-readiness and UX polish sprint. This phase covers error handling, layout consistency, skeleton loading states, and mobile navigation.
 
@@ -177,9 +177,9 @@ Extended the `MdxRenderer` with two new rich interactive components to enable vi
 
 ---
 
-## 6. 🔴 Layout: Marketing Nav & Route Group
+## 6. ✅ Layout: Marketing Nav & Route Group
 
-**Status:** Not Started — Planned
+**Status:** ✅ Complete (2026-08-21)
 
 ### Problem
 All public/marketing pages (`/`, `/pyq`, `/pricing`, `/[examSlug]-mock-tests`, etc.) each define their own inline `<header>` with no shared component — inconsistent branding, high maintenance cost.
@@ -191,9 +191,9 @@ All public/marketing pages (`/`, `/pyq`, `/pricing`, `/[examSlug]-mock-tests`, e
 
 ---
 
-## 7. 🔴 Layout: Mobile Bottom Navigation
+## 7. ✅ Layout: Mobile Bottom Navigation
 
-**Status:** Not Started — Planned
+**Status:** ✅ Complete (2026-08-21)
 
 ### Problem
 `FloatingNav` hides all navigation links on mobile (they require `lg:` breakpoint). Students on phones have no way to navigate between sections.

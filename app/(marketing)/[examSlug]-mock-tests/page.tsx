@@ -23,7 +23,7 @@ export default async function ExamMockTestsLandingPage({ params }: { params: Pro
   const mockTests: any[] = result?.data || [];
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <>
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 px-6 sm:px-12 lg:px-24 border-b border-border bg-card">
         <div className="absolute inset-0 z-0 bg-primary/5 pointer-events-none" />
@@ -128,6 +128,6 @@ export default async function ExamMockTestsLandingPage({ params }: { params: Pro
           </div>
         </div>
       </section>
-    </div>
+    </>
   );
 }
