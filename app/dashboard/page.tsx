@@ -102,6 +102,14 @@ interface GamificationProfile {
   }>;
 }
 
+interface RecommendedProduct {
+  id: string;
+  name: string;
+  description: string | null;
+  price: number;
+  originalPrice: number | null;
+}
+
 const getExamColorClasses = (examId: string) => {
   switch (examId) {
     case "SSC_CGL":
@@ -787,6 +795,73 @@ function AlertsWidget({ alerts }: { alerts: any[] }) {
   );
 }
 
+
+// ─── Recommended Products Widget ─────────────────────────────────────────────
+
+function RecommendedProductsWidget({
+  products,
+}: {
+  products: RecommendedProduct[];
+}) {
+  if (products.length === 0) return null;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <div className="bg-primary/10 p-1.5 rounded-xl">
+          <Zap className="w-5 h-5 text-primary" />
+        </div>
+        <div>
+          <h3 className="text-lg font-bold text-foreground tracking-tight">
+            Recommended for You
+          </h3>
+          <p className="text-xs text-muted-foreground">
+            Plans matched to your study profile
+          </p>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {products.map((product) => (
+          <div
+            key={product.id}
+            className="bg-card border border-border rounded-xl p-5 flex flex-col gap-3 hover:border-primary/30 transition-colors"
+          >
+            <div className="flex-1">
+              <h4 className="font-bold text-foreground text-base mb-1">
+                {product.name}
+              </h4>
+              {product.description && (
+                <p className="text-muted-foreground text-xs leading-relaxed line-clamp-2">
+                  {product.description}
+                </p>
+              )}
+            </div>
+            <div className="flex items-center justify-between mt-auto pt-2 border-t border-border">
+              <div className="flex items-baseline gap-2">
+                <span className="text-lg font-black text-foreground">
+                  ₹{product.price.toLocaleString("en-IN")}
+                </span>
+                {product.originalPrice && (
+                  <span className="text-xs text-muted-foreground line-through">
+                    ₹{product.originalPrice.toLocaleString("en-IN")}
+                  </span>
+                )}
+              </div>
+              <Link
+                href="/dashboard/upgrade"
+                className="text-xs font-semibold text-primary hover:text-primary/80 flex items-center gap-1 transition-colors"
+              >
+                View Plan
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Dashboard Page ──────────────────────────────────────────────────────
 
 export default function DashboardPage() {
@@ -798,6 +873,7 @@ export default function DashboardPage() {
     null,
   );
   const [alerts, setAlerts] = useState<any[]>([]);
+  const [recommendedProducts, setRecommendedProducts] = useState<RecommendedProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const user = useAuthStore((state) => state.user);
@@ -830,7 +906,11 @@ export default function DashboardPage() {
       setSubjects(subjectsRes.value.data.data);
 
       if (analyticsRes.status === "fulfilled") {
-        setAnalytics(analyticsRes.value.data.data);
+        const analyticsData = analyticsRes.value.data.data;
+        setAnalytics(analyticsData);
+        if (Array.isArray(analyticsData.recommendedProducts)) {
+          setRecommendedProducts(analyticsData.recommendedProducts);
+        }
       }
       if (weakTopicsRes.status === "fulfilled") {
         setWeakTopics(weakTopicsRes.value.data.data);
@@ -926,6 +1006,11 @@ export default function DashboardPage() {
 
       {/* ── Weak Topics Widget ──────────────────────────────── */}
       <WeakTopicsWidget weakTopics={weakTopics} />
+
+      {/* ── Recommended Products (FREE users only) ───────────── */}
+      {user?.subscriptionTier === "FREE" && recommendedProducts.length > 0 && (
+        <RecommendedProductsWidget products={recommendedProducts} />
+      )}
 
       {/* ── Subjects Section ────────────────────────────────── */}
       <div className="space-y-12 md:space-y-16">
