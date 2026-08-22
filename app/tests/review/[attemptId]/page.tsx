@@ -18,6 +18,8 @@ import {
 } from "recharts";
 import { AlertCircle, Clock, CheckCircle2, XCircle } from "lucide-react";
 
+import { TimeAccuracyQuadrant } from "@/components/analytics/TimeAccuracyQuadrant";
+import { TopicPerformanceTable } from "@/components/analytics/TopicPerformanceTable";
 import { Skeleton } from "@/components/ui/skeleton";
 
 function TestReviewSkeleton() {
@@ -96,6 +98,8 @@ export default function TestReviewPage() {
   const [loading, setLoading] = useState(true);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [attempt, setAttempt] = useState<any>(null);
+  const [advancedAnalytics, setAdvancedAnalytics] = useState<any>(null);
+
 
   useEffect(() => {
     if (!attemptId) return;
@@ -103,6 +107,9 @@ export default function TestReviewPage() {
       try {
         const res = await api.get(`/attempts/${attemptId}`);
         setAttempt(res.data.data);
+        const advRes = await api.get(`/analytics/test/${attemptId}`);
+        setAdvancedAnalytics(advRes.data.data);
+
       } catch (e) {
         console.error(e);
       } finally {
@@ -341,6 +348,38 @@ export default function TestReviewPage() {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        )}
+
+
+        {advancedAnalytics && (
+          <div className="pt-8 border-t space-y-8">
+            <h2 className="text-2xl font-bold text-foreground">Advanced Diagnostics</h2>
+            
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="bg-card border rounded-2xl p-6 shadow-sm flex flex-col">
+                <h3 className="font-bold mb-1">Time vs. Accuracy Quadrant</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Identify your danger zones. Questions in the bottom-right indicate you spent too much time and got them wrong.
+                </p>
+                <div className="flex-1 min-h-[400px]">
+                  <TimeAccuracyQuadrant 
+                    data={advancedAnalytics.quadrantData} 
+                    avgTime={(advancedAnalytics.overview.avgTimeCorrect + advancedAnalytics.overview.avgTimeIncorrect) / 2 || 30} 
+                  />
+                </div>
+              </div>
+
+              <div className="bg-card border rounded-2xl p-6 shadow-sm flex flex-col">
+                <h3 className="font-bold mb-1">Topic Performance</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Breakdown by subject and chapter to identify weak areas.
+                </p>
+                <div className="flex-1 overflow-auto">
+                  <TopicPerformanceTable data={advancedAnalytics.topicPerformance} />
+                </div>
+              </div>
             </div>
           </div>
         )}
