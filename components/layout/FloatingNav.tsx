@@ -40,7 +40,6 @@ export function FloatingNav() {
     { name: "Syllabus", href: "/dashboard/syllabus", icon: Map },
     { name: "Practice", href: "/dashboard/practice-sets", icon: Target },
     { name: "PYQs", href: "/dashboard/pyq", icon: FileQuestion },
-    { name: "PYQs", href: "/dashboard/pyq", icon: FileQuestion },
     { name: "Tests", href: "/dashboard/mock-tests", icon: PenTool },
     { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
     { name: "Leaderboard", href: "/dashboard/leaderboard", icon: Trophy },
@@ -57,6 +56,15 @@ export function FloatingNav() {
     { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
     { name: "Leaderboard", href: "/dashboard/leaderboard", icon: Trophy },
   ];
+
+  const isToday = (dateString: string | null | undefined) => {
+    if (!dateString) return false;
+    const date = new Date(dateString);
+    const today = new Date();
+    return date.setHours(0, 0, 0, 0) === today.setHours(0, 0, 0, 0);
+  };
+  const hasCompletedToday = isToday(user?.lastActiveDate);
+  const streakDays = user?.streakDays || 0;
 
   if (!user) return null;
 
@@ -109,6 +117,16 @@ export function FloatingNav() {
                 <div className="h-4 w-px bg-border hidden md:block" />
               </>
             )}
+
+            
+            {/* Streak Indicator */}
+            <div className={cn(
+              "hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full border bg-muted/50",
+              hasCompletedToday ? "text-orange-500 border-orange-500/20 bg-orange-500/10" : "text-muted-foreground border-border"
+            )}>
+              <Flame className={cn("w-4 h-4", hasCompletedToday && "fill-orange-500")} />
+              <span className="text-sm font-bold">{streakDays}</span>
+            </div>
 
             <ModeToggle />
 
