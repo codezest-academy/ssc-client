@@ -15,10 +15,25 @@ export const api = axios.create({
   withCredentials: true,
 });
 
+function getGuestSessionId() {
+  if (typeof window === "undefined") return null;
+  let guestId = localStorage.getItem("guestSessionId");
+  if (!guestId) {
+    guestId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15);
+    localStorage.setItem("guestSessionId", guestId);
+  }
+  return guestId;
+}
+
 api.interceptors.request.use((config) => {
   const token = useAuthStore.getState().accessToken;
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
+  } else if (!token && config.headers) {
+    const guestSessionId = getGuestSessionId();
+    if (guestSessionId) {
+      config.headers["x-guest-session-id"] = guestSessionId;
+    }
   }
   return config;
 });
