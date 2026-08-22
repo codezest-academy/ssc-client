@@ -35,9 +35,8 @@ export function DailyTargetWidget() {
       const attemptRes = await api.post("/attempts/daily-quiz", {
         dailyQuizId: quiz.id,
       });
-
       const attempt = attemptRes.data.data;
-      router.push(`/test-engine/${attempt.id}`);
+      router.push(`/tests/attempt/${attempt.id}`);
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Failed to start daily quiz");
     } finally {

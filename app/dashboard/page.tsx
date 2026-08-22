@@ -45,6 +45,7 @@ import { useAuthStore, type StudyPersona } from "@/store/auth";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import DashboardLoading from "./loading";
+import { DailyTargetWidget } from "@/components/dashboard/DailyTargetWidget";
 interface Subject {
   id: string;
   name: string;
@@ -982,26 +983,7 @@ export default function DashboardPage() {
       {/* ── Gamification and Target Widgets ─────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
         <GamificationWidget profile={gamification} />
-        <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20 rounded-3xl p-5 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-5 shadow-sm group relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 opacity-50 group-hover:opacity-100 transition-opacity duration-700" />
-          <div className="relative">
-            <div className="flex items-center gap-2 mb-1.5">
-              <div className="bg-primary/10 p-1.5 rounded-xl">
-                <Flame className="w-5 h-5 text-primary" />
-              </div>
-              <h3 className="text-xl font-black text-foreground tracking-tight">
-                Daily 10-Min Target
-              </h3>
-            </div>
-            <p className="text-muted-foreground text-sm max-w-xl leading-relaxed">
-              Keep your streak alive! Complete today&apos;s dynamic 10-question
-              practice set covering mixed topics.
-            </p>
-          </div>
-          <div className="shrink-0 relative">
-            <DailyTargetButton subjects={subjects} />
-          </div>
-        </div>
+        <DailyTargetWidget />
       </div>
 
       {/* ── Weak Topics Widget ──────────────────────────────── */}
