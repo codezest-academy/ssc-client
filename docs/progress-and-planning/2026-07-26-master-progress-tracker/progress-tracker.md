@@ -1,7 +1,7 @@
 # SSC Client — Master Progress Tracker
 
-**Last Updated:** 2026-08-22  
-**Overall Status:** ✅ Phases 1–13 Complete. ✅ Phase 4 Polish Sprint + Phase 13 Personalization Complete.
+**Last Updated:** 2026-08-23  
+**Overall Status:** ✅ Phases 1–13 Complete. ✅ Phase 4 Polish Sprint + Phase 13 Personalization Complete. Phase 15–16 API features live.
 
 ---
 
@@ -34,6 +34,10 @@
 | **Phase 11** | Persona Onboarding Wizard (4-step) + Persona-Aware Dashboard | ✅ Complete | API Phase 13 |
 | **Phase 12** | Continuous Feedback Loop (widget + admin inbox) | ✅ Complete | API Phase 14 |
 | **Phase 13** | Public Exam Notifications & Job Alerts — SEO pages & Dashboard Widget | ✅ Complete | API Phase 14 |
+| **Phase 14** | Purchases — Razorpay checkout + `/dashboard/purchases` order history | ✅ Complete | API Phase 10 |
+| **Phase 15** | Gamification — XP bar, rank badge, streak counter (dashboard header) | 🟡 UI partially integrated — no dedicated gamification page yet |
+| **Phase 16** | Advanced Analytics — Weak Topics, Danger Zones, Peer Comparison, Mastery Trends, Agenda | ✅ Complete (analytics page) |
+| **Phase 17** | Daily Quiz — `/dashboard/daily-quiz` student-facing UI | 🔴 Not started — API is live, no client page exists |
 
 ---
 
@@ -85,5 +89,8 @@
 | UX/UI Guidelines | [ux-ui-guidelines.md](../../frontend-and-ux/2026-08-03-ux-architecture-and-standards/ux-ui-guidelines.md) |
 | Onboarding Flow Spec | [onboarding-flow.md](../../frontend-and-ux/2026-08-08-onboarding-flow/onboarding-flow.md) |
 | **Phase 4 Roadmap** | [2026-08-12-phase-4-roadmap.md](../2026-08-12-phase-4-roadmap.md) |
+| **Advanced Analytics API** | [advanced-analytics.md](../../../../../ssc-api/docs/architecture-and-infrastructure/2026-08-23-advanced-analytics/advanced-analytics.md) |
+| **Feedback Module API** | [feedback-module.md](../../../../../ssc-api/docs/architecture-and-infrastructure/2026-08-23-feedback-module/feedback-module.md) |
+| **Daily Quiz API** | [daily-quiz.md](../../../../../ssc-api/docs/architecture-and-infrastructure/2026-08-23-daily-quiz/daily-quiz.md) |
 
 

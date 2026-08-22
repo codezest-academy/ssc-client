@@ -281,5 +281,5 @@ No `dark:` modifier overrides are used — all semantic tokens auto-adapt.
 | Theme System | [theme-system.md](../2026-07-26-theme-system/theme-system.md) |
 | UX/UI Guidelines | [ux-ui-guidelines.md](../2026-08-03-ux-architecture-and-standards/ux-ui-guidelines.md) |
 | Error Handling Standards | [error-handling.md](../2026-08-12-error-handling-standards/) |
-| Go-To-Market Playbook | [ssc_cgl_go_to_market_playbook.md](../../product-strategy/ssc_cgl_go_to_market_playbook.md) |
+| Go-To-Market Playbook | [ssc_cgl_go_to_market_playbook.md](../../../../../docs/product-strategy/ssc_cgl_go_to_market_playbook.md) |
 | Phase 4 Roadmap | [2026-08-12-phase-4-roadmap.md](../../progress-and-planning/2026-08-12-phase-4-roadmap.md) |
