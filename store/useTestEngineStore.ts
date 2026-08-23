@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { api } from '@/lib/axios';
+import { useAuthStore } from './auth';
 
 export type QuestionStatus =
   | 'NOT_VISITED'
@@ -31,6 +32,7 @@ interface TestEngineState {
   timeRemaining: number;
   status: 'NOT_STARTED' | 'IN_PROGRESS' | 'SUBMITTED';
   attemptId: string | null;
+  syncQueue: Array<{ questionId: string; selectedOption: OptionType }>;
   
   // Actions
   initializeTest: (questions: EngineQuestion[], durationSeconds: number, attemptId: string) => void;
@@ -41,6 +43,7 @@ interface TestEngineState {
   jumpToQuestion: (index: number) => void;
   tickTimer: () => void;
   submitTest: () => void;
+  syncQueuedResponses: () => Promise<void>;
 }
 
 export const useTestEngineStore = create<TestEngineState>((set, get) => ({
@@ -51,6 +54,7 @@ export const useTestEngineStore = create<TestEngineState>((set, get) => ({
   timeRemaining: 0,
   status: 'NOT_STARTED',
   attemptId: null,
+  syncQueue: [],
 
   initializeTest: (questions, durationSeconds, attemptId) => {
     const initialStatus: Record<string, QuestionStatus> = {};
@@ -83,19 +87,21 @@ export const useTestEngineStore = create<TestEngineState>((set, get) => ({
     const currentQ = state.questions[state.currentIndex];
     const hasAnswer = state.answers[currentQ.id] !== undefined && state.answers[currentQ.id] !== null;
     
-    // Sync to backend if we have an attemptId
+    const responsePayload = {
+      questionId: currentQ.id,
+      selectedOption: state.answers[currentQ.id] || null,
+    };
+
     if (state.attemptId) {
       try {
         await api.patch(`/attempts/${state.attemptId}/answers`, {
-          responses: [
-            {
-              questionId: currentQ.id,
-              selectedOption: state.answers[currentQ.id] || null,
-            }
-          ]
+          responses: [responsePayload]
         });
+        // If successful, try to flush any existing queue
+        get().syncQueuedResponses();
       } catch (e) {
-        console.error('Failed to sync answer', e);
+        console.error('Network failed. Queuing answer offline.', e);
+        set((s) => ({ syncQueue: [...s.syncQueue, responsePayload] }));
       }
     }
 
@@ -122,18 +128,20 @@ export const useTestEngineStore = create<TestEngineState>((set, get) => ({
     const currentQ = state.questions[state.currentIndex];
     const hasAnswer = state.answers[currentQ.id] !== undefined && state.answers[currentQ.id] !== null;
 
+    const responsePayload = {
+      questionId: currentQ.id,
+      selectedOption: state.answers[currentQ.id] || null,
+    };
+
     if (state.attemptId) {
       try {
         await api.patch(`/attempts/${state.attemptId}/answers`, {
-          responses: [
-            {
-              questionId: currentQ.id,
-              selectedOption: state.answers[currentQ.id] || null,
-            }
-          ]
+          responses: [responsePayload]
         });
+        get().syncQueuedResponses();
       } catch (e) {
         console.error('Failed to sync answer', e);
+        set((s) => ({ syncQueue: [...s.syncQueue, responsePayload] }));
       }
     }
 
@@ -159,18 +167,20 @@ export const useTestEngineStore = create<TestEngineState>((set, get) => ({
     const state = get();
     const currentQ = state.questions[state.currentIndex];
 
+    const responsePayload = {
+      questionId: currentQ.id,
+      selectedOption: null,
+    };
+
     if (state.attemptId) {
       try {
         await api.patch(`/attempts/${state.attemptId}/answers`, {
-          responses: [
-            {
-              questionId: currentQ.id,
-              selectedOption: null,
-            }
-          ]
+          responses: [responsePayload]
         });
+        get().syncQueuedResponses();
       } catch (e) {
         console.error('Failed to clear answer', e);
+        set((s) => ({ syncQueue: [...s.syncQueue, responsePayload] }));
       }
     }
 
@@ -213,11 +223,36 @@ export const useTestEngineStore = create<TestEngineState>((set, get) => ({
     });
   },
 
+  syncQueuedResponses: async () => {
+    const state = get();
+    if (!state.attemptId || state.syncQueue.length === 0) return;
+    
+    const queueToProcess = [...state.syncQueue];
+    set({ syncQueue: [] }); // Clear eagerly
+    
+    try {
+      await api.patch(`/attempts/${state.attemptId}/answers`, {
+        responses: queueToProcess
+      });
+    } catch (e) {
+      console.error('Failed to sync queued answers', e);
+      // Re-add to queue if failed
+      set((s) => ({ syncQueue: [...s.syncQueue, ...queueToProcess] }));
+    }
+  },
+
   submitTest: async () => {
     const state = get();
     if (state.attemptId) {
       try {
-        await api.post(`/attempts/${state.attemptId}/submit`);
+        const res = await api.post(`/attempts/${state.attemptId}/submit`);
+        // If the backend returns gamification awards, apply them immediately to the auth store
+        if (res.data?.data?.gamification) {
+          const { xpAwarded, streakIncremented } = res.data.data.gamification;
+          if (xpAwarded || streakIncremented) {
+             useAuthStore.getState().optimisticGamificationUpdate(xpAwarded || 0, !!streakIncremented);
+          }
+        }
       } catch (e) {
         console.error('Failed to submit test', e);
       }

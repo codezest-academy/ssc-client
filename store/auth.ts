@@ -44,6 +44,8 @@ export interface User {
   // Gamification
   streakDays?: number;
   lastActiveDate?: string | null;
+  xpPoints?: number;
+  rankTier?: string;
 }
 
 interface AuthState {
@@ -55,6 +57,7 @@ interface AuthState {
   logout: () => void;
   isHydrated: boolean;
   setHydrated: (state: boolean) => void;
+  optimisticGamificationUpdate: (xpGained: number, streakIncremented: boolean) => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -68,6 +71,17 @@ export const useAuthStore = create<AuthState>()(
       setToken: (token) => set({ accessToken: token }),
       setUser: (user) => set({ user }),
       logout: () => set({ user: null, accessToken: null }),
+      optimisticGamificationUpdate: (xpGained, streakIncremented) => set((state) => {
+        if (!state.user) return state;
+        return {
+          user: {
+            ...state.user,
+            xpPoints: (state.user.xpPoints || 0) + xpGained,
+            streakDays: streakIncremented ? (state.user.streakDays || 0) + 1 : state.user.streakDays,
+            lastActiveDate: streakIncremented ? new Date().toISOString() : state.user.lastActiveDate
+          }
+        };
+      }),
     }),
     {
       name: "ssc-client-auth",
