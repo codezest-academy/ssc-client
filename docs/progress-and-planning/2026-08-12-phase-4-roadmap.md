@@ -241,3 +241,36 @@ Updated `app/profile/layout.tsx` to include the standard outer shell paddings an
 - **Error Tracking:** Custom Error Tracking System implemented (✅ Phase 4)
 - **CI/CD:** GitHub Actions for `tsc --noEmit` + `eslint` on pull requests.
 - **Bundle Optimization:** Analyze and lazy-load heavy components (Recharts, KaTeX).
+- **Gamification Rewards:** Physical merchandise store integration for high-tier XP earners.
+- **Social Features:** Collaborative study groups and shared "Study Session" calendars.
+
+---
+
+## 11. ✅ Phase 15 & 17 — Gamification + Daily Quiz Pages (2026-08-24)
+
+### 11a. `/dashboard/daily-quiz` — Phase 17 ✅
+
+**Status:** ✅ Complete  
+**File:** `app/dashboard/daily-quiz/page.tsx`
+
+Fetches today's quiz from `GET /api/v1/daily-quiz/today`, shows a question preview grid, and starts a `TestAttempt` via `POST /api/v1/attempts/daily-quiz/start`. Completion is inferred from `user.lastActiveDate`. The existing test engine handles scoring, XP award, and streak update natively.
+
+### 11b. `/dashboard/gamification` — Phase 15 ✅
+
+**Status:** ✅ Complete  
+**File:** `app/dashboard/gamification/page.tsx`
+
+Fetches `GET /api/v1/gamification/profile`. Displays:
+- Hero card with current rank icon, total XP, day streak, and animated XP progress bar
+- Rank ladder (all 5 tiers: ASPIRANT → CONSTABLE → SUB_INSPECTOR → INSPECTOR → COMMISSIONER)
+- Badges showcase grid (earned badges with criteria + award date)
+- CTA to `/dashboard/daily-quiz`
+
+### 11c. `GamificationProfileCard` Bug Fix
+
+Fixed rank tier names to match the API. The analytics page now correctly displays `CONSTABLE`, `SUB_INSPECTOR`, `INSPECTOR`, `COMMISSIONER` (was showing `CHALLENGER`, `ACHIEVER`, `MASTER`, `LEGEND` which never matched the API). XP formula in the info dialog corrected to `marks×10 + accuracy×5`.
+
+### 11d. `FloatingNav` Update
+
+- Desktop: **Daily Quiz** + **Rank** nav links added
+- Mobile: **Daily** tab added (replaces Leaderboard; Leaderboard remains accessible from desktop nav)

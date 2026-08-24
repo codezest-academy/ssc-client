@@ -5,7 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/mode-toggle";
-import { LogOut, Flame, Sparkles, User, ChevronDown, BookOpen, Target, PenTool, BarChart3, Trophy, Map, Bell, FileQuestion } from "lucide-react";
+import { LogOut, Flame, Sparkles, User, ChevronDown, BookOpen, Target, PenTool, BarChart3, Trophy, Map, Bell, FileQuestion, Zap, Medal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { api } from "@/lib/axios";
 import {
@@ -36,25 +36,27 @@ export function FloatingNav() {
 
   // All 7 links — shown in the desktop horizontal pill nav
   const navLinks = [
-    { name: "Curriculum", href: "/dashboard", icon: BookOpen },
-    { name: "Syllabus", href: "/dashboard/syllabus", icon: Map },
-    { name: "Practice", href: "/dashboard/practice-sets", icon: Target },
-    { name: "PYQs", href: "/dashboard/pyq", icon: FileQuestion },
-    { name: "Tests", href: "/dashboard/mock-tests", icon: PenTool },
-    { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
-    { name: "Leaderboard", href: "/dashboard/leaderboard", icon: Trophy },
-    { name: "Alerts", href: "/alerts", icon: Bell },
+    { name: "Curriculum",   href: "/dashboard",              icon: BookOpen    },
+    { name: "Syllabus",     href: "/dashboard/syllabus",     icon: Map         },
+    { name: "Practice",     href: "/dashboard/practice-sets",icon: Target      },
+    { name: "PYQs",         href: "/dashboard/pyq",          icon: FileQuestion},
+    { name: "Tests",        href: "/dashboard/mock-tests",   icon: PenTool     },
+    { name: "Daily Quiz",   href: "/dashboard/daily-quiz",   icon: Zap         },
+    { name: "Analytics",    href: "/dashboard/analytics",    icon: BarChart3   },
+    { name: "Rank",         href: "/dashboard/gamification", icon: Medal       },
+    { name: "Leaderboard",  href: "/dashboard/leaderboard",  icon: Trophy      },
+    { name: "Alerts",       href: "/alerts",                 icon: Bell        },
   ];
 
-  // 5 core tabs — shown in the mobile fixed bottom bar
-  // Syllabus and Alerts are secondary features (low daily usage) — desktop only
+  // 6 core tabs — shown in the mobile fixed bottom bar
+  // Syllabus, Leaderboard, Rank, and Alerts are secondary (low daily use) — desktop only
   const mobileNavLinks = [
-    { name: "Home", href: "/dashboard", icon: BookOpen },
-    { name: "Practice", href: "/dashboard/practice-sets", icon: Target },
-    { name: "PYQs", href: "/dashboard/pyq", icon: FileQuestion },
-    { name: "Tests", href: "/dashboard/mock-tests", icon: PenTool },
-    { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
-    { name: "Leaderboard", href: "/dashboard/leaderboard", icon: Trophy },
+    { name: "Home",      href: "/dashboard",              icon: BookOpen    },
+    { name: "Practice",  href: "/dashboard/practice-sets",icon: Target      },
+    { name: "Daily",     href: "/dashboard/daily-quiz",   icon: Zap         },
+    { name: "Tests",     href: "/dashboard/mock-tests",   icon: PenTool     },
+    { name: "Analytics", href: "/dashboard/analytics",    icon: BarChart3   },
+    { name: "PYQs",      href: "/dashboard/pyq",          icon: FileQuestion},
   ];
 
   const isToday = (dateString: string | null | undefined) => {

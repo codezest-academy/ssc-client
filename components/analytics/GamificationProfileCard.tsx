@@ -17,12 +17,14 @@ interface GamificationProfileCardProps {
   streakDays: number;
 }
 
+// Rank tiers must match the RankTier enum in the API (ssc-api/prisma/schema.prisma)
+// XP-only thresholds — streaks do NOT gate tier progression in the current implementation
 const RANKS = [
-  { name: "ASPIRANT", minXP: 0, minStreak: 0, color: "text-slate-500", bg: "bg-slate-500/10", border: "border-slate-500/20" },
-  { name: "CHALLENGER", minXP: 10000, minStreak: 0, color: "text-blue-500", bg: "bg-blue-500/10", border: "border-blue-500/20" },
-  { name: "ACHIEVER", minXP: 50000, minStreak: 7, color: "text-teal-500", bg: "bg-teal-500/10", border: "border-teal-500/20" },
-  { name: "MASTER", minXP: 250000, minStreak: 30, color: "text-purple-500", bg: "bg-purple-500/10", border: "border-purple-500/20" },
-  { name: "LEGEND", minXP: 1000000, minStreak: 90, color: "text-amber-500", bg: "bg-amber-500/10", border: "border-amber-500/20" },
+  { name: "ASPIRANT",      minXP: 0,      color: "text-muted-foreground", bg: "bg-muted",          border: "border-border"          },
+  { name: "CONSTABLE",     minXP: 500,    color: "text-info",             bg: "bg-info/10",         border: "border-info/20"         },
+  { name: "SUB_INSPECTOR", minXP: 2000,   color: "text-success",          bg: "bg-success/10",      border: "border-success/20"      },
+  { name: "INSPECTOR",     minXP: 5000,   color: "text-warning",          bg: "bg-warning/10",      border: "border-warning/20"      },
+  { name: "COMMISSIONER",  minXP: 10000,  color: "text-primary",          bg: "bg-primary/10",      border: "border-primary/20"      },
 ];
 
 export function GamificationProfileCard({ xpPoints, rankTier, streakDays }: GamificationProfileCardProps) {
@@ -37,9 +39,6 @@ export function GamificationProfileCard({ xpPoints, rankTier, streakDays }: Gami
     ? Math.min(100, Math.max(0, ((xpPoints - currentRank.minXP) / (nextRank.minXP - currentRank.minXP)) * 100))
     : 100;
 
-  const streakProgress = nextRank && nextRank.minStreak > 0
-    ? Math.min(100, Math.max(0, (streakDays / nextRank.minStreak) * 100))
-    : 100;
 
   return (
     <Card className="border-border shadow-sm relative overflow-hidden bg-card/50">
@@ -67,22 +66,20 @@ export function GamificationProfileCard({ xpPoints, rankTier, streakDays }: Gami
                   Experience Points (XP) and daily consistency determine your global Rank Tier. Earn XP by attempting Practice Sets and Mock Tests.
                 </p>
                 <div className="space-y-2 bg-muted/30 p-4 rounded-xl border border-border">
-                  <h4 className="font-bold text-foreground">Scoring Rules:</h4>
+                  <h4 className="font-bold text-foreground">XP Formula:</h4>
                   <ul className="list-disc pl-4 space-y-1">
-                    <li><strong className="text-foreground">+100 XP</strong> per Mark Obtained</li>
-                    <li><strong className="text-foreground">Up to +5,000 XP</strong> Accuracy Bonus per test</li>
+                    <li><strong className="text-foreground">(Marks × 10)</strong> from your score</li>
+                    <li><strong className="text-foreground">+ (Accuracy% × 5)</strong> bonus</li>
+                    <li>Minimum <strong className="text-foreground">0 XP</strong> — you never lose XP</li>
                   </ul>
                 </div>
                 <div className="space-y-2">
-                  <h4 className="font-bold text-foreground">Rank Requirements:</h4>
+                  <h4 className="font-bold text-foreground">Rank Thresholds:</h4>
                   <ul className="space-y-1">
                     {RANKS.map(r => (
                       <li key={r.name} className="flex justify-between items-center bg-card border border-border p-2 rounded-lg">
-                        <span className={cn("font-bold text-xs uppercase tracking-wider px-2 py-1 rounded-md", r.bg, r.color)}>{r.name}</span>
-                        <div className="text-right">
-                          <div className="font-mono text-foreground font-semibold">{r.minXP.toLocaleString()} XP</div>
-                          {r.minStreak > 0 && <div className="text-[10px] text-muted-foreground">{r.minStreak} Day Streak</div>}
-                        </div>
+                        <span className={cn("font-bold text-xs uppercase tracking-wider px-2 py-1 rounded-md", r.bg, r.color)}>{r.name.replace("_", " ")}</span>
+                        <div className="font-mono text-foreground font-semibold">{r.minXP.toLocaleString()} XP</div>
                       </li>
                     ))}
                   </ul>
@@ -113,44 +110,20 @@ export function GamificationProfileCard({ xpPoints, rankTier, streakDays }: Gami
         </div>
 
         {nextRank ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-3">
-              <div className="flex justify-between text-xs font-bold">
-                <span className="text-muted-foreground uppercase tracking-widest">XP Progress</span>
-                <span className="text-primary">{nextRank.minXP.toLocaleString()} XP Req</span>
-              </div>
-              <div className="h-4 w-full bg-muted rounded-full overflow-hidden border border-border/50 relative">
-                <div 
-                  className="h-full bg-primary transition-all duration-1000 ease-out absolute left-0 top-0" 
-                  style={{ width: `${xpProgress}%` }} 
-                />
-              </div>
-              <p className="text-xs text-center font-medium text-muted-foreground">
-                <strong className="text-foreground">{Math.max(0, nextRank.minXP - xpPoints).toLocaleString()} XP</strong> needed
-              </p>
+          <div className="space-y-3">
+            <div className="flex justify-between text-xs font-bold">
+              <span className="text-muted-foreground uppercase tracking-widest">Progress to {nextRank.name.replace("_", " ")}</span>
+              <span className="text-primary">{nextRank.minXP.toLocaleString()} XP</span>
             </div>
-
-            {nextRank.minStreak > 0 ? (
-              <div className="space-y-3">
-                <div className="flex justify-between text-xs font-bold">
-                  <span className="text-muted-foreground uppercase tracking-widest">Streak Progress</span>
-                  <span className="text-amber-500">{nextRank.minStreak} Days Req</span>
-                </div>
-                <div className="h-4 w-full bg-muted rounded-full overflow-hidden border border-border/50 relative">
-                  <div 
-                    className="h-full bg-amber-500 transition-all duration-1000 ease-out absolute left-0 top-0" 
-                    style={{ width: `${streakProgress}%` }} 
-                  />
-                </div>
-                <p className="text-xs text-center font-medium text-muted-foreground">
-                  <strong className="text-foreground">{Math.max(0, nextRank.minStreak - streakDays)} days</strong> needed
-                </p>
-              </div>
-            ) : (
-              <div className="flex items-center justify-center bg-muted/20 border border-border rounded-xl p-4">
-                <p className="text-sm font-medium text-muted-foreground">No streak required for {nextRank.name}</p>
-              </div>
-            )}
+            <div className="h-4 w-full bg-muted rounded-full overflow-hidden border border-border/50 relative">
+              <div
+                className="h-full bg-primary transition-all duration-1000 ease-out absolute left-0 top-0"
+                style={{ width: `${xpProgress}%` }}
+              />
+            </div>
+            <p className="text-xs text-center font-medium text-muted-foreground">
+              <strong className="text-foreground">{Math.max(0, nextRank.minXP - xpPoints).toLocaleString()} XP</strong> to next rank
+            </p>
           </div>
         ) : (
           <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 text-center">

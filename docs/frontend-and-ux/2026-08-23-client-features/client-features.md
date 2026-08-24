@@ -9,26 +9,50 @@ This document details low-priority/miscellaneous client pages and features, addr
 ---
 
 ## M. Gamification UI
-**Route:** `/dashboard`  
-**Location:** `src/app/dashboard/page.tsx`
+**Route:** `/dashboard/gamification`  
+**Location:** `app/dashboard/gamification/page.tsx`  
+**Status:** ✅ **Complete** (2026-08-24)
 
 **Overview:**
-The gamification UI surfaces the user's XP, rank tier, and streak to them on the main dashboard.
+The gamification UI has two surfaces:
+1. **Dashboard integration** — The `GamificationProfileCard` component on the Analytics page shows XP, rank, and streak. Inline streak counter + rank badge appear in `FloatingNav`.
+2. **Dedicated Gamification page** (`/dashboard/gamification`) — Full rank profile with hero card, animated XP progress bar, rank ladder, and badges showcase.
 
 **Features:**
-- **Gamification Widget:** Shows rank tier (e.g., ASPIRANT, CONSTABLE) and total XP. Displays a progress bar to the next tier and the user's current streak (in days).
-- **Data Source:** Pulls data from `profile` object passed to the `GamificationWidget`.
+- **Hero card:** Current tier icon, total XP, streak count, animated XP progress bar to next tier.
+- **Rank Ladder:** All 5 tiers (ASPIRANT → COMMISSIONER) shown as a vertical progress map with achieved/current/locked states.
+- **Badges:** Grid of all earned badges with award date and criteria. `<EmptyState />` if none earned yet.
+- **Info modal:** XP formula (`marks×10 + accuracy×5`) and rank thresholds.
+- **Data source:** `GET /api/v1/gamification/profile`
 
----
+**Rank tiers (implemented — XP-only, no streak gating):**
+| Tier | Min XP |
+|---|---|
+| ASPIRANT | 0 |
+| CONSTABLE | 500 |
+| SUB\_INSPECTOR | 2,000 |
+| INSPECTOR | 5,000 |
+| COMMISSIONER | 10,000 |
 
 ## N. Daily Quiz UI
-**Route:** Unknown (`/dashboard/daily-quiz` planned)  
-**Status:** 🔴 **Not Built**
+**Route:** `/dashboard/daily-quiz`  
+**Location:** `app/dashboard/daily-quiz/page.tsx`  
+**Status:** ✅ **Complete** (2026-08-24)
 
 **Overview:**
-The Daily Quiz API (Phase 15) is fully functional on the backend, generating personalized daily quizzes for students. However, no frontend page or component currently exists in `ssc-client` to render or take these quizzes.
+Student-facing page for the Daily 10-Minute Challenge. Fetches (or lazily generates) today's quiz via the API, shows a question preview grid, and starts a standard `TestAttempt` when the student clicks the CTA.
 
-**Gap:** A student-facing UI route needs to be created to consume the `/api/v1/daily-quiz` endpoints.
+**Features:**
+- **Hero card:** Date, difficulty breakdown, completion status (uses `user.lastActiveDate` to infer if taken today), start/retake CTA.
+- **Question preview grid:** 10 questions shown as title snippet + difficulty badge. Correct answers are hidden until submission.
+- **Start flow:** `POST /api/v1/attempts/daily-quiz/start` → redirects to `/tests/attempt/:id`. The existing test engine handles scoring, XP, and streak natively.
+- **Error/loading/empty states:** Full `<ErrorState />`, `<Skeleton />`, and `<EmptyState />` coverage.
+- **FloatingNav:** "Daily" tab added to the mobile bottom bar; "Daily Quiz" added to the desktop nav.
+
+**API endpoints consumed:**
+- `GET /api/v1/daily-quiz/today` — fetches or auto-generates today's quiz
+- `POST /api/v1/attempts/daily-quiz/start` — creates a linked `TestAttempt`
+- `POST /api/v1/attempts/:id/submit` — standard submit (no changes needed)
 
 ---
 
