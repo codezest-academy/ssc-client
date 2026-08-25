@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/mode-toggle";
 import { LocaleSwitcher } from "@/components/ui/locale-switcher";
-import { LogOut, Flame, Sparkles, User, ChevronDown, BookOpen, Target, PenTool, BarChart3, Trophy, Map, Bell, FileQuestion, Zap, Medal } from "lucide-react";
+import { LogOut, Flame, Sparkles, User, ChevronDown, BookOpen, Target, PenTool, BarChart3, Trophy, Map, Bell, FileQuestion, Zap, Medal, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { api } from "@/lib/axios";
 import {
@@ -47,6 +47,7 @@ export function FloatingNav() {
     { name: "Rank",         href: "/dashboard/gamification", icon: Medal       },
     { name: "Leaderboard",  href: "/dashboard/leaderboard",  icon: Trophy      },
     { name: "Alerts",       href: "/alerts",                 icon: Bell        },
+    { name: "Store",        href: "/store",                  icon: ShoppingBag },
   ];
 
   // 6 core tabs — shown in the mobile fixed bottom bar
@@ -58,6 +59,7 @@ export function FloatingNav() {
     { name: "Tests",     href: "/dashboard/mock-tests",   icon: PenTool     },
     { name: "Analytics", href: "/dashboard/analytics",    icon: BarChart3   },
     { name: "PYQs",      href: "/dashboard/pyq",          icon: FileQuestion},
+    { name: "Store",     href: "/store",                  icon: ShoppingBag },
   ];
 
   const isToday = (dateString: string | null | undefined) => {

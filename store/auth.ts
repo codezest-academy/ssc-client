@@ -45,6 +45,7 @@ export interface User {
   streakDays?: number;
   lastActiveDate?: string | null;
   xpPoints?: number;
+  coins?: number;
   rankTier?: string;
 }
 
