@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useAuthStore } from "../store/auth";
-
+import { useLocaleStore } from "../store/locale";
 const isServer = typeof window === 'undefined';
 let baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 
@@ -35,6 +35,21 @@ api.interceptors.request.use((config) => {
       config.headers["x-guest-session-id"] = guestSessionId;
     }
   }
+
+  // Inject locale query param on GET requests
+  if (config.method?.toLowerCase() === 'get') {
+    // Only access zustand store if we are on client (zustand is client-side state)
+    // For server components using axios, it would need to be passed explicitly, 
+    // but this axios instance is primarily used in client components
+    if (typeof window !== 'undefined') {
+      const locale = useLocaleStore.getState().locale;
+      if (locale && locale !== 'EN') {
+        config.params = config.params || {};
+        config.params.locale = locale;
+      }
+    }
+  }
+
   return config;
 });
 

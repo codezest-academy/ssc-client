@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/mode-toggle";
+import { LocaleSwitcher } from "@/components/ui/locale-switcher";
 import { LogOut, Flame, Sparkles, User, ChevronDown, BookOpen, Target, PenTool, BarChart3, Trophy, Map, Bell, FileQuestion, Zap, Medal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { api } from "@/lib/axios";
@@ -130,6 +131,7 @@ export function FloatingNav() {
               <span className="text-sm font-bold">{streakDays}</span>
             </div>
 
+            <LocaleSwitcher />
             <ModeToggle />
 
             {/* Streak counter — uses semantic warning tokens, never raw orange */}
