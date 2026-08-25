@@ -87,6 +87,16 @@ The dashboard layout varies based on `user.studyPersona`. See [User Personas](..
 
 ---
 
+
+---
+
+## 📱 Mobile Architecture (ssc-mobile)
+
+We are concurrently developing the `ssc-mobile` native application alongside this web client. 
+- **Tech Stack**: React Native CLI, React Navigation, NativeWind, react-native-reusables.
+- **Shared Logic**: The mobile app uses the exact same Zustand auth store structure, React Query keys, and Axios API interceptors as `ssc-client`.
+- **Purpose**: Provides students with an offline-capable, high-performance native experience (using FlashList and Reanimated) for studying and test-taking.
+
 ## Related Documents
 
 | Document | Location |
