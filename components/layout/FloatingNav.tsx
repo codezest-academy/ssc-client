@@ -17,6 +17,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
 
 export function FloatingNav() {
   const user = useAuthStore((state) => state.user);
@@ -35,19 +44,23 @@ export function FloatingNav() {
     }
   };
 
-  // All 7 links — shown in the desktop horizontal pill nav
-  const navLinks = [
-    { name: "Curriculum",   href: "/dashboard",              icon: BookOpen    },
-    { name: "Syllabus",     href: "/dashboard/syllabus",     icon: Map         },
-    { name: "Practice",     href: "/dashboard/practice-sets",icon: Target      },
-    { name: "PYQs",         href: "/dashboard/pyq",          icon: FileQuestion},
-    { name: "Tests",        href: "/dashboard/mock-tests",   icon: PenTool     },
-    { name: "Daily Quiz",   href: "/dashboard/daily-quiz",   icon: Zap         },
-    { name: "Analytics",    href: "/dashboard/analytics",    icon: BarChart3   },
-    { name: "Rank",         href: "/dashboard/gamification", icon: Medal       },
-    { name: "Leaderboard",  href: "/dashboard/leaderboard",  icon: Trophy      },
-    { name: "Alerts",       href: "/alerts",                 icon: Bell        },
-    { name: "Store",        href: "/store",                  icon: ShoppingBag },
+  // Mega Menu Categories (Desktop)
+  const academyLinks = [
+    { name: "Curriculum", href: "/dashboard", icon: BookOpen, desc: "Your master study plan" },
+    { name: "Syllabus Tracker", href: "/dashboard/syllabus", icon: Map, desc: "Track topic-wise progress" },
+  ];
+
+  const testSeriesLinks = [
+    { name: "Practice Sets", href: "/dashboard/practice-sets", icon: Target, desc: "Topic-wise adaptive questions" },
+    { name: "Mock Tests", href: "/dashboard/mock-tests", icon: PenTool, desc: "Full-length timed exams" },
+    { name: "PYQs", href: "/dashboard/pyq", icon: FileQuestion, desc: "Previous year question papers" },
+    { name: "Daily Quizzes", href: "/dashboard/daily-quiz", icon: Zap, desc: "Quick daily challenges" },
+  ];
+
+  const insightsLinks = [
+    { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3, desc: "Deep dive into your strengths" },
+    { name: "Gamification", href: "/dashboard/gamification", icon: Medal, desc: "View your Zest points and tier" },
+    { name: "Leaderboard", href: "/dashboard/leaderboard", icon: Trophy, desc: "Compare your standing globally" },
   ];
 
   // 6 core tabs — shown in the mobile fixed bottom bar
@@ -88,24 +101,111 @@ export function FloatingNav() {
               </span>
             </Link>
 
-            <nav className="hidden lg:flex items-center gap-1">
-              {navLinks.map((link) => {
-                const isActive = pathname === link.href;
-                return (
-                  <Link
-                    key={link.name}
-                    href={link.href}
-                    className={cn(
-                      "px-3 py-1.5 text-sm font-medium rounded-full transition-colors",
-                      isActive
-                        ? "bg-primary/10 text-primary font-semibold"
-                        : "text-muted-foreground hover:text-foreground hover:bg-accent"
-                    )}
-                  >
-                    {link.name}
-                  </Link>
-                );
-              })}
+            <nav className="hidden xl:flex items-center gap-1">
+              <NavigationMenu>
+                <NavigationMenuList>
+                  
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="bg-transparent hover:bg-accent font-medium text-sm text-muted-foreground hover:text-foreground data-[state=open]:bg-accent data-[state=open]:text-foreground">Academy</NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] bg-popover">
+                        {academyLinks.map((link) => (
+                          <li key={link.name}>
+                            <NavigationMenuLink asChild>
+                              <Link
+                                href={link.href}
+                                className="block select-none space-y-1 rounded-xl p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                              >
+                                <div className="flex items-center gap-3">
+                                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                                    <link.icon className="h-5 w-5" />
+                                  </div>
+                                  <div>
+                                    <div className="text-sm font-semibold leading-none">{link.name}</div>
+                                    <p className="line-clamp-2 text-xs leading-snug text-muted-foreground mt-1.5">
+                                      {link.desc}
+                                    </p>
+                                  </div>
+                                </div>
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="bg-transparent hover:bg-accent font-medium text-sm text-muted-foreground hover:text-foreground data-[state=open]:bg-accent data-[state=open]:text-foreground">Test Series</NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] bg-popover">
+                        {testSeriesLinks.map((link) => (
+                          <li key={link.name}>
+                            <NavigationMenuLink asChild>
+                              <Link
+                                href={link.href}
+                                className="block select-none space-y-1 rounded-xl p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                              >
+                                <div className="flex items-center gap-3">
+                                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                                    <link.icon className="h-5 w-5" />
+                                  </div>
+                                  <div>
+                                    <div className="text-sm font-semibold leading-none">{link.name}</div>
+                                    <p className="line-clamp-2 text-xs leading-snug text-muted-foreground mt-1.5">
+                                      {link.desc}
+                                    </p>
+                                  </div>
+                                </div>
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="bg-transparent hover:bg-accent font-medium text-sm text-muted-foreground hover:text-foreground data-[state=open]:bg-accent data-[state=open]:text-foreground">Insights</NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[500px] bg-popover">
+                        {insightsLinks.map((link) => (
+                          <li key={link.name}>
+                            <NavigationMenuLink asChild>
+                              <Link
+                                href={link.href}
+                                className="block select-none space-y-1 rounded-xl p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                              >
+                                <div className="flex items-center gap-3">
+                                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                                    <link.icon className="h-5 w-5" />
+                                  </div>
+                                  <div>
+                                    <div className="text-sm font-semibold leading-none">{link.name}</div>
+                                    <p className="line-clamp-2 text-xs leading-snug text-muted-foreground mt-1.5">
+                                      {link.desc}
+                                    </p>
+                                  </div>
+                                </div>
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                  
+                  <NavigationMenuItem>
+                    <Link href="/store" legacyBehavior passHref>
+                      <NavigationMenuLink className="bg-transparent px-4 py-2 hover:bg-accent font-medium text-sm text-muted-foreground hover:text-foreground rounded-md transition-colors flex items-center gap-1.5">
+                        <ShoppingBag className="w-4 h-4" />
+                        Store
+                      </NavigationMenuLink>
+                    </Link>
+                  </NavigationMenuItem>
+
+                </NavigationMenuList>
+              </NavigationMenu>
             </nav>
           </div>
 
@@ -141,6 +241,12 @@ export function FloatingNav() {
               <Flame className="w-4 h-4 fill-warning/50" />
               <span className="text-sm">{user.streakDays || 0}</span>
             </div>
+
+            <Button variant="ghost" size="icon" asChild className="hidden sm:flex rounded-full text-muted-foreground hover:text-foreground">
+              <Link href="/alerts">
+                <Bell className="w-5 h-5" />
+              </Link>
+            </Button>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
