@@ -27,6 +27,22 @@ interface Props {
   avgTime: number;
 }
 
+const CustomTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    const dataPoint = payload[0].payload as QuadrantDataPoint;
+    return (
+      <div className="bg-card border border-border p-3 rounded-lg shadow-md text-sm">
+        <p className="font-bold mb-1">{dataPoint.subjectName} - {dataPoint.chapterName}</p>
+        <p>Time Taken: <span className="font-semibold">{dataPoint.timeTaken}s</span></p>
+        <p>Status: <span className={dataPoint.isCorrect ? "text-success" : "text-destructive font-semibold"}>
+          {dataPoint.isCorrect ? "Correct" : "Incorrect"}
+        </span></p>
+      </div>
+    );
+  }
+  return null;
+};
+
 export function TimeAccuracyQuadrant({ data, avgTime }: Props) {
   // We only plot answered questions
   const answeredData = data.filter(d => d.isAnswered);
@@ -35,21 +51,7 @@ export function TimeAccuracyQuadrant({ data, avgTime }: Props) {
   const correctData = answeredData.filter(d => d.isCorrect === 1);
   const incorrectData = answeredData.filter(d => d.isCorrect === 0);
 
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      const dataPoint = payload[0].payload as QuadrantDataPoint;
-      return (
-        <div className="bg-card border border-border p-3 rounded-lg shadow-md text-sm">
-          <p className="font-bold mb-1">{dataPoint.subjectName} - {dataPoint.chapterName}</p>
-          <p>Time Taken: <span className="font-semibold">{dataPoint.timeTaken}s</span></p>
-          <p>Status: <span className={dataPoint.isCorrect ? "text-success" : "text-destructive font-semibold"}>
-            {dataPoint.isCorrect ? "Correct" : "Incorrect"}
-          </span></p>
-        </div>
-      );
-    }
-    return null;
-  };
+
 
   return (
     <div className="h-[400px] w-full">

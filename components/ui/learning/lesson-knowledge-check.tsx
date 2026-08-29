@@ -140,17 +140,17 @@ export function LessonKnowledgeCheck({ lessonId, onComplete }: KnowledgeCheckPro
                 className={cn(
                   "w-full text-left p-4 rounded-xl border-2 transition-all flex items-center gap-4",
                   !showExplanation && "hover:border-primary hover:bg-primary/5",
-                  isSelected && !showExplanation && "border-primary bg-primary/10",
+                  isSelected && !showExplanation && "border-option-selected/10 bg-option-selected text-foreground",
                   !isSelected && !showExplanation && "border-border bg-card",
-                  showCorrect && "border-success bg-success/10",
-                  showIncorrect && "border-destructive bg-destructive/10",
+                  showCorrect && "border-correct bg-correct/10 text-correct",
+                  showIncorrect && "border-incorrect bg-incorrect/10 text-incorrect",
                   showExplanation && !isCorrect && !isSelected && "border-border bg-card opacity-50"
                 )}
               >
                 <div className={cn(
                   "w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0",
-                  showCorrect ? "bg-success text-success-foreground" : 
-                  showIncorrect ? "bg-destructive text-destructive-foreground" :
+                  showCorrect ? "bg-correct/10 text-correct" : 
+                  showIncorrect ? "bg-incorrect/10 text-incorrect" :
                   "bg-muted text-muted-foreground"
                 )}>
                   {showCorrect ? <CheckCircle2 className="w-5 h-5" /> : 

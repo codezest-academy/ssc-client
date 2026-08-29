@@ -99,13 +99,13 @@ export function QuestionViewer() {
                     'group relative flex items-center gap-3 rounded-xl border-2 transition-all duration-150 text-left overflow-hidden',
                     useTwoCol ? 'px-4 py-3 min-h-[56px]' : 'w-full px-4 py-3.5',
                     isSelected
-                      ? 'border-primary bg-primary/5 shadow-sm'
+                      ? 'border-option-selected/10 bg-option-selected/10 text-foreground shadow-sm'
                       : 'border-border/60 bg-card hover:border-primary/50 hover:bg-muted/40 active:scale-[0.99]'
                   )}
                 >
                   {/* Left accent stripe on selection */}
                   {isSelected && (
-                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-l-[10px]" />
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-option-selected rounded-l-[10px]" />
                   )}
 
                   {/* Option key badge */}
@@ -113,7 +113,7 @@ export function QuestionViewer() {
                     className={cn(
                       'font-mono font-black w-8 h-8 flex items-center justify-center shrink-0 rounded-full text-sm transition-colors',
                       isSelected
-                        ? 'bg-primary text-primary-foreground'
+                        ? 'text-foreground'
                         : 'bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary'
                     )}
                   >
@@ -139,7 +139,7 @@ export function QuestionViewer() {
 
                   {/* Checkmark on selection */}
                   {isSelected && (
-                    <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
+                    <CheckCircle2 className="w-5 h-5 text-foreground shrink-0" />
                   )}
                 </button>
               );

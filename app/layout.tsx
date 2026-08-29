@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans, Noto_Sans_Devanagari, Noto_Sans_Telugu } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -14,6 +14,22 @@ const inter = Inter({
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
   subsets: ["latin"],
+});
+
+const notoDevanagari = Noto_Sans_Devanagari({
+  subsets: ["devanagari"],
+  variable: "--font-devanagari",
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  preload: false,
+});
+
+const notoTelugu = Noto_Sans_Telugu({
+  subsets: ["telugu"],
+  variable: "--font-telugu",
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -57,7 +73,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${jakarta.variable} antialiased`}
+      className={`${inter.variable} ${jakarta.variable} ${notoDevanagari.variable} ${notoTelugu.variable} antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-screen flex flex-col bg-background text-foreground">
